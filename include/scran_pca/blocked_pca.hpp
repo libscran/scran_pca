@@ -670,7 +670,7 @@ public:
 
     template<class Right_>
     void multiply(const Right_& rhs, Workspace& work, EigenVector_& output) const {
-        const auto& realized_rhs = [&]() {
+        const auto& realized_rhs = [&]() -> const auto& {
             if constexpr(std::is_same<Right_, EigenVector_>::value) {
                 return rhs;
             } else {

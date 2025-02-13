@@ -95,7 +95,7 @@ public:
 private:
     template<class Right_>
     void inner_multiply(const Right_& rhs, bool transposed, Workspace& work, EigenVector_& out) const {
-        const auto& realized_rhs = [&]() {
+        const auto& realized_rhs = [&]() -> const auto& {
             if constexpr(std::is_same<Right_, EigenVector_>::value) {
                 return rhs;
             } else {
@@ -107,7 +107,7 @@ private:
         auto resultdim = (transposed ? my_ncol : my_nrow);
         auto otherdim = (transposed ? my_nrow : my_ncol);
 
-        tatami::parallelize([&](size_t t, Index_ start, Index_ length) {
+        tatami::parallelize([&](size_t t, Index_ start, Index_ length) -> void {
             auto& vbuffer = work.vbuffers[t];
 
             if (my_prefer_rows != transposed) {

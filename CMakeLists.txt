@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 project(scran_pca
-    VERSION 0.1.1
+    VERSION 0.1.2
     DESCRIPTION "Principal components analysis for single-cell data"
     LANGUAGES CXX)
 
