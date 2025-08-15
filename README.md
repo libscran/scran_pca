@@ -22,7 +22,7 @@ const tatami::Matrix<double, int>& mat = some_data_source();
 
 // Take the top 20 PCs:
 scran_pca::SimplePcaOptions opt;
-opt.rank = 20;
+opt.number = 20;
 auto res = scran_pca::simple_pca(mat, opt);
 
 res.components; // rows are PCs, columns are cells.
@@ -47,7 +47,7 @@ This ensures that the inter-block differences do not contribute to the first few
 std::vector<int> blocks = some_blocks();
 
 scran_pca::BlockedPcaOptions bopt;
-bopt.rank = 10; // taking the top 10 PCs this time.
+bopt.number = 10; // taking the top 10 PCs this time.
 auto bres = scran_pca::blocked_pca(mat, blocks.data(), bopt);
 
 bres.components; // rows are PCs, columns are cells.
@@ -56,7 +56,7 @@ bres.center; // rows are blocks, columns are genes.
 
 The components derived from the residuals will only be free of inter-block differences under certain conditions (equal population composition with a consistent shift between blocks).
 If this is not the case, more sophisticated batch correction methods are required.
-If those methods accept a low-dimensional representation for the cells as input, 
+If those methods accept a low-dimensional representation for the cells as input,
 we can use `scran_pca::blocked_pca()` to obtain an appropriate matrix that focuses on intra-block variation without making assumptions about the inter-block differences:
 
 ```cpp
