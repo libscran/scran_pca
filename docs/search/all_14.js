@@ -12,7 +12,7 @@ var searchData=
   ['wrapped_5fmultiply_9',['wrapped_multiply',['https://ltla.github.io/CppIrlba/namespaceirlba.html#aab50891ee0a3fd5a318ef6aa256b7d10',1,'irlba']]],
   ['wrapped_5frealize_10',['wrapped_realize',['https://ltla.github.io/CppIrlba/namespaceirlba.html#aec781c9e4054d9f1b62fc52af8d19c66',1,'irlba']]],
   ['wrapped_5fworkspace_11',['wrapped_workspace',['https://ltla.github.io/CppIrlba/namespaceirlba.html#a3f1075c4c34a8afe68dbed060978c4e3',1,'irlba']]],
-  ['wrappedadjointworkspace_12',['WrappedAdjointWorkspace',['https://ltla.github.io/CppIrlba/namespaceirlba.html#aeac6c618f2563487690acec46196ccdc',1,'irlba']]],
-  ['wrappedworkspace_13',['WrappedWorkspace',['https://ltla.github.io/CppIrlba/namespaceirlba.html#ad2b92efc32285100178f1d2e740db57a',1,'irlba']]],
+  ['wrappedadjointworkspace_12',['WrappedAdjointWorkspace',['https://ltla.github.io/CppIrlba/namespaceirlba.html#ad688d23339418eb0a0cc5b7217f35ad4',1,'irlba']]],
+  ['wrappedworkspace_13',['WrappedWorkspace',['https://ltla.github.io/CppIrlba/namespaceirlba.html#af50e89ef6fc5f30c5bdcc904b74eb45c',1,'irlba']]],
   ['wrappers_2ehpp_14',['wrappers.hpp',['https://ltla.github.io/CppIrlba/wrappers_8hpp.html',1,'']]]
 ];
