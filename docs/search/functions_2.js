@@ -4,7 +4,7 @@ var searchData=
   ['cast_5findex_5fto_5fcontainer_5fsize_1',['cast_Index_to_container_size',['https://tatami-inc.github.io/tatami/namespacetatami.html#a4fbc87d33e2177ca494bb096ec72c308',1,'tatami']]],
   ['centered_2',['Centered',['https://ltla.github.io/CppIrlba/classirlba_1_1Centered.html#a48b46304c577789a6957b472fef87874',1,'irlba::Centered']]],
   ['cols_3',['cols',['https://ltla.github.io/CppIrlba/classirlba_1_1MockMatrix.html#a4940f9dd3cfe19dbe048a5facb0c44d5',1,'irlba::MockMatrix::cols()'],['https://ltla.github.io/CppIrlba/classirlba_1_1ParallelSparseMatrix.html#ad28b7feb9b8edbe5f028bee51635ba7d',1,'irlba::ParallelSparseMatrix::cols()']]],
-  ['compress_5fsparse_5ftriplets_4',['compress_sparse_triplets',['https://tatami-inc.github.io/tatami/namespacetatami.html#aa007887c6e13021b8a9d5565de1b8bb9',1,'tatami']]],
+  ['compress_5fsparse_5ftriplets_4',['compress_sparse_triplets',['https://tatami-inc.github.io/tatami/namespacetatami.html#abb624f8a5bc844d3e902cde63b84001f',1,'tatami']]],
   ['compressedsparsecolumnmatrix_5',['CompressedSparseColumnMatrix',['https://tatami-inc.github.io/tatami/classtatami_1_1CompressedSparseColumnMatrix.html#a4a7d2c1c47bbab5e0bdde48ad9ba9ec7',1,'tatami::CompressedSparseColumnMatrix']]],
   ['compressedsparsematrix_6',['CompressedSparseMatrix',['https://tatami-inc.github.io/tatami/classtatami_1_1CompressedSparseMatrix.html#a01256bb540937246cfc78dd2a30ff2e0',1,'tatami::CompressedSparseMatrix']]],
   ['compressedsparserowmatrix_7',['CompressedSparseRowMatrix',['https://tatami-inc.github.io/tatami/classtatami_1_1CompressedSparseRowMatrix.html#ab757e111074096fb542148675c72cade',1,'tatami::CompressedSparseRowMatrix']]],

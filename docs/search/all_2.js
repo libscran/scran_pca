@@ -15,7 +15,7 @@ var searchData=
   ['components_12',['components',['../structscran__pca_1_1SimplePcaResults.html#a1da0c096b49b673dac64a13efca490df',1,'scran_pca::SimplePcaResults::components'],['../structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8',1,'scran_pca::BlockedPcaResults::components']]],
   ['components_20analysis_20duh_13',['Principal components analysis, duh',['../index.html',1,'']]],
   ['components_5ffrom_5fresiduals_14',['components_from_residuals',['../structscran__pca_1_1BlockedPcaOptions.html#a3e2503517358ed97e08dc9111e35e791',1,'scran_pca::BlockedPcaOptions']]],
-  ['compress_5fsparse_5ftriplets_15',['compress_sparse_triplets',['https://tatami-inc.github.io/tatami/namespacetatami.html#aa007887c6e13021b8a9d5565de1b8bb9',1,'tatami']]],
+  ['compress_5fsparse_5ftriplets_15',['compress_sparse_triplets',['https://tatami-inc.github.io/tatami/namespacetatami.html#abb624f8a5bc844d3e902cde63b84001f',1,'tatami']]],
   ['compress_5fsparse_5ftriplets_2ehpp_16',['compress_sparse_triplets.hpp',['https://tatami-inc.github.io/tatami/compress__sparse__triplets_8hpp.html',1,'']]],
   ['compressedsparsecolumnmatrix_17',['CompressedSparseColumnMatrix',['https://tatami-inc.github.io/tatami/classtatami_1_1CompressedSparseColumnMatrix.html',1,'tatami::CompressedSparseColumnMatrix&lt; typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_ &gt;'],['https://tatami-inc.github.io/tatami/classtatami_1_1CompressedSparseColumnMatrix.html#a4a7d2c1c47bbab5e0bdde48ad9ba9ec7',1,'tatami::CompressedSparseColumnMatrix::CompressedSparseColumnMatrix()']]],
   ['compressedsparsecontents_18',['CompressedSparseContents',['https://tatami-inc.github.io/tatami/structtatami_1_1CompressedSparseContents.html',1,'tatami']]],
