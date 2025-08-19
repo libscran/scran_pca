@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 project(scran_pca
-    VERSION 0.1.2
+    VERSION 0.2.0
     DESCRIPTION "Principal components analysis for single-cell data"
     LANGUAGES CXX)
 
@@ -22,10 +22,11 @@ option(SCRAN_PCA_FETCH_EXTERN "Automatically fetch scran_pca's external dependen
 if(SCRAN_PCA_FETCH_EXTERN)
     add_subdirectory(extern)
 else()
-    find_package(tatami_tatami 3.0.0 CONFIG REQUIRED)
-    find_package(tatami_tatami_stats 1.0.0 CONFIG REQUIRED)
+    find_package(tatami_tatami 4.0.0 CONFIG REQUIRED)
+    find_package(tatami_tatami_stats 2.0.0 CONFIG REQUIRED)
     find_package(libscran_scran_blocks 0.1.0 CONFIG REQUIRED)
     find_package(ltla_irlba 2.0.0 CONFIG REQUIRED)
+    find_package(ltla_sanisizer 2.0.0 CONFIG REQUIRED)
     find_package(Eigen3 3.4.0 REQUIRED NO_MODULE)
 endif()
 

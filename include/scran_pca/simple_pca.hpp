@@ -1,15 +1,16 @@
 #ifndef SCRAN_PCA_SIMPLE_PCA_HPP
 #define SCRAN_PCA_SIMPLE_PCA_HPP
 
+#include <vector>
+#include <type_traits>
+#include <algorithm>
+
 #include "tatami/tatami.hpp"
 #include "tatami_stats/tatami_stats.hpp"
 #include "irlba/irlba.hpp"
 #include "irlba/parallel.hpp"
 #include "Eigen/Dense"
-
-#include <vector>
-#include <type_traits>
-#include <algorithm>
+#include "sanisizer/sanisizer.hpp"
 
 #include "utils.hpp"
 
@@ -78,15 +79,19 @@ namespace internal {
 
 template<bool sparse_, typename Value_, typename Index_, class EigenVector_>
 void compute_row_means_and_variances(const tatami::Matrix<Value_, Index_>& mat, int num_threads, EigenVector_& center_v, EigenVector_& scale_v) {
-    if (mat.prefer_rows()) {
-        tatami::parallelize([&](size_t, Index_ start, Index_ length) -> void {
-            tatami::Options opt;
-            opt.sparse_extract_index = false;
-            auto ext = tatami::consecutive_extractor<sparse_>(&mat, true, start, length, opt);
-            auto ncells = mat.ncol();
-            std::vector<Value_> vbuffer(ncells);
+    auto ngenes = mat.nrow();
 
-            for (Index_ r = start, end = start + length; r < end; ++r) {
+    if (mat.prefer_rows()) {
+        tatami::parallelize([&](int , Index_ start, Index_ length) -> void {
+            auto ext = tatami::consecutive_extractor<sparse_>(mat, true, start, length, [&]{
+                tatami::Options opt;
+                opt.sparse_extract_index = false;
+                return opt;
+            }());
+            auto ncells = mat.ncol();
+            auto vbuffer = tatami::create_container_of_Index_size<std::vector<Value_> >(ncells);
+
+            for (Index_ g = start, end = start + length; g < end; ++g) {
                 auto results = [&]{
                     if constexpr(sparse_) {
                         auto range = ext->fetch(vbuffer.data(), NULL);
@@ -96,16 +101,15 @@ void compute_row_means_and_variances(const tatami::Matrix<Value_, Index_>& mat, 
                         return tatami_stats::variances::direct(ptr, ncells, /* skip_nan = */ false);
                     }
                 }();
-                center_v.coeffRef(r) = results.first;
-                scale_v.coeffRef(r) = results.second;
+                center_v.coeffRef(g) = results.first;
+                scale_v.coeffRef(g) = results.second;
             }
-        }, mat.nrow(), num_threads);
+        }, ngenes, num_threads);
 
     } else {
-        tatami::parallelize([&](size_t t, Index_ start, Index_ length) -> void {
-            tatami::Options opt;
+        tatami::parallelize([&](int t, Index_ start, Index_ length) -> void {
             auto ncells = mat.ncol();
-            auto ext = tatami::consecutive_extractor<sparse_>(&mat, false, static_cast<Index_>(0), ncells, start, length, opt);
+            auto ext = tatami::consecutive_extractor<sparse_>(mat, false, static_cast<Index_>(0), ncells, start, length);
 
             typedef typename EigenVector_::Scalar Scalar;
             tatami_stats::LocalOutputBuffer<Scalar> cbuffer(t, start, length, center_v.data());
@@ -119,9 +123,16 @@ void compute_row_means_and_variances(const tatami::Matrix<Value_, Index_>& mat, 
                 }
             }();
 
-            std::vector<Value_> vbuffer(length);
-            typename std::conditional<sparse_, std::vector<Index_>, Index_>::type ibuffer(length);
-            for (Index_ r = 0; r < ncells; ++r) {
+            auto vbuffer = tatami::create_container_of_Index_size<std::vector<Value_> >(length);
+            auto ibuffer = [&]{
+                if constexpr(sparse_) {
+                    return tatami::create_container_of_Index_size<std::vector<Index_> >(length);
+                } else {
+                    return false;
+                }
+            }();
+
+            for (Index_ c = 0; c < ncells; ++c) {
                 if constexpr(sparse_) {
                     auto range = ext->fetch(vbuffer.data(), ibuffer.data());
                     running.add(range.value, range.index, range.number);
@@ -134,7 +145,7 @@ void compute_row_means_and_variances(const tatami::Matrix<Value_, Index_>& mat, 
             running.finish();
             cbuffer.transfer();
             sbuffer.transfer();
-        }, mat.nrow(), num_threads);
+        }, ngenes, num_threads);
     }
 }
 
@@ -169,17 +180,21 @@ void run_sparse(
     typename EigenVector_::Scalar& total_var,
     bool& converged)
 {
-    Index_ ngenes = mat.nrow();
-    center_v.resize(ngenes);
-    scale_v.resize(ngenes);
+    auto ngenes = mat.nrow();
+    center_v.resize(tatami::cast_Index_to_container_size<decltype(center_v)>(ngenes));
+    scale_v.resize(tatami::cast_Index_to_container_size<decltype(scale_v)>(ngenes));
 
     if (options.realize_matrix) {
         // 'extracted' contains row-major contents...
         auto extracted = tatami::retrieve_compressed_sparse_contents<Value_, Index_>(
-            &mat, 
+            mat, 
             /* row = */ true, 
-            /* two_pass = */ false, 
-            /* threads = */ options.num_threads
+            [&]{
+                tatami::RetrieveCompressedSparseContentsOptions opt;
+                opt.two_pass = false;
+                opt.num_threads = options.num_threads;
+                return opt;
+            }()
         );
 
         // But we effectively transpose it to CSC with genes in columns.
@@ -194,15 +209,16 @@ void run_sparse(
             options.num_threads
         ); 
 
-        tatami::parallelize([&](size_t, size_t start, size_t length) -> void {
-            const auto& ptrs = emat.get_pointers();
+        tatami::parallelize([&](int, Index_ start, Index_ length) -> void {
+            const auto& pointers = emat.get_pointers();
             const auto& values = emat.get_values();
-            for (size_t r = start, end = start + length; r < end; ++r) {
-                auto offset = ptrs[r];
-                Index_ num_nonzero = ptrs[r + 1] - offset;
+            for (Index_ g = start, end = start + length; g < end; ++g) {
+                auto offset = pointers[g];
+                auto next_offset = pointers[g + 1]; // increment won't overflow as 'g + 1 <= end'.
+                Index_ num_nonzero = next_offset - offset;
                 auto results = tatami_stats::variances::direct(values.data() + offset, num_nonzero, ncells, /* skip_nan = */ false);
-                center_v.coeffRef(r) = results.first;
-                scale_v.coeffRef(r) = results.second;
+                center_v.coeffRef(g) = results.first;
+                scale_v.coeffRef(g) = results.second;
             }
         }, ngenes, options.num_threads);
 
@@ -239,17 +255,29 @@ void run_dense(
     bool& converged)
 {
     Index_ ngenes = mat.nrow();
-    center_v.resize(ngenes);
-    scale_v.resize(ngenes);
+    center_v.resize(tatami::cast_Index_to_container_size<decltype(center_v)>(ngenes));
+    scale_v.resize(tatami::cast_Index_to_container_size<decltype(scale_v)>(ngenes));
 
     if (options.realize_matrix) {
         // Create a matrix with genes in columns.
         Index_ ncells = mat.ncol();
-        EigenMatrix_ emat(ncells, ngenes);
+        EigenMatrix_ emat(
+            sanisizer::cast<decltype(std::declval<EigenMatrix_>().rows())>(ncells),
+            sanisizer::cast<decltype(std::declval<EigenMatrix_>().cols())>(ngenes)
+        );
 
         // If emat is row-major, we want to fill it with columns of 'mat', so row_major = false.
         // If emat is column-major, we want to fill it with rows of 'mat', so row_major = true.
-        tatami::convert_to_dense(&mat, /* row_major = */ !emat.IsRowMajor, emat.data(), options.num_threads);
+        tatami::convert_to_dense(
+            mat,
+            /* row_major = */ !emat.IsRowMajor,
+            emat.data(),
+            [&]{
+                tatami::ConvertToDenseOptions opt;
+                opt.num_threads = options.num_threads;
+                return opt;
+            }()
+        );
 
         center_v.array() = emat.array().colwise().sum();
         if (ncells) {
