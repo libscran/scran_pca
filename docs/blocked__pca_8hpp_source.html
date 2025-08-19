@@ -813,8 +813,8 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>    <span class="keyword">template</span>&lt;<span class="keyword">class</span> EigenMatrix2_&gt;</div>
 <div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>    EigenMatrix2_ realize()<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>        EigenMatrix2_ output = <a class="code hl_functionRef" href="https://ltla.github.io/CppIrlba/namespaceirlba.html#aec781c9e4054d9f1b62fc52af8d19c66">irlba::wrapped_realize&lt;EigenMatrix2_&gt;</a>(my_mat);</div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>        <span class="keywordflow">for</span> (<span class="keyword">decltype</span>(output.rows()) i = 0, end = output.rows(); i &lt; rend; ++i) {</div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>            output.row(r) -= my_means.row(my_block[i]);</div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>        <span class="keywordflow">for</span> (<span class="keyword">decltype</span>(output.rows()) i = 0, end = output.rows(); i &lt; end; ++i) {</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>            output.row(i) -= my_means.row(my_block[i]);</div>
 <div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>        }</div>
 <div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>        <span class="keywordflow">return</span> output;</div>
 <div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>    }</div>
@@ -855,9 +855,9 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>                mat,</div>
 <div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>                <span class="comment">/* row = */</span> <span class="keyword">true</span>,</div>
 <div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>                [&amp;]{</div>
-<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>                    tatami::RetrieveCompressedSparseContents opt;</div>
-<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>                    opt.two_pass = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>                    opt.num_threads = options.num_threads;</div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>                    <a class="code hl_structRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1RetrieveCompressedSparseContentsOptions.html">tatami::RetrieveCompressedSparseContentsOptions</a> opt;</div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>                    opt.<a class="code hl_variableRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1RetrieveCompressedSparseContentsOptions.html#a6e8d3d669e760e0b640f085b519a49f3">two_pass</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>                    opt.<a class="code hl_variableRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1RetrieveCompressedSparseContentsOptions.html#a63e19a4a990891427f82f3a433fa2044">num_threads</a> = options.num_threads;</div>
 <div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>                    <span class="keywordflow">return</span> opt;</div>
 <div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>                }()</div>
 <div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>            );</div>
@@ -874,7 +874,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>                mat,</div>
 <div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>                <span class="comment">/* row_major = */</span> <span class="keyword">true</span>,</div>
 <div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>                emat.data(),</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>                    [&amp;]{</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>                [&amp;]{</div>
 <div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>                    tatami::ConvertToDenseOptions opt;</div>
 <div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>                    opt.num_threads = options.num_threads;</div>
 <div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>                    return opt;</div>
@@ -1093,6 +1093,9 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a910c7e46f4cc53f12b9b15eea7170659"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scran_pca::BlockedPcaResults::scale</a></div><div class="ttdeci">EigenVector_ scale</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:981</div></div>
 <div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a97057089c28f6338d93081dabfad2785"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">scran_pca::BlockedPcaResults::center</a></div><div class="ttdeci">EigenMatrix_ center</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:975</div></div>
 <div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_ae83cf282975daa64bf304945b6fa71fd"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#ae83cf282975daa64bf304945b6fa71fd">scran_pca::BlockedPcaResults::variance_explained</a></div><div class="ttdeci">EigenVector_ variance_explained</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:955</div></div>
+<div class="ttc" id="astructtatami_1_1RetrieveCompressedSparseContentsOptions_html"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/structtatami_1_1RetrieveCompressedSparseContentsOptions.html">tatami::RetrieveCompressedSparseContentsOptions</a></div></div>
+<div class="ttc" id="astructtatami_1_1RetrieveCompressedSparseContentsOptions_html_a63e19a4a990891427f82f3a433fa2044"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/structtatami_1_1RetrieveCompressedSparseContentsOptions.html#a63e19a4a990891427f82f3a433fa2044">tatami::RetrieveCompressedSparseContentsOptions::num_threads</a></div><div class="ttdeci">int num_threads</div></div>
+<div class="ttc" id="astructtatami_1_1RetrieveCompressedSparseContentsOptions_html_a6e8d3d669e760e0b640f085b519a49f3"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/structtatami_1_1RetrieveCompressedSparseContentsOptions.html#a6e8d3d669e760e0b640f085b519a49f3">tatami::RetrieveCompressedSparseContentsOptions::two_pass</a></div><div class="ttdeci">bool two_pass</div></div>
 <div class="ttc" id="atatami_8hpp_html"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/tatami_8hpp.html">tatami.hpp</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
