@@ -117,9 +117,9 @@ struct BlockingDetails {
 
 template<class EigenVector_, typename Index_, typename Block_>
 BlockingDetails<Index_, EigenVector_> compute_blocking_details(
-    Index_ ncells,
+    const Index_ ncells,
     const Block_* block,
-    scran_blocks::WeightPolicy block_weight_policy, 
+    const scran_blocks::WeightPolicy block_weight_policy, 
     const scran_blocks::VariableWeightParameters& variable_block_weight_parameters) 
 {
     BlockingDetails<Index_, EigenVector_> output;
@@ -129,14 +129,14 @@ BlockingDetails<Index_, EigenVector_> compute_blocking_details(
     }
 
     const auto& block_size = output.block_size;
-    auto nblocks = block_size.size();
+    const auto nblocks = block_size.size();
     output.weighted = true;
     auto& total_weight = output.total_block_weight;
     auto& element_weight = output.per_element_weight;
     sanisizer::resize(element_weight, nblocks);
 
-    for (decltype(nblocks) b = 0; b < nblocks; ++b) {
-        auto bsize = block_size[b];
+    for (decltype(I(nblocks)) b = 0; b < nblocks; ++b) {
+        const auto bsize = block_size[b];
 
         // Computing effective block weights that also incorporate division by the
         // block size. This avoids having to do the division by block size in the
@@ -180,7 +180,7 @@ BlockingDetails<Index_, EigenVector_> compute_blocking_details(
 
 template<typename Num_, typename Value_, typename Index_, typename Block_, typename EigenVector_, typename Float_>
 void compute_sparse_mean_and_variance_blocked(
-    Num_ num_nonzero, 
+    const Num_ num_nonzero, 
     const Value_* values, 
     const Index_* indices, 
     const Block_* block, 
@@ -188,16 +188,16 @@ void compute_sparse_mean_and_variance_blocked(
     Float_* centers,
     Float_& variance,
     std::vector<Index_>& block_copy,
-    Num_ num_all)
+    const Num_ num_all)
 {
     const auto& block_size = block_details.block_size;
-    auto nblocks = block_size.size();
+    const auto nblocks = block_size.size();
 
     std::fill_n(centers, nblocks, 0);
     for (Num_ i = 0; i < num_nonzero; ++i) {
         centers[block[indices[i]]] += values[i];
     }
-    for (decltype(nblocks) b = 0; b < nblocks; ++b) {
+    for (decltype(I(nblocks)) b = 0; b < nblocks; ++b) {
         auto bsize = block_size[b];
         if (bsize) {
             centers[b] /= bsize;
@@ -213,24 +213,24 @@ void compute_sparse_mean_and_variance_blocked(
 
     if (block_details.weighted) {
         for (Num_ i = 0; i < num_nonzero; ++i) {
-            Block_ curb = block[indices[i]];
-            auto diff = values[i] - centers[curb];
+            const Block_ curb = block[indices[i]];
+            const auto diff = values[i] - centers[curb];
             variance += diff * diff * block_details.per_element_weight[curb];
             --block_copy[curb];
         }
-        for (decltype(nblocks) b = 0; b < nblocks; ++b) {
-            auto val = centers[b];
+        for (decltype(I(nblocks)) b = 0; b < nblocks; ++b) {
+            const auto val = centers[b];
             variance += val * val * block_copy[b] * block_details.per_element_weight[b];
         }
     } else {
         for (Num_ i = 0; i < num_nonzero; ++i) {
-            Block_ curb = block[indices[i]];
-            auto diff = values[i] - centers[curb];
+            const Block_ curb = block[indices[i]];
+            const auto diff = values[i] - centers[curb];
             variance += diff * diff;
             --block_copy[curb];
         }
-        for (decltype(nblocks) b = 0; b < nblocks; ++b) {
-            auto val = centers[b];
+        for (decltype(I(nblocks)) b = 0; b < nblocks; ++b) {
+            const auto val = centers[b];
             variance += val * val * block_copy[b];
         }
     }
@@ -254,24 +254,24 @@ void compute_blockwise_mean_and_variance_realized_sparse(
     const BlockingDetails<Index_, EigenVector_>& block_details,
     EigenMatrix_& centers,
     EigenVector_& variances,
-    int nthreads) 
+    const int nthreads) 
 {
-    auto ngenes = emat.cols();
-    tatami::parallelize([&](int, decltype(ngenes) start, decltype(ngenes) length) -> void {
-        auto ncells = emat.rows();
+    const auto ngenes = emat.cols();
+    tatami::parallelize([&](const int, const decltype(I(ngenes)) start, const decltype(I(ngenes)) length) -> void {
+        const auto ncells = emat.rows();
         const auto& values = emat.get_values();
         const auto& indices = emat.get_indices();
         const auto& pointers = emat.get_pointers();
 
-        auto nblocks = block_details.block_size.size();
+        const auto nblocks = block_details.block_size.size();
         static_assert(!EigenMatrix_::IsRowMajor);
         auto block_copy = sanisizer::create<std::vector<Index_> >(nblocks);
 
-        for (auto g = start, end = start + length; g < end; ++g) {
-            auto offset = pointers[g];
-            auto next_offset = pointers[g + 1]; // increment won't overflow as 'g < end' and 'end' is of the same type. 
+        for (decltype(I(start)) g = start, end = start + length; g < end; ++g) {
+            const auto offset = pointers[g];
+            const auto next_offset = pointers[g + 1]; // increment won't overflow as 'g < end' and 'end' is of the same type. 
             compute_sparse_mean_and_variance_blocked(
-                static_cast<decltype(ncells)>(next_offset - offset),
+                static_cast<decltype(I(ncells))>(next_offset - offset),
                 values.data() + offset,
                 indices.data() + offset,
                 block,
@@ -287,7 +287,7 @@ void compute_blockwise_mean_and_variance_realized_sparse(
 
 template<typename Num_, typename Value_, typename Block_, typename Index_, typename EigenVector_, typename Float_>
 void compute_dense_mean_and_variance_blocked(
-    Num_ number, 
+    const Num_ number, 
     const Value_* values, 
     const Block_* block, 
     const BlockingDetails<Index_, EigenVector_>& block_details,
@@ -295,12 +295,12 @@ void compute_dense_mean_and_variance_blocked(
     Float_& variance) 
 {
     const auto& block_size = block_details.block_size;
-    auto nblocks = block_size.size();
+    const auto nblocks = block_size.size();
     std::fill_n(centers, nblocks, 0);
     for (Num_ i = 0; i < number; ++i) {
         centers[block[i]] += values[i];
     }
-    for (decltype(nblocks) b = 0; b < nblocks; ++b) {
+    for (decltype(I(nblocks)) b = 0; b < nblocks; ++b) {
         const auto& bsize = block_size[b];
         if (bsize) {
             centers[b] /= bsize;
@@ -311,14 +311,14 @@ void compute_dense_mean_and_variance_blocked(
 
     if (block_details.weighted) {
         for (Num_ i = 0; i < number; ++i) {
-            auto curb = block[i];
-            auto delta = values[i] - centers[curb];
+            const auto curb = block[i];
+            const auto delta = values[i] - centers[curb];
             variance += delta * delta * block_details.per_element_weight[curb];
         }
     } else {
         for (Num_ i = 0; i < number; ++i) {
-            auto curb = block[i];
-            auto delta = values[i] - centers[curb];
+            const auto curb = block[i];
+            const auto delta = values[i] - centers[curb];
             variance += delta * delta;
         }
     }
@@ -333,14 +333,14 @@ void compute_blockwise_mean_and_variance_realized_dense(
     const BlockingDetails<Index_, EigenVector_>& block_details,
     EigenMatrix_& centers,
     EigenVector_& variances,
-    int nthreads) 
+    const int nthreads) 
 {
-    auto ngenes = emat.cols();
-    tatami::parallelize([&](int, decltype(ngenes) start, decltype(ngenes) length) -> void {
-        auto ncells = emat.rows();
+    const auto ngenes = emat.cols();
+    tatami::parallelize([&](const int, const decltype(I(ngenes)) start, const decltype(I(ngenes)) length) -> void {
+        const auto ncells = emat.rows();
         static_assert(!EigenMatrix_::IsRowMajor);
-        auto nblocks = block_details.block_size.size();
-        for (auto g = start, end = start + length; g < end; ++g) {
+        const auto nblocks = block_details.block_size.size();
+        for (decltype(I(start)) g = start, end = start + length; g < end; ++g) {
             compute_dense_mean_and_variance_blocked(
                 ncells,
                 emat.data() + sanisizer::product_unsafe<std::size_t>(g, ncells),
@@ -360,15 +360,15 @@ void compute_blockwise_mean_and_variance_tatami(
     const BlockingDetails<Index_, EigenVector_>& block_details,
     EigenMatrix_& centers,
     EigenVector_& variances,
-    int nthreads) 
+    const int nthreads) 
 {
     const auto& block_size = block_details.block_size;
-    auto nblocks = block_size.size();
-    Index_ ngenes = mat.nrow();
-    Index_ ncells = mat.ncol();
+    const auto nblocks = block_size.size();
+    const Index_ ngenes = mat.nrow();
+    const Index_ ncells = mat.ncol();
 
     if (mat.prefer_rows()) {
-        tatami::parallelize([&](int, Index_ start, Index_ length) -> void {
+        tatami::parallelize([&](const int, const Index_ start, const Index_ length) -> void {
             static_assert(!EigenMatrix_::IsRowMajor);
             auto block_copy = sanisizer::create<std::vector<Index_> >(nblocks);
             auto vbuffer = tatami::create_container_of_Index_size<std::vector<Value_> >(ncells);
@@ -408,11 +408,11 @@ void compute_blockwise_mean_and_variance_tatami(
 
     } else {
         typedef typename EigenVector_::Scalar Scalar;
-
-        std::vector<std::pair<decltype(nblocks), Scalar> > block_multipliers;
+        std::vector<std::pair<decltype(I(nblocks)), Scalar> > block_multipliers;
         block_multipliers.reserve(nblocks);
-        for (decltype(nblocks) b = 0; b < nblocks; ++b) {
-            auto bsize = block_size[b];
+
+        for (decltype(I(nblocks)) b = 0; b < nblocks; ++b) {
+            const auto bsize = block_size[b];
             if (bsize > 1) { // skipping blocks with NaN variances.
                 Scalar mult = bsize - 1; // need to convert variances back into sum of squared differences.
                 if (block_details.weighted) {
@@ -422,11 +422,11 @@ void compute_blockwise_mean_and_variance_tatami(
             }
         }
 
-        tatami::parallelize([&](int, Index_ start, Index_ length) -> void {
+        tatami::parallelize([&](const int, const Index_ start, const Index_ length) -> void {
             std::vector<std::vector<Scalar> > re_centers, re_variances;
             re_centers.reserve(nblocks);
             re_variances.reserve(nblocks);
-            for (decltype(nblocks) b = 0; b < nblocks; ++b) {
+            for (decltype(I(nblocks)) b = 0; b < nblocks; ++b) {
                 re_centers.emplace_back(length);
                 re_variances.emplace_back(length);
             }
@@ -436,25 +436,25 @@ void compute_blockwise_mean_and_variance_tatami(
             if (mat.is_sparse()) {
                 std::vector<tatami_stats::variances::RunningSparse<Scalar, Value_, Index_> > running;
                 running.reserve(nblocks);
-                for (decltype(nblocks) b = 0; b < nblocks; ++b) {
+                for (decltype(I(nblocks)) b = 0; b < nblocks; ++b) {
                     running.emplace_back(length, re_centers[b].data(), re_variances[b].data(), /* skip_nan = */ false, /* subtract = */ start);
                 }
 
                 auto ibuffer = tatami::create_container_of_Index_size<std::vector<Index_> >(length);
                 auto ext = tatami::consecutive_extractor<true>(mat, false, static_cast<Index_>(0), ncells, start, length);
                 for (Index_ c = 0; c < ncells; ++c) {
-                    auto range = ext->fetch(vbuffer.data(), ibuffer.data());
+                    const auto range = ext->fetch(vbuffer.data(), ibuffer.data());
                     running[block[c]].add(range.value, range.index, range.number);
                 }
 
-                for (decltype(nblocks) b = 0; b < nblocks; ++b) {
+                for (decltype(I(nblocks)) b = 0; b < nblocks; ++b) {
                     running[b].finish();
                 }
 
             } else {
                 std::vector<tatami_stats::variances::RunningDense<Scalar, Value_, Index_> > running;
                 running.reserve(nblocks);
-                for (decltype(nblocks) b = 0; b < nblocks; ++b) {
+                for (decltype(I(nblocks)) b = 0; b < nblocks; ++b) {
                     running.emplace_back(length, re_centers[b].data(), re_variances[b].data(), /* skip_nan = */ false);
                 }
 
@@ -464,7 +464,7 @@ void compute_blockwise_mean_and_variance_tatami(
                     running[block[c]].add(ptr);
                 }
 
-                for (decltype(nblocks) b = 0; b < nblocks; ++b) {
+                for (decltype(I(nblocks)) b = 0; b < nblocks; ++b) {
                     running[b].finish();
                 }
             }
@@ -472,7 +472,7 @@ void compute_blockwise_mean_and_variance_tatami(
             static_assert(!EigenMatrix_::IsRowMajor);
             for (Index_ i = 0; i < length; ++i) {
                 auto mptr = centers.data() + sanisizer::product_unsafe<std::size_t>(start + i, nblocks);
-                for (decltype(nblocks) b = 0; b < nblocks; ++b) {
+                for (decltype(I(nblocks)) b = 0; b < nblocks; ++b) {
                     mptr[b] = re_centers[b][i];
                 }
 
@@ -508,14 +508,14 @@ inline void project_matrix_realized_sparse(
     const EigenMatrix_& scaled_rotation, // genes in rows, dims in columns
     int nthreads) 
 {
-    auto rank = scaled_rotation.cols();
-    auto ncells = emat.rows();
-    auto ngenes = emat.cols();
+    const auto rank = scaled_rotation.cols();
+    const auto ncells = emat.rows();
+    const auto ngenes = emat.cols();
 
     // Store as transposed for more cache efficiency.
     components.resize(
-        sanisizer::cast<decltype(components.rows())>(rank),
-        sanisizer::cast<decltype(components.cols())>(ncells)
+        sanisizer::cast<decltype(I(components.rows()))>(rank),
+        sanisizer::cast<decltype(I(components.cols()))>(ncells)
     );
     components.setZero();
 
@@ -525,9 +525,9 @@ inline void project_matrix_realized_sparse(
     if (nthreads == 1) {
         const auto& pointers = emat.get_pointers();
         auto multipliers = sanisizer::create<Eigen::VectorXd>(rank);
-        for (decltype(ngenes) g = 0; g < ngenes; ++g) {
+        for (decltype(I(ngenes)) g = 0; g < ngenes; ++g) {
             multipliers.noalias() = scaled_rotation.row(g);
-            auto start = pointers[g], end = pointers[g + 1]; // increment is safe as 'g + 1 <= ngenes'.
+            const auto start = pointers[g], end = pointers[g + 1]; // increment is safe as 'g + 1 <= ngenes'.
             for (auto i = start; i < end; ++i) {
                 components.col(indices[i]).noalias() += values[i] * multipliers;
             }
@@ -535,14 +535,14 @@ inline void project_matrix_realized_sparse(
 
     } else {
         const auto& row_nonzero_starts = emat.get_secondary_nonzero_starts();
-        irlba::parallelize(nthreads, [&](int t) -> void { 
+        irlba::parallelize(nthreads, [&](const int t) -> void { 
             const auto& starts = row_nonzero_starts[t];
             const auto& ends = row_nonzero_starts[t + 1]; // increment is safe as 't + 1 <= nthreads'.
             auto multipliers = sanisizer::create<Eigen::VectorXd>(rank);
 
-            for (decltype(ngenes) g = 0; g < ngenes; ++g) {
+            for (decltype(I(ngenes)) g = 0; g < ngenes; ++g) {
                 multipliers.noalias() = scaled_rotation.row(g);
-                auto start = starts[g], end = ends[g];
+                const auto start = starts[g], end = ends[g];
                 for (auto i = start; i < end; ++i) {
                     components.col(indices[i]).noalias() += values[i] * multipliers;
                 }
@@ -556,38 +556,38 @@ void project_matrix_transposed_tatami(
     const tatami::Matrix<Value_, Index_>& mat, // genes in rows, cells in columns
     EigenMatrix_& components,
     const EigenMatrix_& scaled_rotation, // genes in rows, dims in columns
-    int nthreads) 
+    const int nthreads) 
 {
-    auto rank = scaled_rotation.cols();
-    auto ngenes = mat.nrow();
-    auto ncells = mat.ncol();
+    const auto rank = scaled_rotation.cols();
+    const auto ngenes = mat.nrow();
+    const auto ncells = mat.ncol();
     typedef typename EigenMatrix_::Scalar Scalar;
 
     // Store as transposed for more cache efficiency.
     components.resize(
-        sanisizer::cast<decltype(components.rows())>(rank),
-        sanisizer::cast<decltype(components.cols())>(ncells)
+        sanisizer::cast<decltype(I(components.rows()))>(rank),
+        sanisizer::cast<decltype(I(components.cols()))>(ncells)
     );
 
     if (mat.prefer_rows()) {
-        tatami::parallelize([&](int, Index_ start, Index_ length) -> void {
+        tatami::parallelize([&](const int, const Index_ start, const Index_ length) -> void {
             static_assert(!EigenMatrix_::IsRowMajor);
-            auto vptr = scaled_rotation.data();
+            const auto vptr = scaled_rotation.data();
             auto vbuffer = tatami::create_container_of_Index_size<std::vector<Value_> >(length);
 
             std::vector<std::vector<Scalar> > local_buffers; // create separate buffers to avoid false sharing.
             local_buffers.reserve(rank);
-            for (decltype(rank) r = 0; r < rank; ++r) {
-                local_buffers.emplace_back(tatami::cast_Index_to_container_size<decltype(local_buffers.front())>(length));
+            for (decltype(I(rank)) r = 0; r < rank; ++r) {
+                local_buffers.emplace_back(tatami::cast_Index_to_container_size<decltype(I(local_buffers.front()))>(length));
             }
 
             if (mat.is_sparse()) {
                 auto ibuffer = tatami::create_container_of_Index_size<std::vector<Index_> >(length);
                 auto ext = tatami::consecutive_extractor<true>(mat, true, static_cast<Index_>(0), ngenes, start, length);
                 for (Index_ g = 0; g < ngenes; ++g) {
-                    auto range = ext->fetch(vbuffer.data(), ibuffer.data());
-                    for (decltype(rank) r = 0; r < rank; ++r) {
-                        auto mult = vptr[sanisizer::nd_offset<std::size_t>(g, ngenes, r)];
+                    const auto range = ext->fetch(vbuffer.data(), ibuffer.data());
+                    for (decltype(I(rank)) r = 0; r < rank; ++r) {
+                        const auto mult = vptr[sanisizer::nd_offset<std::size_t>(g, ngenes, r)];
                         auto& local_buffer = local_buffers[r];
                         for (Index_ i = 0; i < range.number; ++i) {
                             local_buffer[range.index[i] - start] += range.value[i] * mult;
@@ -598,9 +598,9 @@ void project_matrix_transposed_tatami(
             } else {
                 auto ext = tatami::consecutive_extractor<false>(mat, true, static_cast<Index_>(0), ngenes, start, length);
                 for (Index_ g = 0; g < ngenes; ++g) {
-                    auto ptr = ext->fetch(vbuffer.data());
-                    for (decltype(rank) r = 0; r < rank; ++r) {
-                        auto mult = vptr[sanisizer::nd_offset<std::size_t>(g, ngenes, r)];
+                    const auto ptr = ext->fetch(vbuffer.data());
+                    for (decltype(I(rank)) r = 0; r < rank; ++r) {
+                        const auto mult = vptr[sanisizer::nd_offset<std::size_t>(g, ngenes, r)];
                         auto& local_buffer = local_buffers[r];
                         for (Index_ i = 0; i < length; ++i) {
                             local_buffer[i] += ptr[i] * mult;
@@ -609,7 +609,7 @@ void project_matrix_transposed_tatami(
                 }
             }
 
-            for (decltype(rank) r = 0; r < rank; ++r) {
+            for (decltype(I(rank)) r = 0; r < rank; ++r) {
                 for (Index_ c = 0; c < length; ++c) {
                     components.coeffRef(r, c + start) = local_buffers[r][c];
                 }
@@ -618,7 +618,7 @@ void project_matrix_transposed_tatami(
         }, ncells, nthreads);
 
     } else {
-        tatami::parallelize([&](int, Index_ start, Index_ length) -> void {
+        tatami::parallelize([&](const int, const Index_ start, const Index_ length) -> void {
             static_assert(!EigenMatrix_::IsRowMajor);
             auto vbuffer = tatami::create_container_of_Index_size<std::vector<Value_> >(ngenes);
 
@@ -627,12 +627,12 @@ void project_matrix_transposed_tatami(
                 auto ext = tatami::consecutive_extractor<true>(mat, false, start, length);
 
                 for (Index_ c = start, end = start + length; c < end; ++c) {
-                    auto range = ext->fetch(vbuffer.data(), ibuffer.data());
+                    const auto range = ext->fetch(vbuffer.data(), ibuffer.data());
                     static_assert(!EigenMatrix_::IsRowMajor);
-                    for (decltype(rank) r = 0; r < rank; ++r) {
+                    for (decltype(I(rank)) r = 0; r < rank; ++r) {
                         auto& output = components.coeffRef(r, c);
                         output = 0;
-                        auto rotptr = scaled_rotation.data() + sanisizer::product_unsafe<std::size_t>(r, ngenes);
+                        const auto rotptr = scaled_rotation.data() + sanisizer::product_unsafe<std::size_t>(r, ngenes);
                         for (Index_ i = 0; i < range.number; ++i) {
                             output += rotptr[range.index[i]] * range.value[i];
                         }
@@ -642,10 +642,10 @@ void project_matrix_transposed_tatami(
             } else {
                 auto ext = tatami::consecutive_extractor<false>(mat, false, start, length);
                 for (Index_ c = start, end = start + length; c < end; ++c) {
-                    auto ptr = ext->fetch(vbuffer.data()); 
+                    const auto ptr = ext->fetch(vbuffer.data()); 
                     static_assert(!EigenMatrix_::IsRowMajor);
-                    for (decltype(rank) r = 0; r < rank; ++r) {
-                        auto rotptr = scaled_rotation.data() + sanisizer::product_unsafe<std::size_t>(r, ngenes);
+                    for (decltype(I(rank)) r = 0; r < rank; ++r) {
+                        const auto rotptr = scaled_rotation.data() + sanisizer::product_unsafe<std::size_t>(r, ngenes);
                         components.coeffRef(r, c) = std::inner_product(rotptr, rotptr + ngenes, ptr, static_cast<Scalar>(0));
                     }
                 }
@@ -658,12 +658,12 @@ template<class EigenMatrix_, class EigenVector_>
 void clean_up_projected(EigenMatrix_& projected, EigenVector_& D) {
     // Empirically centering to give nice centered PCs, because we can't
     // guarantee that the projection is centered in this manner.
-    for (decltype(projected.rows()) i = 0, prows = projected.rows(); i < prows; ++i) {
+    for (decltype(I(projected.rows())) i = 0, prows = projected.rows(); i < prows; ++i) {
         projected.row(i).array() -= projected.row(i).sum() / projected.cols();
     }
 
     // Just dividing by the number of observations - 1 regardless of weighting.
-    typename EigenMatrix_::Scalar denom = projected.cols() - 1;
+    const typename EigenMatrix_::Scalar denom = projected.cols() - 1;
     for (auto& d : D) {
         d = d * d / denom;
     }
@@ -688,7 +688,7 @@ public:
     struct Workspace {
         template<typename NumBlocks_>
         Workspace(NumBlocks_ nblocks, irlba::WrappedWorkspace<Matrix_> c) :
-            sub(sanisizer::cast<decltype(sub.size())>(nblocks)),
+            sub(sanisizer::cast<decltype(I(sub.size()))>(nblocks)),
             child(std::move(c))
         {}
 
@@ -715,7 +715,7 @@ public:
         irlba::wrapped_multiply(my_mat, realized_rhs, work.child, output);
 
         work.sub.noalias() = my_means * realized_rhs;
-        for (decltype(output.size()) i = 0, end = output.size(); i < end; ++i) {
+        for (decltype(I(output.size())) i = 0, end = output.size(); i < end; ++i) {
             auto& val = output.coeffRef(i);
             val -= work.sub.coeff(my_block[i]);
         }
@@ -725,7 +725,7 @@ public:
     struct AdjointWorkspace {
         template<typename NumBlocks_>
         AdjointWorkspace(NumBlocks_ nblocks, irlba::WrappedAdjointWorkspace<Matrix_> c) :
-            aggr(sanisizer::cast<decltype(aggr.size())>(nblocks)),
+            aggr(sanisizer::cast<decltype(I(aggr.size()))>(nblocks)),
             child(std::move(c))
         {}
 
@@ -752,7 +752,7 @@ public:
         irlba::wrapped_adjoint_multiply(my_mat, realized_rhs, work.child, output);
 
         work.aggr.setZero();
-        for (decltype(realized_rhs.size()) i = 0, end = realized_rhs.size(); i < end; ++i) {
+        for (decltype(I(realized_rhs.size())) i = 0, end = realized_rhs.size(); i < end; ++i) {
             work.aggr.coeffRef(my_block[i]) += realized_rhs.coeff(i); 
         }
 
@@ -763,7 +763,7 @@ public:
     template<class EigenMatrix2_>
     EigenMatrix2_ realize() const {
         EigenMatrix2_ output = irlba::wrapped_realize<EigenMatrix2_>(my_mat);
-        for (decltype(output.rows()) i = 0, end = output.rows(); i < end; ++i) {
+        for (decltype(I(output.rows())) i = 0, end = output.rows(); i < end; ++i) {
             output.row(i) -= my_means.row(my_block[i]);
         }
         return output;
@@ -816,8 +816,8 @@ void run_blocked(
         } else {
             // Perform an implicit transposition by performing a row-major extraction into a column-major transposed matrix.
             EigenMatrix_ emat(
-                sanisizer::cast<decltype(std::declval<EigenMatrix_>().rows())>(ncells),
-                sanisizer::cast<decltype(std::declval<EigenMatrix_>().rows())>(ngenes)
+                sanisizer::cast<decltype(I(std::declval<EigenMatrix_>().rows()))>(ncells),
+                sanisizer::cast<decltype(I(std::declval<EigenMatrix_>().cols()))>(ngenes)
             ); 
             static_assert(!EigenMatrix_::IsRowMajor);
             tatami::convert_to_dense(
@@ -834,10 +834,10 @@ void run_blocked(
         }
     }();
 
-    auto nblocks = block_details.block_size.size();
+    const auto nblocks = block_details.block_size.size();
     center_m.resize(
-        sanisizer::cast<decltype(center_m.rows())>(nblocks),
-        sanisizer::cast<decltype(center_m.cols())>(ngenes)
+        sanisizer::cast<decltype(I(center_m.rows()))>(nblocks),
+        sanisizer::cast<decltype(I(center_m.cols()))>(ngenes)
     );
     sanisizer::resize(scale_v, ngenes);
 
@@ -850,16 +850,16 @@ void run_blocked(
     }
     total_var = internal::process_scale_vector(options.scale, scale_v);
 
-    ResidualWrapper<decltype(emat), Block_, EigenMatrix_, EigenVector_> centered(emat, block, center_m);
+    ResidualWrapper<decltype(I(emat)), Block_, EigenMatrix_, EigenVector_> centered(emat, block, center_m);
 
     if (block_details.weighted) {
         if (options.scale) {
-            irlba::Scaled<true, decltype(centered), EigenVector_> scaled(centered, scale_v, /* divide = */ true);
-            irlba::Scaled<false, decltype(scaled), EigenVector_> weighted(scaled, block_details.expanded_weights, /* divide = */ false);
+            irlba::Scaled<true, decltype(I(centered)), EigenVector_> scaled(centered, scale_v, /* divide = */ true);
+            irlba::Scaled<false, decltype(I(scaled)), EigenVector_> weighted(scaled, block_details.expanded_weights, /* divide = */ false);
             auto out = irlba::compute(weighted, options.number, components, rotation, variance_explained, options.irlba_options);
             converged = out.first;
         } else {
-            irlba::Scaled<false, decltype(centered), EigenVector_> weighted(centered, block_details.expanded_weights, /* divide = */ false);
+            irlba::Scaled<false, decltype(I(centered)), EigenVector_> weighted(centered, block_details.expanded_weights, /* divide = */ false);
             auto out = irlba::compute(weighted, options.number, components, rotation, variance_explained, options.irlba_options);
             converged = out.first;
         }
@@ -879,7 +879,7 @@ void run_blocked(
         // Subtracting each block's mean from the PCs.
         if (options.components_from_residuals) {
             EigenMatrix_ centering = (center_m * scaled_rotation).adjoint();
-            for (decltype(ncells) c =0 ; c < ncells; ++c) {
+            for (decltype(I(ncells)) c =0 ; c < ncells; ++c) {
                 components.col(c) -= centering.col(block[c]);
             }
         }
@@ -891,11 +891,11 @@ void run_blocked(
 
     } else {
         if (options.scale) {
-            irlba::Scaled<true, decltype(centered), EigenVector_> scaled(centered, scale_v, /* divide = */ true);
-            auto out = irlba::compute(scaled, options.number, components, rotation, variance_explained, options.irlba_options);
+            irlba::Scaled<true, decltype(I(centered)), EigenVector_> scaled(centered, scale_v, /* divide = */ true);
+            const auto out = irlba::compute(scaled, options.number, components, rotation, variance_explained, options.irlba_options);
             converged = out.first;
         } else {
-            auto out = irlba::compute(centered, options.number, components, rotation, variance_explained, options.irlba_options);
+            const auto out = irlba::compute(centered, options.number, components, rotation, variance_explained, options.irlba_options);
             converged = out.first;
         }
 

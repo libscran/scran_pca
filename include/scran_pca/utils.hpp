@@ -13,8 +13,13 @@ namespace scran_pca {
 
 namespace internal {
 
+template<typename Input_>
+std::remove_cv_t<std::remove_reference_t<Input_> > I(Input_ x) {
+    return x;
+}
+
 template<class EigenVector_>
-auto process_scale_vector(bool scale, EigenVector_& scale_v) {
+auto process_scale_vector(const bool scale, EigenVector_& scale_v) {
     typedef typename EigenVector_::Scalar Scalar;
     if (scale) {
         Scalar total_var = 0;
@@ -33,7 +38,7 @@ auto process_scale_vector(bool scale, EigenVector_& scale_v) {
 }
 
 template<typename NumObs_, class EigenMatrix_, class EigenVector_>
-void clean_up(NumObs_ num_obs, EigenMatrix_& U, EigenVector_& D) {
+void clean_up(const NumObs_ num_obs, EigenMatrix_& U, EigenVector_& D) {
     typename EigenVector_::Scalar denom = num_obs - 1;
     U.array().rowwise() *= D.adjoint().array();
     for (auto& d : D) {
@@ -109,10 +114,10 @@ private:
             }
         }();
 
-        auto resultdim = (transposed ? my_ncol : my_nrow);
-        auto otherdim = (transposed ? my_nrow : my_ncol);
+        const auto resultdim = (transposed ? my_ncol : my_nrow);
+        const auto otherdim = (transposed ? my_nrow : my_ncol);
 
-        tatami::parallelize([&](int t, Index_ start, Index_ length) -> void {
+        tatami::parallelize([&](const int t, const Index_ start, const Index_ length) -> void {
             auto& vbuffer = work.vbuffers[t];
 
             if (my_prefer_rows != transposed) {
@@ -124,7 +129,7 @@ private:
                     auto ext = tatami::consecutive_extractor<true>(my_mat, my_prefer_rows, start, length);
 
                     for (Index_ r = start, end = start + length; r < end; ++r) {
-                        auto range = ext->fetch(vbuffer.data(), ibuffer.data());
+                        const auto range = ext->fetch(vbuffer.data(), ibuffer.data());
                         Scalar prod = 0;
                         for (Index_ i = 0; i < range.number; ++i) {
                             prod += realized_rhs[range.index[i]] * range.value[i];
@@ -135,7 +140,7 @@ private:
                 } else {
                     auto ext = tatami::consecutive_extractor<false>(my_mat, my_prefer_rows, start, length);
                     for (Index_ r = start, end = start + length; r < end; ++r) {
-                        auto ptr = ext->fetch(vbuffer.data());
+                        const auto ptr = ext->fetch(vbuffer.data());
                         out[r] = std::inner_product(realized_rhs.begin(), realized_rhs.end(), ptr, static_cast<Scalar>(0));
                     }
                 }
@@ -150,8 +155,8 @@ private:
                     tatami_stats::LocalOutputBuffer<Scalar> buffer(t, start, length, out.data());
                     auto bdata = buffer.data();
                     for (Index_ c = 0; c < otherdim; ++c) {
-                        auto range = ext->fetch(vbuffer.data(), ibuffer.data());
-                        auto mult = realized_rhs[c];
+                        const auto range = ext->fetch(vbuffer.data(), ibuffer.data());
+                        const auto mult = realized_rhs[c];
                         for (Index_ i = 0; i < range.number; ++i) {
                             bdata[range.index[i] - start] += mult * range.value[i];
                         }
@@ -163,8 +168,8 @@ private:
                     tatami_stats::LocalOutputBuffer<Scalar> buffer(t, start, length, out.data());
                     auto bdata = buffer.data();
                     for (Index_ c = 0; c < otherdim; ++c) {
-                        auto ptr = ext->fetch(vbuffer.data());
-                        auto mult = realized_rhs[c];
+                        const auto ptr = ext->fetch(vbuffer.data());
+                        const auto mult = realized_rhs[c];
                         for (Index_ r = 0; r < length; ++r) {
                             bdata[r] += mult * ptr[r];
                         }
@@ -191,8 +196,8 @@ public:
     EigenMatrix_ realize() const {
         // Copying into a transposed matrix.
         EigenMatrix_ emat(
-            sanisizer::cast<decltype(std::declval<EigenMatrix_>().rows())>(my_ncol),
-            sanisizer::cast<decltype(std::declval<EigenMatrix_>().cols())>(my_nrow)
+            sanisizer::cast<decltype(I(std::declval<EigenMatrix_>().rows()))>(my_ncol),
+            sanisizer::cast<decltype(I(std::declval<EigenMatrix_>().cols()))>(my_nrow)
         );
         tatami::convert_to_dense(
             my_mat,

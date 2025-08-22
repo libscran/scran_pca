@@ -78,21 +78,21 @@ struct SimplePcaOptions {
 namespace internal {
 
 template<bool sparse_, typename Value_, typename Index_, class EigenVector_>
-void compute_row_means_and_variances(const tatami::Matrix<Value_, Index_>& mat, int num_threads, EigenVector_& center_v, EigenVector_& scale_v) {
-    auto ngenes = mat.nrow();
+void compute_row_means_and_variances(const tatami::Matrix<Value_, Index_>& mat, const int num_threads, EigenVector_& center_v, EigenVector_& scale_v) {
+    const auto ngenes = mat.nrow();
 
     if (mat.prefer_rows()) {
-        tatami::parallelize([&](int , Index_ start, Index_ length) -> void {
+        tatami::parallelize([&](const int, const Index_ start, const Index_ length) -> void {
             auto ext = tatami::consecutive_extractor<sparse_>(mat, true, start, length, [&]{
                 tatami::Options opt;
                 opt.sparse_extract_index = false;
                 return opt;
             }());
-            auto ncells = mat.ncol();
+            const auto ncells = mat.ncol();
             auto vbuffer = tatami::create_container_of_Index_size<std::vector<Value_> >(ncells);
 
             for (Index_ g = start, end = start + length; g < end; ++g) {
-                auto results = [&]{
+                const auto results = [&]{
                     if constexpr(sparse_) {
                         auto range = ext->fetch(vbuffer.data(), NULL);
                         return tatami_stats::variances::direct(range.value, range.number, ncells, /* skip_nan = */ false);
@@ -108,7 +108,7 @@ void compute_row_means_and_variances(const tatami::Matrix<Value_, Index_>& mat, 
 
     } else {
         tatami::parallelize([&](int t, Index_ start, Index_ length) -> void {
-            auto ncells = mat.ncol();
+            const auto ncells = mat.ncol();
             auto ext = tatami::consecutive_extractor<sparse_>(mat, false, static_cast<Index_>(0), ncells, start, length);
 
             typedef typename EigenVector_::Scalar Scalar;
@@ -134,10 +134,10 @@ void compute_row_means_and_variances(const tatami::Matrix<Value_, Index_>& mat, 
 
             for (Index_ c = 0; c < ncells; ++c) {
                 if constexpr(sparse_) {
-                    auto range = ext->fetch(vbuffer.data(), ibuffer.data());
+                    const auto range = ext->fetch(vbuffer.data(), ibuffer.data());
                     running.add(range.value, range.index, range.number);
                 } else {
-                    auto ptr = ext->fetch(vbuffer.data());
+                    const auto ptr = ext->fetch(vbuffer.data());
                     running.add(ptr);
                 }
             }
@@ -161,7 +161,7 @@ auto run_irlba_deferred(
 {
     irlba::Centered<IrlbaMatrix_, EigenVector_> centered(mat, center_v);
     if (options.scale) {
-        irlba::Scaled<true, decltype(centered), EigenVector_> scaled(centered, scale_v, true);
+        irlba::Scaled<true, decltype(I(centered)), EigenVector_> scaled(centered, scale_v, true);
         return irlba::compute(scaled, options.number, components, rotation, variance_explained, options.irlba_options);
     } else {
         return irlba::compute(centered, options.number, components, rotation, variance_explained, options.irlba_options);
@@ -180,7 +180,7 @@ void run_sparse(
     typename EigenVector_::Scalar& total_var,
     bool& converged)
 {
-    auto ngenes = mat.nrow();
+    const auto ngenes = mat.nrow();
     sanisizer::resize(center_v, ngenes);
     sanisizer::resize(scale_v, ngenes);
 
@@ -198,7 +198,7 @@ void run_sparse(
         );
 
         // But we effectively transpose it to CSC with genes in columns.
-        Index_ ncells = mat.ncol();
+        const Index_ ncells = mat.ncol();
         irlba::ParallelSparseMatrix emat(
             ncells,
             ngenes,
@@ -209,27 +209,27 @@ void run_sparse(
             options.num_threads
         ); 
 
-        tatami::parallelize([&](int, Index_ start, Index_ length) -> void {
+        tatami::parallelize([&](const int, const Index_ start, const Index_ length) -> void {
             const auto& pointers = emat.get_pointers();
             const auto& values = emat.get_values();
             for (Index_ g = start, end = start + length; g < end; ++g) {
-                auto offset = pointers[g];
-                auto next_offset = pointers[g + 1]; // increment won't overflow as 'g + 1 <= end'.
-                Index_ num_nonzero = next_offset - offset;
-                auto results = tatami_stats::variances::direct(values.data() + offset, num_nonzero, ncells, /* skip_nan = */ false);
+                const auto offset = pointers[g];
+                const auto next_offset = pointers[g + 1]; // increment won't overflow as 'g + 1 <= end'.
+                const Index_ num_nonzero = next_offset - offset;
+                const auto results = tatami_stats::variances::direct(values.data() + offset, num_nonzero, ncells, /* skip_nan = */ false);
                 center_v.coeffRef(g) = results.first;
                 scale_v.coeffRef(g) = results.second;
             }
         }, ngenes, options.num_threads);
 
         total_var = internal::process_scale_vector(options.scale, scale_v);
-        auto out = run_irlba_deferred(emat, options, components, rotation, variance_explained, center_v, scale_v);
+        const auto out = run_irlba_deferred(emat, options, components, rotation, variance_explained, center_v, scale_v);
         converged = out.first;
 
     } else {
         compute_row_means_and_variances<true>(mat, options.num_threads, center_v, scale_v);
         total_var = internal::process_scale_vector(options.scale, scale_v);
-        auto out = run_irlba_deferred(
+        const auto out = run_irlba_deferred(
             internal::TransposedTatamiWrapper<EigenVector_, Value_, Index_>(mat, options.num_threads), 
             options, 
             components, 
@@ -254,16 +254,16 @@ void run_dense(
     typename EigenVector_::Scalar& total_var,
     bool& converged)
 {
-    Index_ ngenes = mat.nrow();
+    const Index_ ngenes = mat.nrow();
     sanisizer::resize(center_v, ngenes);
     sanisizer::resize(scale_v, ngenes);
 
     if (options.realize_matrix) {
         // Create a matrix with genes in columns.
-        Index_ ncells = mat.ncol();
+        const Index_ ncells = mat.ncol();
         EigenMatrix_ emat(
-            sanisizer::cast<decltype(std::declval<EigenMatrix_>().rows())>(ncells),
-            sanisizer::cast<decltype(std::declval<EigenMatrix_>().cols())>(ngenes)
+            sanisizer::cast<decltype(I(std::declval<EigenMatrix_>().rows()))>(ncells),
+            sanisizer::cast<decltype(I(std::declval<EigenMatrix_>().cols()))>(ngenes)
         );
 
         // If emat is row-major, we want to fill it with columns of 'mat', so row_major = false.
@@ -299,13 +299,13 @@ void run_dense(
             emat.array().rowwise() /= scale_v.adjoint().array();
         }
 
-        auto out = irlba::compute(emat, options.number, components, rotation, variance_explained, options.irlba_options);
+        const auto out = irlba::compute(emat, options.number, components, rotation, variance_explained, options.irlba_options);
         converged = out.first;
 
     } else {
         compute_row_means_and_variances<false>(mat, options.num_threads, center_v, scale_v);
         total_var = internal::process_scale_vector(options.scale, scale_v);
-        auto out = run_irlba_deferred(
+        const auto out = run_irlba_deferred(
             internal::TransposedTatamiWrapper<EigenVector_, Value_, Index_>(mat, options.num_threads), 
             options, 
             components, 
