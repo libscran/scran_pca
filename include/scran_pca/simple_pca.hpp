@@ -181,8 +181,8 @@ void run_sparse(
     bool& converged)
 {
     auto ngenes = mat.nrow();
-    center_v.resize(tatami::cast_Index_to_container_size<decltype(center_v)>(ngenes));
-    scale_v.resize(tatami::cast_Index_to_container_size<decltype(scale_v)>(ngenes));
+    sanisizer::resize(center_v, ngenes);
+    sanisizer::resize(scale_v, ngenes);
 
     if (options.realize_matrix) {
         // 'extracted' contains row-major contents...
@@ -255,8 +255,8 @@ void run_dense(
     bool& converged)
 {
     Index_ ngenes = mat.nrow();
-    center_v.resize(tatami::cast_Index_to_container_size<decltype(center_v)>(ngenes));
-    scale_v.resize(tatami::cast_Index_to_container_size<decltype(scale_v)>(ngenes));
+    sanisizer::resize(center_v, ngenes);
+    sanisizer::resize(scale_v, ngenes);
 
     if (options.realize_matrix) {
         // Create a matrix with genes in columns.

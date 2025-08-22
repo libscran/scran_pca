@@ -133,7 +133,7 @@ BlockingDetails<Index_, EigenVector_> compute_blocking_details(
     output.weighted = true;
     auto& total_weight = output.total_block_weight;
     auto& element_weight = output.per_element_weight;
-    element_weight.resize(sanisizer::cast<decltype(element_weight.size())>(nblocks));
+    sanisizer::resize(element_weight, nblocks);
 
     for (decltype(nblocks) b = 0; b < nblocks; ++b) {
         auto bsize = block_size[b];
@@ -166,7 +166,7 @@ BlockingDetails<Index_, EigenVector_> compute_blocking_details(
     }
 
     auto& expanded = output.expanded_weights;
-    expanded.resize(sanisizer::cast<decltype(expanded.size())>(ncells));
+    sanisizer::resize(expanded, ncells);
     for (Index_ c = 0; c < ncells; ++c) {
         expanded.coeffRef(c) = sqrt_weights[block[c]];
     }
@@ -839,7 +839,7 @@ void run_blocked(
         sanisizer::cast<decltype(center_m.rows())>(nblocks),
         sanisizer::cast<decltype(center_m.cols())>(ngenes)
     );
-    scale_v.resize(sanisizer::cast<decltype(scale_v.size())>(ngenes));
+    sanisizer::resize(scale_v, ngenes);
 
     if constexpr(!realize_matrix_) {
         compute_blockwise_mean_and_variance_tatami(mat, block, block_details, center_m, scale_v, options.num_threads);

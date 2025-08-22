@@ -83,9 +83,9 @@ public:
 
     Workspace workspace() const {
         Workspace output;
-        output.vbuffers.resize(sanisizer::cast<decltype(output.vbuffers.size())>(my_num_threads));
+        sanisizer::resize(output.vbuffers, my_num_threads);
         if (my_is_sparse) {
-            output.ibuffers.resize(sanisizer::cast<decltype(output.ibuffers.size())>(my_num_threads));
+            sanisizer::resize(output.ibuffers, my_num_threads);
         }
 
         return output;
