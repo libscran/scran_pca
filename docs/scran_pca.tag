@@ -171,17 +171,17 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>int</type>
-      <name>num_threads</name>
-      <anchorfile>structscran__pca_1_1SimplePcaOptions.html</anchorfile>
-      <anchor>a64970ffcc255df6b8bec468be6407a35</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
       <type>bool</type>
       <name>realize_matrix</name>
       <anchorfile>structscran__pca_1_1SimplePcaOptions.html</anchorfile>
       <anchor>a2d20fac36e65846f1431042ac5a48660</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>num_threads</name>
+      <anchorfile>structscran__pca_1_1SimplePcaOptions.html</anchorfile>
+      <anchor>a64970ffcc255df6b8bec468be6407a35</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">

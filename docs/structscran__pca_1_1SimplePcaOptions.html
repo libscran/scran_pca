@@ -117,10 +117,10 @@ Public Attributes</h2></td></tr>
 <tr class="separator:abfc39a6f7cd82a793e41d22641dcd0b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45a65fc15d15e95becb8166f09b0c6fa" id="r_a45a65fc15d15e95becb8166f09b0c6fa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a45a65fc15d15e95becb8166f09b0c6fa">transpose</a> = true</td></tr>
 <tr class="separator:a45a65fc15d15e95becb8166f09b0c6fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64970ffcc255df6b8bec468be6407a35" id="r_a64970ffcc255df6b8bec468be6407a35"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a64970ffcc255df6b8bec468be6407a35">num_threads</a> = 1</td></tr>
-<tr class="separator:a64970ffcc255df6b8bec468be6407a35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d20fac36e65846f1431042ac5a48660" id="r_a2d20fac36e65846f1431042ac5a48660"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d20fac36e65846f1431042ac5a48660">realize_matrix</a> = true</td></tr>
 <tr class="separator:a2d20fac36e65846f1431042ac5a48660"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64970ffcc255df6b8bec468be6407a35" id="r_a64970ffcc255df6b8bec468be6407a35"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a64970ffcc255df6b8bec468be6407a35">num_threads</a> = 1</td></tr>
+<tr class="separator:a64970ffcc255df6b8bec468be6407a35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aacdf3c260690b42cdd4dca844d10d813" id="r_aacdf3c260690b42cdd4dca844d10d813"><td class="memItemLeft" align="right" valign="top"><a class="elRef" href="https://ltla.github.io/CppIrlba/structirlba_1_1Options.html">irlba::Options</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aacdf3c260690b42cdd4dca844d10d813">irlba_options</a></td></tr>
 <tr class="separator:aacdf3c260690b42cdd4dca844d10d813"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -168,7 +168,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of PCs to compute. This should be no greater than the maximum number of PCs, i.e., the smaller dimension of the input matrix, otherwise an error will be thrown. (This error can be avoided by setting <code><a class="elRef" href="https://ltla.github.io/CppIrlba/structirlba_1_1Options.html#a4e6e040a6ff921f48c70961ad9876c31">irlba::Options::cap_number</a> = true</code> in <code><a class="el" href="#aacdf3c260690b42cdd4dca844d10d813">SimplePcaOptions::irlba_options</a></code>, in which case only the maximum number of PCs will be reported in the results.) </p>
+<p>Number of PCs to compute. Larger values will capture more biological signal at the cost of increasing noise and compute time. If this is greater than the maximum number of PCs (i.e., the smaller dimension of the input matrix), only the maximum number of PCs will be reported in the results. </p>
 
 </div>
 </div>
@@ -198,7 +198,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Should genes be scaled to unit variance? Genes with zero variance are ignored. </p>
+<p>Should genes be scaled to unit variance? This ensures that each gene contributes equally to the PCA, favoring consistent variation across many genes rather than large variation in a few genes. Genes with zero variance are ignored. </p>
 
 </div>
 </div>

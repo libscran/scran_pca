@@ -144,7 +144,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Policy to use for weighting batches of different size. </p>
+<p>Policy for weighting the contribution of blocks of different size. The default of <code>scran_blocks::WeightPolicy::VARIABLE</code> is to define equal weights for blocks once they reach a certain size (see <code><a class="el" href="#a300f43e9e22d2f66224f2fbf9611ed4a">BlockedPcaOptions::variable_block_weight_parameters</a></code>). The weight of a smaller block is linearly proportional to its size, to avoid outsized contributions from very small blocks. </p>
 
 </div>
 </div>
@@ -159,7 +159,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Compute the principal components from the residuals. If false, only the rotation vector is computed from the residuals, and the original expression values are projected onto the new axes. </p>
+<p>Whether to compute the principal components from the residuals. If <code>false</code>, only the rotation vector is computed from the residuals and the original expression values are projected onto the new axes. This avoids strong assumptions about the nature of the differences between blocks as discussed in <code><a class="el" href="namespacescran__pca.html#a41ce273ad9e5faaa398afd5dceb88500">blocked_pca()</a></code>. </p>
 
 </div>
 </div>
@@ -204,7 +204,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of principal components (PCs) to compute. This should be no greater than the maximum number of PCs, i.e., the smaller dimension of the input matrix, otherwise an error will be thrown. (This error can be avoided by setting <code><a class="elRef" href="https://ltla.github.io/CppIrlba/structirlba_1_1Options.html#a4e6e040a6ff921f48c70961ad9876c31">irlba::Options::cap_number</a> = true</code> in <code><a class="el" href="#a4e3ca5a977c555fdf742b8a5373a0417">BlockedPcaOptions::irlba_options</a></code>, in which case only the maximum number of PCs will be reported in the results.) </p>
+<p>Number of principal components (PCs) to compute. Larger values will capture more biological signal at the cost of increasing noise and compute time. If this is greater than the maximum number of PCs (i.e., the smaller dimension of the input matrix), only the maximum number of PCs will be reported in the results. </p>
 
 </div>
 </div>
@@ -234,7 +234,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Should genes be scaled to unit variance? Genes with zero variance are ignored. </p>
+<p>Should genes be scaled to unit variance? This ensures that each gene contributes equally to the PCA, favoring consistent variation across many genes rather than large variation in a few genes. In the presence of a blocking factor, each gene's variance is calculated as a weighted sum of the variances from each block. Genes with zero variance are ignored. </p>
 
 </div>
 </div>
@@ -264,7 +264,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Parameters for the variable block weights. Only used when <code><a class="el" href="#aa5ac168e8a3384d0fde25a966db0bdac">BlockedPcaOptions::block_weight_policy</a> = scran_blocks::WeightPolicy::VARIABLE</code>. </p>
+<p>Parameters for the variable block weights, including the threshold at which blocks are considered to be large enough to have equal weight. Only used when <code><a class="el" href="#aa5ac168e8a3384d0fde25a966db0bdac">BlockedPcaOptions::block_weight_policy</a> = scran_blocks::WeightPolicy::VARIABLE</code>. </p>
 
 </div>
 </div>

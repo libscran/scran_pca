@@ -131,7 +131,7 @@ Public Attributes</h2></td></tr>
 struct scran_pca::SimplePcaResults&lt; EigenMatrix_, EigenVector_ &gt;</div><p>Results of <code><a class="el" href="namespacescran__pca.html#afbe9b43fbd114829551a10897067905c">simple_pca()</a></code>. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">EigenMatrix_</td><td>A floating-point <code>Eigen::Matrix</code> class. </td></tr>
+    <tr><td class="paramname">EigenMatrix_</td><td>A floating-point column-major <code>Eigen::Matrix</code> class. </td></tr>
     <tr><td class="paramname">EigenVector_</td><td>A floating-point <code>Eigen::Vector</code> class. </td></tr>
   </table>
   </dd>
@@ -167,7 +167,7 @@ template&lt;typename EigenMatrix_ , typename EigenVector_ &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Matrix of principal components. By default, each row corresponds to a PC while each column corresponds to a cell in the input matrix. If <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#a45a65fc15d15e95becb8166f09b0c6fa">SimplePcaOptions::transpose</a> = false</code>, rows are cells instead. The number of PCs is determined by <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#af99a561e7aa50311bd05ea59802cc492">SimplePcaOptions::number</a></code>. </p>
+<p>Matrix of principal component scores. By default, each row corresponds to a PC while each column corresponds to a cell in the input matrix. If <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#a45a65fc15d15e95becb8166f09b0c6fa">SimplePcaOptions::transpose</a> = false</code>, rows are cells instead. The number of PCs is determined by <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#af99a561e7aa50311bd05ea59802cc492">SimplePcaOptions::number</a></code>. </p>
 
 </div>
 </div>
