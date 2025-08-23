@@ -8,7 +8,7 @@
 
 As the name suggests, this repository implements functions to perform a PCA on the gene-by-cell expression matrix,
 returning low-dimensional coordinates for each cell that can be used for efficient downstream analyses, e.g., clustering, visualization.
-The code itself was originally derived from the [**scran**](https://bioconductor.org/packages/scran) and [**batchelor**](https://bioconductor.org/packages/batchelor) R packages
+The code itself was originally derived from the [**scran**](https://bioconductor.org/packages/scran) and [**batchelor**](https://bioconductor.org/packages/batchelor) R packages,
 factored out into a separate C++ library for easier re-use.
 
 ## Quick start
@@ -55,7 +55,7 @@ bres.center; // rows are blocks, columns are genes.
 ```
 
 The components derived from the residuals will only be free of inter-block differences under certain conditions (equal population composition with a consistent shift between blocks).
-If this is not the case, more sophisticated batch correction methods are required.
+If this is not the case, more sophisticated batch correction methods are required such as [MNN correction](https://github.com/libscran/mnncorrect).
 If those methods accept a low-dimensional representation for the cells as input,
 we can use `scran_pca::blocked_pca()` to obtain an appropriate matrix that focuses on intra-block variation without making assumptions about the inter-block differences:
 
@@ -116,4 +116,4 @@ See the tags in [`extern/CMakeLists.txt`](extern/CMakeLists.txt) to find compati
 ### Manual
 
 If you're not using CMake, the simple approach is to just copy the files in `include/` - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's `-I`.
-This requires the external dependencies listed in [`extern/CMakeLists.txt`](extern/CMakeLists.txt), which also need to be made available during compilation.
+This also requires the external dependencies listed in [`extern/CMakeLists.txt`](extern/CMakeLists.txt).

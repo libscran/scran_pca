@@ -29,6 +29,7 @@ struct SimplePcaOptions {
      * @cond
      */
     SimplePcaOptions() {
+        // Avoid throwing an error if too many PCs are requested.
         irlba_options.cap_number = true;
     }
     /**
@@ -37,13 +38,14 @@ struct SimplePcaOptions {
 
     /** 
      * Number of PCs to compute.
-     * This should be no greater than the maximum number of PCs, i.e., the smaller dimension of the input matrix, otherwise an error will be thrown.
-     * (This error can be avoided by setting `irlba::Options::cap_number = true` in `SimplePcaOptions::irlba_options`, in which case only the maximum number of PCs will be reported in the results.)
+     * Larger values will capture more biological signal at the cost of increasing noise and compute time.
+     * If this is greater than the maximum number of PCs (i.e., the smaller dimension of the input matrix), only the maximum number of PCs will be reported in the results.
      */
     int number = 25;
 
     /**
      * Should genes be scaled to unit variance?
+     * This ensures that each gene contributes equally to the PCA, favoring consistent variation across many genes rather than large variation in a few genes.
      * Genes with zero variance are ignored.
      */
     bool scale = false;
@@ -55,16 +57,16 @@ struct SimplePcaOptions {
     bool transpose = true;
 
     /**
-     * Number of threads to use.
-     * The parallelization scheme is determined by `tatami::parallelize()` and `irlba::parallelize()`.
-     */
-    int num_threads = 1;
-
-    /**
      * Whether to realize `tatami::Matrix` objects into an appropriate in-memory format before PCA.
      * This is typically faster but increases memory usage.
      */
     bool realize_matrix = true;
+
+    /**
+     * Number of threads to use.
+     * The parallelization scheme is determined by `tatami::parallelize()` and `irlba::parallelize()`.
+     */
+    int num_threads = 1;
 
     /**
      * Further options to pass to `irlba::compute()`.
@@ -325,13 +327,13 @@ void run_dense(
 
 /**
  * @brief Results of `simple_pca()`.
- * @tparam EigenMatrix_ A floating-point `Eigen::Matrix` class.
+ * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
  * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
  */
 template<typename EigenMatrix_, typename EigenVector_>
 struct SimplePcaResults {
     /**
-     * Matrix of principal components.
+     * Matrix of principal component scores.
      * By default, each row corresponds to a PC while each column corresponds to a cell in the input matrix.
      * If `SimplePcaOptions::transpose = false`, rows are cells instead.
      * The number of PCs is determined by `SimplePcaOptions::number`. 
@@ -378,17 +380,17 @@ struct SimplePcaResults {
 /**
  * Principal components analysis (PCA) for compression and denoising of single-cell expression data.
  *
- * The premise is that most of the variation in the dataset is driven by biology, as changes in pathway activity drive coordinated changes across multiple genes.
+ * The premise behind PCA is that most of the variation in the dataset is driven by biological differences between subpopulations that drive coordinated changes across multiple genes in the same pathways.
  * In contrast, technical noise is random and not synchronized across any one axis in the high-dimensional space.
  * This suggests that the earlier principal components (PCs) should be enriched for biological heterogeneity while the later PCs capture random noise.
  *
- * Our aim is to reduce the size of the data and reduce noise by only using the earlier PCs for downstream cell-based analyses (e.g., neighbor detection, clustering).
+ * Our aim is to reduce the size of the data and eliminate noise by only using the earlier PCs for downstream cell-based analyses (e.g., neighbor detection, clustering).
  * Most practitioners will keep the first 10-50 PCs, though the exact choice is fairly arbitrary - see `SimplePcaOptions::number` to specify the number of PCs.
  * As we are only interested in the top PCs, we can use approximate algorithms for faster computation, in particular [IRLBA](https://github.com/LTLA/CppIrlba).
  *
  * @tparam Value_ Type of the matrix data.
  * @tparam Index_ Integer type for the indices.
- * @tparam EigenMatrix_ A floating-point `Eigen::Matrix` class.
+ * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
  * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
  *
  * @param[in] mat The input matrix.
@@ -421,7 +423,7 @@ void simple_pca(const tatami::Matrix<Value_, Index_>& mat, const SimplePcaOption
 /**
  * Overload of `simple_pca()` that allocates memory for the output.
  *
- * @tparam EigenMatrix_ A floating-point `Eigen::Matrix` class.
+ * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
  * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
  * @tparam Value_ Type of the matrix data.
  * @tparam Index_ Integer type for the indices.
