@@ -40,8 +40,8 @@ struct BlockedPcaOptions {
      */
 
     /**
-     * Number of principal components (PCs) to compute.
-     * Larger values will capture more biological signal at the cost of increasing noise and compute time.
+     * Number of the top principal components (PCs) to compute.
+     * Retaining more PCs will capture more biological signal at the cost of increasing noise and compute time.
      * If this is greater than the maximum number of PCs (i.e., the smaller dimension of the input matrix), only the maximum number of PCs will be reported in the results.
      */
     int number = 25;
@@ -62,8 +62,12 @@ struct BlockedPcaOptions {
 
     /**
      * Policy for weighting the contribution of blocks of different size.
+     *
      * The default of `scran_blocks::WeightPolicy::VARIABLE` is to define equal weights for blocks once they reach a certain size (see `BlockedPcaOptions::variable_block_weight_parameters`).
-     * The weight of a smaller block is linearly proportional to its size, to avoid outsized contributions from very small blocks.
+     * For smaller blocks, the weight is linearly proportional to its size to avoid outsized contributions from very small blocks.
+     *
+     * Other options include `scran_blocks::WeightPolicy::EQUAL`, where all blocks are equally weighted regardless of size;
+     * and `scran_blocks::WeightPolicy::NONE`, where the contribution of each block is proportional to its size.
      */
     scran_blocks::WeightPolicy block_weight_policy = scran_blocks::WeightPolicy::VARIABLE;
 
@@ -1007,12 +1011,13 @@ struct BlockedPcaResults {
  *   To obtain PC scores, each cell is then projected onto the associated subspace using its original expression values.
  *   This approach ensures that inter-block differences do not contribute to the PCA but does not attempt to explicitly remove them.
  * 
- * In complex datasets, the assumptions mentioned for `true` do not hold and more sophisticated batch correction methods like [MNN correction](https://github.com/LTLA/CppMnnCorrect) are required.
- * Some of these methods accept a low-dimensional embedding of cells that can be created with `BlockedPcaOptions::components_from_residuals = false`.
+ * In complex datasets, the assumptions mentioned above for `true` do not hold,
+ * and more sophisticated batch correction methods like [MNN correction](https://github.com/LTLA/CppMnnCorrect) are required.
+ * Some of these methods accept a low-dimensional embedding of cells that can be created as described above with `false`. 
  *
  * `blocked_pca()` will adjust the contribution from blocks of cells so that each block contributes more or less equally to the PCA.
  * This ensures that the definition of the axes of maximum variance are not dominated by the largest block, potentially masking interesting variation in the smaller blocks.
- * `blocked_pca()` scales the expression values for each block so that each block contributes equally to the gene-gene covariance matrix and thus the rotation vectors.
+ * `blocked_pca()` scales the expression values for each block so that each "sufficiently large" block contributes equally to the gene-gene covariance matrix and thus the rotation vectors.
  * (See `BlockedPcaOptions::block_weight_policy` for the choice of weighting scheme.)
  * The vector of residuals for each cell - or the original expression values, if `BlockedPcaOptions::components_from_residuals = false` -
  * is then projected to the subspace defined by these rotation vectors to obtain that cell's PC scores.

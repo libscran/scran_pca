@@ -37,8 +37,8 @@ struct SimplePcaOptions {
      */
 
     /** 
-     * Number of PCs to compute.
-     * Larger values will capture more biological signal at the cost of increasing noise and compute time.
+     * Number of the top principal components (PCs) to compute.
+     * Retaining more PCs will capture more biological signal at the cost of increasing noise and compute time.
      * If this is greater than the maximum number of PCs (i.e., the smaller dimension of the input matrix), only the maximum number of PCs will be reported in the results.
      */
     int number = 25;
