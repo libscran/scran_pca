@@ -29,8 +29,24 @@ TEST(ResidualWrapperTest, EigenDense) {
         }
     }
 
-    scran_pca::internal::ResidualWrapper<decltype(thing), int, Eigen::MatrixXd, Eigen::VectorXd> blocked(thing, block.data(), centers);
-    auto realized = blocked.template realize<Eigen::MatrixXd>();
+    irlba::SimpleMatrix<Eigen::VectorXd, Eigen::MatrixXd, decltype(&thing)> wrapped(&thing);
+    scran_pca::internal::ResidualMatrix<Eigen::VectorXd, Eigen::MatrixXd, decltype(&wrapped), int, decltype(&centers)> blocked(&wrapped, block.data(), &centers);
+
+    Eigen::MatrixXd realized;
+    auto realizer = blocked.new_realize_workspace();
+    realizer->realize_copy(realized);
+
+    // Checking that the reference matches up.
+    {
+        for (std::size_t c = 0; c < NC; ++c) {
+            Eigen::VectorXd refcol = thing.col(c);
+            for (std::size_t r = 0; r < NR; ++r) {
+                refcol.coeffRef(r) -= centers.coeff(block[r], c);
+            }
+            Eigen::VectorXd obscol = realized.col(c);
+            expect_equal_vectors(refcol, obscol);
+        }
+    }
 
     // Trying in the normal orientation.
     {
@@ -40,10 +56,10 @@ TEST(ResidualWrapperTest, EigenDense) {
         }
 
         Eigen::VectorXd prod1(NR);
-        auto wrk = blocked.workspace();
-        blocked.multiply(rhs, wrk, prod1);
+        auto wrk = blocked.new_workspace();
+        wrk->multiply(rhs, prod1);
 
-        Eigen::MatrixXd prod2 = realized * rhs;
+        Eigen::VectorXd prod2 = realized * rhs;
         compare_almost_equal(prod1, prod2);
     }
 
@@ -55,16 +71,16 @@ TEST(ResidualWrapperTest, EigenDense) {
         }
 
         Eigen::VectorXd tprod1(NC);
-        auto wrk = blocked.adjoint_workspace();
-        blocked.adjoint_multiply(rhs, wrk, tprod1);
+        auto wrk = blocked.new_adjoint_workspace();
+        wrk->multiply(rhs, tprod1);
 
-        Eigen::MatrixXd tprod2 = realized.adjoint() * rhs;
+        Eigen::VectorXd tprod2 = realized.adjoint() * rhs;
         compare_almost_equal(tprod1, tprod2);
     }
 }
 
 TEST(ResidualWrapperTest, CustomSparse) {
-    size_t NR = 30, NC = 10, NB = 3;
+    std::size_t NR = 30, NC = 10, NB = 3;
     auto block = generate_blocks(NR, NB);
 
     std::vector<double> values;
@@ -100,18 +116,29 @@ TEST(ResidualWrapperTest, CustomSparse) {
         }
     }
 
-    irlba::ParallelSparseMatrix thing(NR, NC, std::move(values), std::move(indices), std::move(ptrs), /* column_major = */ true, 1);
-    scran_pca::internal::ResidualWrapper<decltype(thing), int, Eigen::MatrixXd, Eigen::VectorXd> blocked(thing, block.data(), centers);
-    auto realized = blocked.template realize<Eigen::MatrixXd>();
+    irlba::ParallelSparseMatrix<Eigen::VectorXd, Eigen::MatrixXd, decltype(values), decltype(indices), decltype(ptrs)> thing(
+        NR, NC, std::move(values), std::move(indices), std::move(ptrs), /* column_major = */ true, 1
+    );
+    scran_pca::internal::ResidualMatrix<Eigen::VectorXd, Eigen::MatrixXd, decltype(&thing), int, decltype(&centers)> blocked(
+        &thing, block.data(), &centers
+    );
+
+    Eigen::MatrixXd realized;
+    auto realizer = blocked.new_realize_workspace();
+    realizer->realize_copy(realized);
 
     // Checking that the dense reference matches up.
     {
-        scran_pca::internal::ResidualWrapper<decltype(thing), int, Eigen::MatrixXd, Eigen::VectorXd> blockedref(thing, block.data(), centers);
-        auto realizedref = blockedref.template realize<Eigen::MatrixXd>();
+        Eigen::MatrixXd tmp;
+        auto tmp_realizer = thing.new_realize_workspace();
+        tmp_realizer->realize_copy(tmp);
 
-        for (Eigen::Index i = 0; i < realizedref.cols(); ++i) {
-            Eigen::VectorXd refcol = realizedref.col(i);
-            Eigen::VectorXd obscol = realized.col(i);
+        for (std::size_t c = 0; c < NC; ++c) {
+            Eigen::VectorXd refcol = tmp.col(c);
+            for (std::size_t r = 0; r < NR; ++r) {
+                refcol.coeffRef(r) -= centers.coeff(block[r], c);
+            }
+            Eigen::VectorXd obscol = realized.col(c);
             expect_equal_vectors(refcol, obscol);
         }
     }
@@ -124,10 +151,10 @@ TEST(ResidualWrapperTest, CustomSparse) {
         }
 
         Eigen::VectorXd prod1(NR);
-        auto wrk = blocked.workspace();
-        blocked.multiply(rhs, wrk, prod1);
+        auto wrk = blocked.new_workspace();
+        wrk->multiply(rhs, prod1);
 
-        Eigen::MatrixXd prod2 = realized * rhs;
+        Eigen::VectorXd prod2 = realized * rhs;
         compare_almost_equal(prod1, prod2);
     }
 
@@ -139,10 +166,10 @@ TEST(ResidualWrapperTest, CustomSparse) {
         }
 
         Eigen::VectorXd tprod1(NC);
-        auto wrk = blocked.adjoint_workspace();
-        blocked.adjoint_multiply(rhs, wrk, tprod1);
+        auto wrk = blocked.new_adjoint_workspace();
+        wrk->multiply(rhs, tprod1);
 
-        Eigen::MatrixXd tprod2 = realized.adjoint() * rhs;
+        Eigen::VectorXd tprod2 = realized.adjoint() * rhs;
         compare_almost_equal(tprod1, tprod2);
     }
 }
