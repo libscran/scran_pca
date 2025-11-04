@@ -962,6 +962,7 @@ void blocked_pca(const tatami::Matrix<Value_, Index_>& mat, const Block_* block,
         );
 
         // Storing sparse_ptr in the unique pointer should not invalidate the former,
+        // based on a reading of the C++ specification w.r.t. reset();
         // so we can continue to use it for projection.
         const auto sparse_ptr = new irlba::ParallelSparseMatrix<
             EigenVector_,

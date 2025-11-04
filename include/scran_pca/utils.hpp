@@ -260,11 +260,11 @@ public:
 
 public:
     Eigen::Index rows() const {
-        return my_core.get_nrow(); // transposed, remember.
+        return my_core.get_ncol(); // transposed, remember.
     }
 
     Eigen::Index cols() const {
-        return my_core.get_ncol();
+        return my_core.get_nrow();
     }
 
 private:

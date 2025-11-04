@@ -63,9 +63,9 @@ TEST_P(SimplePcaBasicTest, Test) {
         size_t NC = dense_row->ncol();
         for (int r = 0; r < rank; ++r) {
             double var = 0;
-            auto ptr = ref.components.data() + r;
-            for (size_t c = 0; c < NC; ++c, ptr += rank) {
-                var += (*ptr) * (*ptr);
+            for (size_t c = 0; c < NC; ++c) {
+                const auto x = ref.components.coeff(r, c);
+                var += x * x;
             }
             var /= NC - 1;
             EXPECT_FLOAT_EQ(var, ref.variance_explained[r]);
