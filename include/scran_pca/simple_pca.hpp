@@ -71,7 +71,7 @@ struct SimplePcaOptions {
     /**
      * Further options to pass to `irlba::compute()`.
      */
-    irlba::Options irlba_options;
+    irlba::Options<Eigen::VectorXd> irlba_options;
 };
 
 /**

@@ -189,12 +189,12 @@ TEST_P(SimplePcaMoreTest, ZeroVariance) {
 
     Eigen::VectorXd init(nr - 1);
     std::copy_n(raw_init.begin(), nr - 1, init.data());
-    opt.irlba_options.initial = &init;
+    opt.irlba_options.initial = init;
     auto ref = scran_pca::simple_pca(leftovers, opt);
 
     Eigen::VectorXd init2(nr);
     std::copy_n(raw_init.begin(), nr, init2.data());
-    opt.irlba_options.initial = &init2;
+    opt.irlba_options.initial = init2;
     auto out = scran_pca::simple_pca(has_zero, opt);
 
     expect_equal_pcs(ref.components, out.components); 
