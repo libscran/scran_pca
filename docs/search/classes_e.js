@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['variableweightparameters_0',['VariableWeightParameters',['https://libscran.github.io/scran_blocks/structscran__blocks_1_1VariableWeightParameters.html',1,'scran_blocks']]]
+  ['workspace_0',['Workspace',['https://ltla.github.io/CppIrlba/classirlba_1_1Workspace.html',1,'irlba']]],
+  ['workspace_3c_20eigenvector_5f_20_3e_1',['Workspace&lt; EigenVector_ &gt;',['https://ltla.github.io/CppIrlba/classirlba_1_1Workspace.html',1,'irlba']]]
 ];

@@ -84,10 +84,10 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>irlba::Options</type>
+      <type>irlba::Options&lt; Eigen::VectorXd &gt;</type>
       <name>irlba_options</name>
       <anchorfile>structscran__pca_1_1BlockedPcaOptions.html</anchorfile>
-      <anchor>a4e3ca5a977c555fdf742b8a5373a0417</anchor>
+      <anchor>a5b60e2a25de87678343d8740522f546a</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -185,10 +185,10 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>irlba::Options</type>
+      <type>irlba::Options&lt; Eigen::VectorXd &gt;</type>
       <name>irlba_options</name>
       <anchorfile>structscran__pca_1_1SimplePcaOptions.html</anchorfile>
-      <anchor>aacdf3c260690b42cdd4dca844d10d813</anchor>
+      <anchor>a3c36f177ab52e01c663d1fea5b90a528</anchor>
       <arglist></arglist>
     </member>
   </compound>
