@@ -9,6 +9,7 @@
 
 #include "tatami/tatami.hpp"
 #include "tatami_stats/tatami_stats.hpp"
+#include "irlba/irlba.hpp"
 
 namespace scran_pca {
 
