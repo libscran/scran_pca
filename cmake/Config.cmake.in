@@ -6,6 +6,6 @@ find_dependency(tatami_tatami_stats 2.0.0 CONFIG REQUIRED)
 find_dependency(libscran_scran_blocks 0.1.0 CONFIG REQUIRED)
 find_dependency(ltla_irlba 2.0.0 CONFIG REQUIRED)
 find_dependency(ltla_sanisizer 0.1.2 CONFIG REQUIRED)
-find_dependency(Eigen3 3.4.0 REQUIRED NO_MODULE)
+find_dependency(Eigen3 5.0.0 REQUIRED NO_MODULE)
 
 include("${CMAKE_CURRENT_LIST_DIR}/libscran_scran_pcaTargets.cmake")

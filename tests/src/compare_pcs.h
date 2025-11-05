@@ -21,7 +21,7 @@ inline void are_pcs_centered(const Eigen::MatrixXd& pcs, double tol = 1e-8) {
         }
         mean /= ncells;
 
-        EXPECT_TRUE(std::abs(mean) < tol);
+        EXPECT_LT(std::abs(mean), tol);
     }
 }
 
@@ -42,8 +42,8 @@ inline void expect_equal_pcs(const Eigen::MatrixXd& left, const Eigen::MatrixXd&
         }
 
         // PCs should average to zero.
-        EXPECT_TRUE(std::abs(left.row(i).sum()) < tol);
-        EXPECT_TRUE(std::abs(right.row(i).sum()) < tol);
+        EXPECT_LT(std::abs(left.row(i).sum()), tol);
+        EXPECT_LT(std::abs(right.row(i).sum()), tol);
     }
 }
 
