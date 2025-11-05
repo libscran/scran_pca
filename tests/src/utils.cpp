@@ -16,7 +16,7 @@ TEST_P(TransposedTatamiWrapperTest, DenseColumn) {
     auto thing = simulate_dense_matrix(NR, NC, /* seed = */ nthreads + 1000);
 
     tatami::DenseMatrix<double, int, tatami::ArrayView<double> > mat(NR, NC, tatami::ArrayView<double>(thing.data(), NC * NR), false);
-    scran_pca::internal::TransposedTatamiWrapperMatrix<Eigen::VectorXd, Eigen::MatrixXd, double, int> wrapped(mat, nthreads);
+    scran_pca::TransposedTatamiWrapperMatrix<Eigen::VectorXd, Eigen::MatrixXd, double, int> wrapped(mat, nthreads);
     EXPECT_EQ(wrapped.rows(), NC);
     EXPECT_EQ(wrapped.cols(), NR);
 
@@ -58,7 +58,7 @@ TEST_P(TransposedTatamiWrapperTest, DenseRow) {
     auto thing = simulate_dense_matrix(NR, NC, /* seed = */ nthreads + 1000);
 
     tatami::DenseMatrix<double, int, tatami::ArrayView<double> > mat(NC, NR, tatami::ArrayView<double>(thing.data(), NC * NR), true);
-    scran_pca::internal::TransposedTatamiWrapperMatrix<Eigen::VectorXd, Eigen::MatrixXd, double, int> wrapped(mat, GetParam());
+    scran_pca::TransposedTatamiWrapperMatrix<Eigen::VectorXd, Eigen::MatrixXd, double, int> wrapped(mat, GetParam());
     EXPECT_EQ(wrapped.rows(), NR);
     EXPECT_EQ(wrapped.cols(), NC);
 
@@ -101,7 +101,7 @@ TEST_P(TransposedTatamiWrapperTest, SparseColumn) {
 
     auto thing = sparse_to_dense(NR, NC, sim);
     tatami::CompressedSparseMatrix<double, int, decltype(sim.values), decltype(sim.indices), decltype(sim.ptrs)> mat(NR, NC, sim.values, sim.indices, sim.ptrs, false);
-    scran_pca::internal::TransposedTatamiWrapperMatrix<Eigen::VectorXd, Eigen::MatrixXd, double, int> wrapped(mat, GetParam());
+    scran_pca::TransposedTatamiWrapperMatrix<Eigen::VectorXd, Eigen::MatrixXd, double, int> wrapped(mat, GetParam());
     EXPECT_EQ(wrapped.rows(), NC);
     EXPECT_EQ(wrapped.cols(), NR);
 
@@ -144,7 +144,7 @@ TEST_P(TransposedTatamiWrapperTest, SparseRow) {
 
     auto thing = sparse_to_dense(NR, NC, sim);
     tatami::CompressedSparseMatrix<double, int, decltype(sim.values), decltype(sim.indices), decltype(sim.ptrs)> mat(NC, NR, sim.values, sim.indices, sim.ptrs, true);
-    scran_pca::internal::TransposedTatamiWrapperMatrix<Eigen::VectorXd, Eigen::MatrixXd, double, int> wrapped(mat, GetParam());
+    scran_pca::TransposedTatamiWrapperMatrix<Eigen::VectorXd, Eigen::MatrixXd, double, int> wrapped(mat, GetParam());
     EXPECT_EQ(wrapped.rows(), NR);
     EXPECT_EQ(wrapped.cols(), NC);
 

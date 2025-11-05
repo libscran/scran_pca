@@ -77,8 +77,6 @@ struct SimplePcaOptions {
 /**
  * @cond
  */
-namespace internal {
-
 template<bool sparse_, typename Value_, typename Index_, class EigenVector_>
 void compute_row_means_and_variances(const tatami::Matrix<Value_, Index_>& mat, const int num_threads, EigenVector_& center_v, EigenVector_& scale_v) {
     const auto ngenes = mat.nrow();
@@ -159,11 +157,11 @@ std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_deferred_mat
     const EigenVector_& scale_v
 ) {
     std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > alt;
-    alt.reset(new irlba::CenteredMatrix<EigenVector_, EigenMatrix_, decltype(ptr), decltype(I(&center_v))>(std::move(ptr), &center_v));
+    alt.reset(new irlba::CenteredMatrix<EigenVector_, EigenMatrix_, I<decltype(ptr)>, I<decltype(&center_v)>>(std::move(ptr), &center_v));
     ptr.swap(alt);
 
     if (options.scale) {
-        alt.reset(new irlba::ScaledMatrix<EigenVector_, EigenMatrix_, decltype(ptr), decltype(I(&scale_v))>(std::move(ptr), &scale_v, true, true));
+        alt.reset(new irlba::ScaledMatrix<EigenVector_, EigenMatrix_, I<decltype(ptr)>, I<decltype(&scale_v)>>(std::move(ptr), &scale_v, true, true));
         ptr.swap(alt);
     }
 
@@ -201,9 +199,9 @@ std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_sparse_matri
         const auto sparse_ptr = new irlba::ParallelSparseMatrix<
             EigenVector_,
             EigenMatrix_,
-            decltype(I(extracted.value)),
-            decltype(I(extracted.index)),
-            decltype(I(extracted.pointers))
+            I<decltype(extracted.value)>,
+            I<decltype(extracted.index)>,
+            I<decltype(extracted.pointers)>
         >(
             ncells,
             ngenes,
@@ -228,13 +226,13 @@ std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_sparse_matri
             }
         }, ngenes, options.num_threads);
 
-        total_var = internal::process_scale_vector(options.scale, scale_v);
+        total_var = process_scale_vector(options.scale, scale_v);
 
     } else {
         compute_row_means_and_variances<true>(mat, options.num_threads, center_v, scale_v);
-        total_var = internal::process_scale_vector(options.scale, scale_v);
+        total_var = process_scale_vector(options.scale, scale_v);
 
-        output.reset(new internal::TransposedTatamiWrapperMatrix<EigenVector_, EigenMatrix_, Value_, Index_>(mat, options.num_threads)); 
+        output.reset(new TransposedTatamiWrapperMatrix<EigenVector_, EigenMatrix_, Value_, Index_>(mat, options.num_threads)); 
     }
 
     return prepare_deferred_matrix_for_irlba(std::move(output), options, center_v, scale_v);
@@ -256,8 +254,8 @@ std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_dense_matrix
         // Create a matrix with genes in columns.
         const Index_ ncells = mat.ncol();
         auto emat = std::make_unique<Eigen::MatrixXd>(
-            sanisizer::cast<decltype(I(std::declval<EigenMatrix_>().rows()))>(ncells),
-            sanisizer::cast<decltype(I(std::declval<EigenMatrix_>().cols()))>(ngenes)
+            sanisizer::cast<I<decltype(std::declval<EigenMatrix_>().rows())> >(ncells),
+            sanisizer::cast<I<decltype(std::declval<EigenMatrix_>().cols())> >(ngenes)
         );
 
         // If emat is row-major, we want to fill it with columns of 'mat', so row_major = false.
@@ -288,7 +286,7 @@ std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_dense_matrix
             std::fill(scale_v.begin(), scale_v.end(), std::numeric_limits<typename EigenVector_::Scalar>::quiet_NaN());
         }
 
-        total_var = internal::process_scale_vector(options.scale, scale_v);
+        total_var = process_scale_vector(options.scale, scale_v);
         if (options.scale) {
             emat->array().rowwise() /= scale_v.adjoint().array();
         }
@@ -299,15 +297,13 @@ std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_dense_matrix
 
     } else {
         compute_row_means_and_variances<false>(mat, options.num_threads, center_v, scale_v);
-        total_var = internal::process_scale_vector(options.scale, scale_v);
+        total_var = process_scale_vector(options.scale, scale_v);
 
         std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > output(
-            new internal::TransposedTatamiWrapperMatrix<EigenVector_, EigenMatrix_, Value_, Index_>(mat, options.num_threads)
+            new TransposedTatamiWrapperMatrix<EigenVector_, EigenMatrix_, Value_, Index_>(mat, options.num_threads)
         ); 
         return prepare_deferred_matrix_for_irlba(std::move(output), options, center_v, scale_v);
     }
-}
-
 }
 /**
  * @endcond
@@ -394,15 +390,15 @@ void simple_pca(const tatami::Matrix<Value_, Index_>& mat, const SimplePcaOption
 
     std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > ptr;
     if (mat.sparse()) {
-        ptr = internal::prepare_sparse_matrix_for_irlba<EigenMatrix_>(mat, options, output.center, output.scale, output.total_variance);
+        ptr = prepare_sparse_matrix_for_irlba<EigenMatrix_>(mat, options, output.center, output.scale, output.total_variance);
     } else {
-        ptr = internal::prepare_dense_matrix_for_irlba<EigenMatrix_>(mat, options, output.center, output.scale, output.total_variance);
+        ptr = prepare_dense_matrix_for_irlba<EigenMatrix_>(mat, options, output.center, output.scale, output.total_variance);
     }
 
     const auto stats = irlba::compute(*ptr, options.number, output.components, output.rotation, output.variance_explained, options.irlba_options);
     output.converged = stats.first;
 
-    internal::clean_up(mat.ncol(), output.components, output.variance_explained);
+    clean_up(mat.ncol(), output.components, output.variance_explained);
     if (options.transpose) {
         output.components.adjointInPlace();
     }

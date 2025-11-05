@@ -17,7 +17,7 @@ TEST(ResidualWrapperTest, EigenDense) {
     auto centers = simulate_dense_matrix(NB, NC, /* seed = */ 1010);
 
     irlba::SimpleMatrix<Eigen::VectorXd, Eigen::MatrixXd, decltype(&thing)> wrapped(&thing);
-    scran_pca::internal::ResidualMatrix<Eigen::VectorXd, Eigen::MatrixXd, decltype(&wrapped), int, decltype(&centers)> blocked(&wrapped, block.data(), &centers);
+    scran_pca::ResidualMatrix<Eigen::VectorXd, Eigen::MatrixXd, decltype(&wrapped), int, decltype(&centers)> blocked(&wrapped, block.data(), &centers);
 
     Eigen::MatrixXd realized;
     auto realizer = blocked.new_realize_workspace();
@@ -65,7 +65,7 @@ TEST(ResidualWrapperTest, CustomSparse) {
     irlba::ParallelSparseMatrix<Eigen::VectorXd, Eigen::MatrixXd, decltype(sim.values), decltype(sim.indices), decltype(sim.ptrs)> thing(
         NR, NC, std::move(sim.values), std::move(sim.indices), std::move(sim.ptrs), /* column_major = */ true, 1
     );
-    scran_pca::internal::ResidualMatrix<Eigen::VectorXd, Eigen::MatrixXd, decltype(&thing), int, decltype(&centers)> blocked(
+    scran_pca::ResidualMatrix<Eigen::VectorXd, Eigen::MatrixXd, decltype(&thing), int, decltype(&centers)> blocked(
         &thing, block.data(), &centers
     );
 

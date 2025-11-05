@@ -14,11 +14,7 @@
 namespace scran_pca {
 
 template<typename Input_>
-std::remove_cv_t<std::remove_reference_t<Input_> > I(Input_ x) {
-    return x;
-}
-
-namespace internal {
+using I = typename std::remove_cv<typename std::remove_reference<Input_>::type>::type;
 
 template<class EigenVector_>
 auto process_scale_vector(const bool scale, EigenVector_& scale_v) {
@@ -297,8 +293,6 @@ public:
         return std::make_unique<TransposedTatamiWrapperRealizeWorkspace<EigenMatrix_, Value_, Index_> >(my_core);
     }
 };
-
-}
 
 }
 
