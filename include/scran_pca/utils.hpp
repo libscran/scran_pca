@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "tatami/tatami.hpp"
+#include "tatami_mult/tatami_mult.hpp"
 #include "tatami_stats/tatami_stats.hpp"
 #include "irlba/irlba.hpp"
 
@@ -82,104 +83,29 @@ public:
 
 public:
     template<class EigenVector_>
-    void inner_multiply(
-        const EigenVector_& right,
-        std::vector<std::vector<Value_> >& vbuffers,
-        std::vector<std::vector<Index_> >& ibuffers,
-        bool transposed,
-        EigenVector_& out
-    ) const {
-        typedef typename EigenVector_::Scalar Scalar;
-
-        const auto resultdim = (transposed ? my_ncol : my_nrow);
-        const auto otherdim = (transposed ? my_nrow : my_ncol);
-
-        tatami::parallelize([&](const int t, const Index_ start, const Index_ length) -> void {
-            auto& vbuffer = vbuffers[t];
-
-            if (my_prefer_rows != transposed) {
-                tatami::resize_container_to_Index_size(vbuffer, otherdim);
-
-                if (my_is_sparse) {
-                    auto& ibuffer = ibuffers[t];
-                    tatami::resize_container_to_Index_size(ibuffer, otherdim);
-                    auto ext = tatami::consecutive_extractor<true>(my_mat, my_prefer_rows, start, length);
-
-                    for (Index_ r = start, end = start + length; r < end; ++r) {
-                        const auto range = ext->fetch(vbuffer.data(), ibuffer.data());
-                        Scalar prod = 0;
-                        for (Index_ i = 0; i < range.number; ++i) {
-                            prod += right[range.index[i]] * range.value[i];
-                        }
-                        out[r] = prod;
-                    }
-
-                } else {
-                    auto ext = tatami::consecutive_extractor<false>(my_mat, my_prefer_rows, start, length);
-                    for (Index_ r = start, end = start + length; r < end; ++r) {
-                        const auto ptr = ext->fetch(vbuffer.data());
-                        out[r] = std::inner_product(right.begin(), right.end(), ptr, static_cast<Scalar>(0));
-                    }
-                }
-
-            } else {
-                tatami::resize_container_to_Index_size(vbuffer, length);
-
-                if (my_is_sparse) {
-                    auto& ibuffer = ibuffers[t];
-                    tatami::resize_container_to_Index_size(ibuffer, length);
-                    auto ext = tatami::consecutive_extractor<true>(my_mat, my_prefer_rows, static_cast<Index_>(0), otherdim, start, length);
-                    tatami_stats::LocalOutputBuffer<Scalar> buffer(t, start, length, out.data());
-                    auto bdata = buffer.data();
-                    for (Index_ c = 0; c < otherdim; ++c) {
-                        const auto range = ext->fetch(vbuffer.data(), ibuffer.data());
-                        const auto mult = right[c];
-                        for (Index_ i = 0; i < range.number; ++i) {
-                            bdata[range.index[i] - start] += mult * range.value[i];
-                        }
-                    }
-                    buffer.transfer();
-
-                } else {
-                    auto ext = tatami::consecutive_extractor<false>(my_mat, my_prefer_rows, static_cast<Index_>(0), otherdim, start, length);
-                    tatami_stats::LocalOutputBuffer<Scalar> buffer(t, start, length, out.data());
-                    auto bdata = buffer.data();
-                    for (Index_ c = 0; c < otherdim; ++c) {
-                        const auto ptr = ext->fetch(vbuffer.data());
-                        const auto mult = right[c];
-                        for (Index_ r = 0; r < length; ++r) {
-                            bdata[r] += mult * ptr[r];
-                        }
-                    }
-                    buffer.transfer();
-                }
-            }
-
-        }, resultdim, my_num_threads);
+    void inner_multiply(const EigenVector_& right, bool transposed, EigenVector_& out) const {
+        tatami_mult::Options opt;
+        opt.num_threads = my_num_threads;
+        if (!transposed) {
+            tatami_mult::multiply(my_mat, right.data(), out.data(), opt);
+        } else {
+            tatami_mult::multiply(right.data(), my_mat, out.data(), opt);
+        }
     }
 };
 
 template<class EigenVector_, typename Value_, typename Index_>
 class TransposedTatamiWrapperWorkspace final : public irlba::Workspace<EigenVector_> {
 public:
-    TransposedTatamiWrapperWorkspace(const TransposedTatamiWrapperCore<Value_, Index_>& core) :
-        my_core(core)
-    {
-        sanisizer::resize(my_vbuffers, my_core.get_num_threads());
-        sanisizer::resize(my_ibuffers, my_core.get_num_threads());
-    }
+    TransposedTatamiWrapperWorkspace(const TransposedTatamiWrapperCore<Value_, Index_>& core) : my_core(core) {}
 
 private:
     const TransposedTatamiWrapperCore<Value_, Index_>& my_core;
-    std::vector<std::vector<Value_> > my_vbuffers;
-    std::vector<std::vector<Index_> > my_ibuffers;
 
 public:
     void multiply(const EigenVector_& rhs, EigenVector_& out) {
         my_core.inner_multiply(
             rhs,
-            my_vbuffers,
-            my_ibuffers,
             true, // mimicking a transposed matrix, remember!
             out
         );
@@ -189,24 +115,15 @@ public:
 template<class EigenVector_, typename Value_, typename Index_>
 class TransposedTatamiWrapperAdjointWorkspace final : public irlba::AdjointWorkspace<EigenVector_> {
 public:
-    TransposedTatamiWrapperAdjointWorkspace(const TransposedTatamiWrapperCore<Value_, Index_>& core) :
-        my_core(core)
-    {
-        sanisizer::resize(my_vbuffers, my_core.get_num_threads());
-        sanisizer::resize(my_ibuffers, my_core.get_num_threads());
-    }
+    TransposedTatamiWrapperAdjointWorkspace(const TransposedTatamiWrapperCore<Value_, Index_>& core) : my_core(core) {}
 
 private:
     const TransposedTatamiWrapperCore<Value_, Index_>& my_core;
-    std::vector<std::vector<Value_> > my_vbuffers;
-    std::vector<std::vector<Index_> > my_ibuffers;
 
 public:
     void multiply(const EigenVector_& rhs, EigenVector_& out) {
         my_core.inner_multiply(
             rhs,
-            my_vbuffers,
-            my_ibuffers,
             false, // mimicking a transposed matrix, remember!
             out
         );
