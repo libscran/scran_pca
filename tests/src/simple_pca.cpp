@@ -18,7 +18,7 @@ protected:
 
         size_t nr = 199, nc = 165;
         auto vec = scran_tests::simulate_vector(nr * nc, [&]() {
-            scran_tests::SimulationParameters sparams;
+            scran_tests::SimulateVectorParameters sparams;
             sparams.density = 0.1;
             sparams.lower = -10;
             sparams.upper = 10;
@@ -156,7 +156,7 @@ TEST_P(SimplePcaMoreTest, ZeroVariance) {
 
     size_t nr = 109, nc = 153;
     auto vec = scran_tests::simulate_vector(nr * nc, [&]() {
-        scran_tests::SimulationParameters sparams;
+        scran_tests::SimulateVectorParameters sparams;
         sparams.density = 0.1;
         sparams.lower = -10;
         sparams.upper = 10;
@@ -178,7 +178,7 @@ TEST_P(SimplePcaMoreTest, ZeroVariance) {
 
     // The initial vector is slightly different when we lose a feature, so we manually force our own random initialization.
     auto raw_init = scran_tests::simulate_vector(nr, [&]() {
-        scran_tests::SimulationParameters sparams;
+        scran_tests::SimulateVectorParameters sparams;
         sparams.lower = -2;
         sparams.upper = 2;
         sparams.seed = scale * 10 + rank;
