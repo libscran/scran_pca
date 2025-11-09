@@ -38,7 +38,7 @@ TEST_P(TransposedTatamiWrapperTest, DenseColumn) {
         auto wrk = wrapped.new_workspace();
         wrk->multiply(rhs, prod1);
         Eigen::VectorXd prod2 = thing.adjoint() * rhs;
-        compare_almost_equal(prod1, prod2);
+        expect_equal_matrices(prod1, prod2);
     }
 
     // Trying in the transposed orientation.
@@ -48,7 +48,7 @@ TEST_P(TransposedTatamiWrapperTest, DenseColumn) {
         auto wrk = wrapped.new_adjoint_workspace();
         wrk->multiply(rhs, tprod1);
         Eigen::VectorXd tprod2 = thing * rhs;
-        compare_almost_equal(tprod1, tprod2);
+        expect_equal_matrices(tprod1, tprod2);
     }
 }
 
@@ -80,7 +80,7 @@ TEST_P(TransposedTatamiWrapperTest, DenseRow) {
         auto wrk = wrapped.new_workspace();
         wrk->multiply(rhs, prod1);
         Eigen::VectorXd prod2 = thing * rhs;
-        compare_almost_equal(prod1, prod2);
+        expect_equal_matrices(prod1, prod2);
     }
 
     // Trying in the transposed orientation.
@@ -90,17 +90,21 @@ TEST_P(TransposedTatamiWrapperTest, DenseRow) {
         auto wrk = wrapped.new_adjoint_workspace();
         wrk->multiply(rhs, tprod1);
         Eigen::VectorXd tprod2 = thing.adjoint() * rhs;
-        compare_almost_equal(tprod1, tprod2);
+        expect_equal_matrices(tprod1, tprod2);
     }
 }
 
 TEST_P(TransposedTatamiWrapperTest, SparseColumn) {
-    std::size_t NR = 60, NC = 50;
+    int NR = 60, NC = 50;
     auto nthreads = GetParam();
-    auto sim = simulate_sparse_triplets(NR, NC, /* seed = */ nthreads + 1000);
+    auto sim = scran_tests::simulate_compressed_sparse_matrix(NC, NR, [&]{
+        scran_tests::SimulateCompressedSparseMatrixParameters params;
+        params.seed = nthreads + 1000;
+        return params;
+    }());
 
     auto thing = sparse_to_dense(NR, NC, sim);
-    tatami::CompressedSparseMatrix<double, int, decltype(sim.values), decltype(sim.indices), decltype(sim.ptrs)> mat(NR, NC, sim.values, sim.indices, sim.ptrs, false);
+    tatami::CompressedSparseMatrix<double, int, decltype(sim.data), decltype(sim.index), decltype(sim.pointers)> mat(NR, NC, sim.data, sim.index, sim.pointers, false);
     scran_pca::TransposedTatamiWrapperMatrix<Eigen::VectorXd, Eigen::MatrixXd, double, int> wrapped(mat, GetParam());
     EXPECT_EQ(wrapped.rows(), NC);
     EXPECT_EQ(wrapped.cols(), NR);
@@ -110,7 +114,7 @@ TEST_P(TransposedTatamiWrapperTest, SparseColumn) {
     realizer->realize_copy(realized);
 
     // Checking that the reference matches up.
-    for (std::size_t c = 0; c < NC; ++c) {
+    for (int c = 0; c < NC; ++c) {
         Eigen::VectorXd refcol = thing.col(c);
         Eigen::VectorXd obsrow = realized.row(c);
         EXPECT_EQ(refcol, obsrow);
@@ -123,7 +127,7 @@ TEST_P(TransposedTatamiWrapperTest, SparseColumn) {
         auto wrk = wrapped.new_workspace();
         wrk->multiply(rhs, prod1);
         Eigen::VectorXd prod2 = thing.adjoint() * rhs;
-        compare_almost_equal(prod1, prod2);
+        expect_equal_matrices(prod1, prod2);
     }
 
     // Trying in the transposed orientation.
@@ -133,17 +137,21 @@ TEST_P(TransposedTatamiWrapperTest, SparseColumn) {
         auto wrk = wrapped.new_adjoint_workspace();
         wrk->multiply(rhs, tprod1);
         Eigen::VectorXd tprod2 = thing * rhs;
-        compare_almost_equal(tprod1, tprod2);
+        expect_equal_matrices(tprod1, tprod2);
     }
 }
 
 TEST_P(TransposedTatamiWrapperTest, SparseRow) {
-    std::size_t NR = 60, NC = 50;
+    int NR = 60, NC = 50;
     auto nthreads = GetParam();
-    auto sim = simulate_sparse_triplets(NR, NC, /* seed = */ nthreads + 1000);
+    auto sim = scran_tests::simulate_compressed_sparse_matrix(NC, NR, [&]{
+        scran_tests::SimulateCompressedSparseMatrixParameters params;
+        params.seed = nthreads + 2000;
+        return params;
+    }());
 
     auto thing = sparse_to_dense(NR, NC, sim);
-    tatami::CompressedSparseMatrix<double, int, decltype(sim.values), decltype(sim.indices), decltype(sim.ptrs)> mat(NC, NR, sim.values, sim.indices, sim.ptrs, true);
+    tatami::CompressedSparseMatrix<double, int, decltype(sim.data), decltype(sim.index), decltype(sim.pointers)> mat(NC, NR, sim.data, sim.index, sim.pointers, true);
     scran_pca::TransposedTatamiWrapperMatrix<Eigen::VectorXd, Eigen::MatrixXd, double, int> wrapped(mat, GetParam());
     EXPECT_EQ(wrapped.rows(), NR);
     EXPECT_EQ(wrapped.cols(), NC);
@@ -153,7 +161,7 @@ TEST_P(TransposedTatamiWrapperTest, SparseRow) {
     realizer->realize_copy(realized);
 
     // Checking that the reference matches up.
-    for (std::size_t c = 0; c < NC; ++c) {
+    for (int c = 0; c < NC; ++c) {
         Eigen::VectorXd refcol = thing.col(c);
         Eigen::VectorXd obscol = realized.col(c);
         EXPECT_EQ(refcol, obscol);
@@ -166,7 +174,7 @@ TEST_P(TransposedTatamiWrapperTest, SparseRow) {
         auto wrk = wrapped.new_workspace();
         wrk->multiply(rhs, prod1);
         Eigen::VectorXd prod2 = thing * rhs;
-        compare_almost_equal(prod1, prod2);
+        expect_equal_matrices(prod1, prod2);
     }
 
     // Trying in the transposed orientation.
@@ -176,7 +184,7 @@ TEST_P(TransposedTatamiWrapperTest, SparseRow) {
         auto wrk = wrapped.new_adjoint_workspace();
         wrk->multiply(rhs, tprod1);
         Eigen::VectorXd tprod2 = thing.adjoint() * rhs;
-        compare_almost_equal(tprod1, tprod2);
+        expect_equal_matrices(tprod1, tprod2);
     }
 }
 

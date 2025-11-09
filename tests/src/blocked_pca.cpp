@@ -42,7 +42,7 @@ TEST(ResidualWrapperTest, EigenDense) {
         auto wrk = blocked.new_workspace();
         wrk->multiply(rhs, prod1);
         Eigen::VectorXd prod2 = realized * rhs;
-        compare_almost_equal(prod1, prod2);
+        expect_equal_matrices(prod1, prod2);
     }
 
     // Trying in the transposed orientation.
@@ -52,18 +52,22 @@ TEST(ResidualWrapperTest, EigenDense) {
         auto wrk = blocked.new_adjoint_workspace();
         wrk->multiply(rhs, tprod1);
         Eigen::VectorXd tprod2 = realized.adjoint() * rhs;
-        compare_almost_equal(tprod1, tprod2);
+        expect_equal_matrices(tprod1, tprod2);
     }
 }
 
 TEST(ResidualWrapperTest, CustomSparse) {
-    std::size_t NR = 50, NC = 70, NB = 3;
+    int NR = 50, NC = 70, NB = 3;
     auto block = generate_blocks(NR, NB);
-    auto sim = simulate_sparse_triplets(NR, NC, /* seed = */ 333);
+    auto sim = scran_tests::simulate_compressed_sparse_matrix(NC, NR, [&]{
+        scran_tests::SimulateCompressedSparseMatrixParameters params;
+        params.seed = 333;
+        return params;
+    }());
     auto centers = simulate_dense_matrix(NB, NC, /* seed = */ 2020);
 
-    irlba::ParallelSparseMatrix<Eigen::VectorXd, Eigen::MatrixXd, decltype(sim.values), decltype(sim.indices), decltype(sim.ptrs)> thing(
-        NR, NC, std::move(sim.values), std::move(sim.indices), std::move(sim.ptrs), /* column_major = */ true, 1
+    irlba::ParallelSparseMatrix<Eigen::VectorXd, Eigen::MatrixXd, decltype(sim.data), decltype(sim.index), decltype(sim.pointers)> thing(
+        NR, NC, std::move(sim.data), std::move(sim.index), std::move(sim.pointers), /* column_major = */ true, 1
     );
     scran_pca::ResidualMatrix<Eigen::VectorXd, Eigen::MatrixXd, decltype(&thing), int, decltype(&centers)> blocked(
         &thing, block.data(), &centers
@@ -79,9 +83,9 @@ TEST(ResidualWrapperTest, CustomSparse) {
         auto tmp_realizer = thing.new_realize_workspace();
         tmp_realizer->realize_copy(tmp);
 
-        for (std::size_t c = 0; c < NC; ++c) {
+        for (int c = 0; c < NC; ++c) {
             Eigen::VectorXd refcol = tmp.col(c);
-            for (std::size_t r = 0; r < NR; ++r) {
+            for (int r = 0; r < NR; ++r) {
                 refcol.coeffRef(r) -= centers.coeff(block[r], c);
             }
             Eigen::VectorXd obscol = realized.col(c);
@@ -96,7 +100,7 @@ TEST(ResidualWrapperTest, CustomSparse) {
         auto wrk = blocked.new_workspace();
         wrk->multiply(rhs, prod1);
         Eigen::VectorXd prod2 = realized * rhs;
-        compare_almost_equal(prod1, prod2);
+        expect_equal_matrices(prod1, prod2);
     }
 
     // Trying in the transposed orientation.
@@ -106,7 +110,7 @@ TEST(ResidualWrapperTest, CustomSparse) {
         auto wrk = blocked.new_adjoint_workspace();
         wrk->multiply(rhs, tprod1);
         Eigen::VectorXd tprod2 = realized.adjoint() * rhs;
-        compare_almost_equal(tprod1, tprod2);
+        expect_equal_matrices(tprod1, tprod2);
     }
 }
 
@@ -119,7 +123,7 @@ protected:
     static void assemble() {
         size_t nr = 121, nc = 155;
         auto vec = scran_tests::simulate_vector(nr * nc, [&]{
-            scran_tests::SimulationParameters sparams;
+            scran_tests::SimulateVectorParameters sparams;
             sparams.density = 0.1; 
             sparams.lower = -10;
             sparams.upper = 10;
@@ -461,7 +465,7 @@ TEST_P(BlockedPcaWeightedTest, VersusReference) {
     size_t nr = 80, nc = 50;
     for (int b = 0; b < nblocks; ++b) {
         auto vec = scran_tests::simulate_vector(nr * nc, [&]{
-            scran_tests::SimulationParameters sparams;
+            scran_tests::SimulateVectorParameters sparams;
             sparams.lower = -10;
             sparams.upper = 10;
             sparams.seed = b + 100;
