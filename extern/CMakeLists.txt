@@ -13,6 +13,12 @@ FetchContent_Declare(
 )
 
 FetchContent_Declare(
+  tatami_mult
+  GIT_REPOSITORY https://github.com/tatami-inc/tatami_mult
+  GIT_TAG master # ^0.1.0
+)
+
+FetchContent_Declare(
   irlba
   GIT_REPOSITORY https://github.com/LTLA/CppIrlba
   GIT_TAG master # ^2.0.0
@@ -38,6 +44,7 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(tatami)
 FetchContent_MakeAvailable(tatami_stats)
+FetchContent_MakeAvailable(tatami_mult)
 
 # Forcing the Eigen build to create the installation files,
 # otherwise scran_pca's own installation gets confused.

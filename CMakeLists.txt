@@ -24,6 +24,7 @@ if(SCRAN_PCA_FETCH_EXTERN)
 else()
     find_package(tatami_tatami 4.0.0 CONFIG REQUIRED)
     find_package(tatami_tatami_stats 2.0.0 CONFIG REQUIRED)
+    find_package(tatami_tatami_mult 0.1.0 CONFIG REQUIRED)
     find_package(libscran_scran_blocks 0.1.0 CONFIG REQUIRED)
     find_package(ltla_irlba 2.0.0 CONFIG REQUIRED)
     find_package(ltla_sanisizer 0.1.2 CONFIG REQUIRED)
@@ -34,6 +35,7 @@ target_link_libraries(
     scran_pca INTERFACE 
     tatami::tatami
     tatami::tatami_stats
+    tatami::tatami_mult
     libscran::scran_blocks
     ltla::irlba
     Eigen3::Eigen
