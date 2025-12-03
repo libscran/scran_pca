@@ -4,6 +4,7 @@
 #include <vector>
 #include <type_traits>
 #include <algorithm>
+#include <optional>
 
 #include "tatami/tatami.hpp"
 #include "tatami_stats/tatami_stats.hpp"
@@ -157,11 +158,11 @@ std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_deferred_mat
     const EigenVector_& scale_v
 ) {
     std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > alt;
-    alt.reset(new irlba::CenteredMatrix<EigenVector_, EigenMatrix_, I<decltype(ptr)>, I<decltype(&center_v)>>(std::move(ptr), &center_v));
+    alt.reset(new irlba::CenteredMatrix<EigenVector_, EigenMatrix_, I<decltype(ptr)>, I<decltype(&center_v)> >(std::move(ptr), &center_v));
     ptr.swap(alt);
 
     if (options.scale) {
-        alt.reset(new irlba::ScaledMatrix<EigenVector_, EigenMatrix_, I<decltype(ptr)>, I<decltype(&scale_v)>>(std::move(ptr), &scale_v, true, true));
+        alt.reset(new irlba::ScaledMatrix<EigenVector_, EigenMatrix_, I<decltype(ptr)>, I<decltype(&scale_v)> >(std::move(ptr), &scale_v, true, true));
         ptr.swap(alt);
     }
 
@@ -362,9 +363,48 @@ struct SimplePcaResults {
 };
 
 /**
+ * @cond
+ */
+template<typename Value_, typename Index_, typename EigenMatrix_, class EigenVector_, class SubsetFunction_>
+void simple_pca_internal(
+    const tatami::Matrix<Value_, Index_>& mat,
+    const SimplePcaOptions& options,
+    SimplePcaResults<EigenMatrix_, EigenVector_>& output,
+    SubsetFunction_ subset_fun
+) {
+    irlba::EigenThreadScope t(options.num_threads);
+
+    std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > ptr;
+    if (mat.sparse()) {
+        ptr = prepare_sparse_matrix_for_irlba<EigenMatrix_>(mat, options, output.center, output.scale, output.total_variance);
+    } else {
+        ptr = prepare_dense_matrix_for_irlba<EigenMatrix_>(mat, options, output.center, output.scale, output.total_variance);
+    }
+
+    const auto stats = irlba::compute(*ptr, options.number, output.components, output.rotation, output.variance_explained, options.irlba_options);
+    output.converged = stats.first;
+
+    subset_fun(output.components, output.variance_explained);
+
+    clean_up(mat.ncol(), output.components, output.variance_explained);
+    if (options.transpose) {
+        output.components.adjointInPlace();
+    }
+
+    if (!options.scale) {
+        output.scale = EigenVector_();
+    }
+}
+
+
+/**
+ * @endcond
+ */
+
+/**
  * Principal components analysis (PCA) for compression and denoising of single-cell expression data.
  *
- * The premise behind PCA is that most of the variation in the dataset is driven by biological differences between subpopulations that drive coordinated changes across multiple genes in the same pathways.
+ * We assume that most variation in the dataset is driven by biological differences between subpopulations that drive coordinated changes across multiple genes in the same pathways.
  * In contrast, technical noise is random and not synchronized across any one axis in the high-dimensional space.
  * This suggests that the earlier principal components (PCs) should be enriched for biological heterogeneity while the later PCs capture random noise.
  *
@@ -386,26 +426,12 @@ struct SimplePcaResults {
  */
 template<typename Value_, typename Index_, typename EigenMatrix_, class EigenVector_>
 void simple_pca(const tatami::Matrix<Value_, Index_>& mat, const SimplePcaOptions& options, SimplePcaResults<EigenMatrix_, EigenVector_>& output) {
-    irlba::EigenThreadScope t(options.num_threads);
-
-    std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > ptr;
-    if (mat.sparse()) {
-        ptr = prepare_sparse_matrix_for_irlba<EigenMatrix_>(mat, options, output.center, output.scale, output.total_variance);
-    } else {
-        ptr = prepare_dense_matrix_for_irlba<EigenMatrix_>(mat, options, output.center, output.scale, output.total_variance);
-    }
-
-    const auto stats = irlba::compute(*ptr, options.number, output.components, output.rotation, output.variance_explained, options.irlba_options);
-    output.converged = stats.first;
-
-    clean_up(mat.ncol(), output.components, output.variance_explained);
-    if (options.transpose) {
-        output.components.adjointInPlace();
-    }
-
-    if (!options.scale) {
-        output.scale = EigenVector_();
-    }
+    simple_pca_internal(
+        mat,
+        options,
+        output, 
+        [](const EigenMatrix_&, const EigenVector_&) -> void {}
+    );
 }
 
 /**

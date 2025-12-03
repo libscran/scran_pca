@@ -12,6 +12,7 @@ add_executable(
     libtest 
     src/simple_pca.cpp
     src/blocked_pca.cpp
+    src/subset_pca.cpp
     src/utils.cpp
 )
 

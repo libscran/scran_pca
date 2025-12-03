@@ -874,56 +874,18 @@ struct BlockedPcaResults {
 };
 
 /**
- * As discussed in `simple_pca()`, we would like to extract the top principal components from a single-cell dataset for downstream cell-based procedures like clustering.
- * In the presence of a blocking factor (e.g., batches, samples), we want to ensure that the PCA is not driven by uninteresting differences between blocks of cells.
- * To achieve this, `blocked_pca()` centers the expression of each gene in each blocking level and uses the residuals for PCA.
- * This means that the gene-gene covariance matrix will only contain variation within each batch, 
- * ensuring that the top rotation vectors/principal components capture biological heterogeneity instead of inter-block differences.
- *
- * The `BlockedPcaOptions::components_from_residuals` option determines exactly how the PC scores are calculated:
- *
- * - If `true` (the default), the PC scores are computed from the matrix of residuals.
- *   This yields a low-dimensional space where inter-block differences have been removed,
- *   assuming that all blocks have the same subpopulation composition and the inter-block differences are consistent for all cell subpopulations.
- *   Under these assumptions, we could use these components for downstream analysis without any concern for block-wise effects.
- * - If `false`, the rotation vectors are first computed from the matrix of residuals.
- *   To obtain PC scores, each cell is then projected onto the associated subspace using its original expression values.
- *   This approach ensures that inter-block differences do not contribute to the PCA but does not attempt to explicitly remove them.
- * 
- * In complex datasets, the assumptions mentioned above for `true` do not hold,
- * and more sophisticated batch correction methods like [MNN correction](https://github.com/LTLA/CppMnnCorrect) are required.
- * Some of these methods accept a low-dimensional embedding of cells that can be created as described above with `false`. 
- *
- * `blocked_pca()` will adjust the contribution from blocks of cells so that each block contributes more or less equally to the PCA.
- * This ensures that the definition of the axes of maximum variance are not dominated by the largest block, potentially masking interesting variation in the smaller blocks.
- * `blocked_pca()` scales the expression values for each block so that each "sufficiently large" block contributes equally to the gene-gene covariance matrix and thus the rotation vectors.
- * (See `BlockedPcaOptions::block_weight_policy` for the choice of weighting scheme.)
- * The vector of residuals for each cell - or the original expression values, if `BlockedPcaOptions::components_from_residuals = false` -
- * is then projected to the subspace defined by these rotation vectors to obtain that cell's PC scores.
- *
- * Internally, `blocked_pca()` defers the residual calculation until the matrix multiplication steps within [IRLBA](https://github.com/LTLA/CppIrlba).
- * This yields the same results as the naive calculation of residuals but is much faster as it can take advantage of efficient sparse operations.
- *
- * @tparam Value_ Type of the matrix data.
- * @tparam Index_ Integer type for the indices.
- * @tparam Block_ Integer type for the blocking factor.
- * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
- * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
- *
- * @param[in] mat Input matrix.
- * Columns should contain cells while rows should contain genes.
- * Matrix entries are typically log-expression values.
- * @param[in] block Pointer to an array of length equal to the number of cells, 
- * containing the block assignment for each cell. 
- * Each assignment should be an integer in \f$[0, N)\f$ where \f$N\f$ is the number of blocks.
- * @param options Further options.
- * @param[out] output On output, the results of the PCA on the residuals. 
- * This can be re-used across multiple calls to `blocked_pca()`. 
+ * @cond
  */
-template<typename Value_, typename Index_, typename Block_, typename EigenMatrix_, class EigenVector_>
-void blocked_pca(const tatami::Matrix<Value_, Index_>& mat, const Block_* block, const BlockedPcaOptions& options, BlockedPcaResults<EigenMatrix_, EigenVector_>& output) {
+template<typename Value_, typename Index_, typename Block_, typename EigenMatrix_, class EigenVector_, class SubsetFunction_>
+void blocked_pca_internal(
+    const tatami::Matrix<Value_, Index_>& mat,
+    const Block_* block,
+    const BlockedPcaOptions& options,
+    BlockedPcaResults<EigenMatrix_, EigenVector_>& output,
+    SubsetFunction_ subset_fun
+) {
     irlba::EigenThreadScope t(options.num_threads);
-    auto block_details = compute_blocking_details<EigenVector_>(mat.ncol(), block, options.block_weight_policy, options.variable_block_weight_parameters);
+    const auto block_details = compute_blocking_details<EigenVector_>(mat.ncol(), block, options.block_weight_policy, options.variable_block_weight_parameters);
 
     const Index_ ngenes = mat.nrow(), ncells = mat.ncol(); 
     const auto nblocks = block_details.block_size.size();
@@ -1067,6 +1029,8 @@ void blocked_pca(const tatami::Matrix<Value_, Index_>& mat, const Block_* block,
         auto out = irlba::compute(*ptr, options.number, output.components, output.rotation, output.variance_explained, options.irlba_options);
         output.converged = out.first;
 
+        subset_fun(block_details, output.components, output.variance_explained);
+
         EigenMatrix_ tmp;
         const auto& scaled_rotation = scale_rotation_matrix(output.rotation, options.scale, output.scale, tmp);
         projector(scaled_rotation);
@@ -1087,6 +1051,8 @@ void blocked_pca(const tatami::Matrix<Value_, Index_>& mat, const Block_* block,
     } else {
         const auto out = irlba::compute(*ptr, options.number, output.components, output.rotation, output.variance_explained, options.irlba_options);
         output.converged = out.first;
+
+        subset_fun(block_details, output.components, output.variance_explained);
 
         if (options.components_from_residuals) {
             clean_up(mat.ncol(), output.components, output.variance_explained);
@@ -1109,6 +1075,72 @@ void blocked_pca(const tatami::Matrix<Value_, Index_>& mat, const Block_* block,
     if (!options.scale) {
         output.scale = EigenVector_();
     }
+}
+/**
+ * @endcond
+ */
+
+/**
+ * As discussed in `simple_pca()`, we would like to extract the top principal components from a single-cell dataset for downstream cell-based procedures like clustering.
+ * In the presence of a blocking factor (e.g., batches, samples), we want to ensure that the PCA is not driven by uninteresting differences between blocks of cells.
+ * To achieve this, `blocked_pca()` centers the expression of each gene in each blocking level and uses the residuals for PCA.
+ * This means that the gene-gene covariance matrix will only contain variation within each batch, 
+ * ensuring that the top rotation vectors/principal components capture biological heterogeneity instead of inter-block differences.
+ *
+ * The `BlockedPcaOptions::components_from_residuals` option determines exactly how the PC scores are calculated:
+ *
+ * - If `true` (the default), the PC scores are computed from the matrix of residuals.
+ *   This yields a low-dimensional space where inter-block differences have been removed,
+ *   assuming that all blocks have the same subpopulation composition and the inter-block differences are consistent for all cell subpopulations.
+ *   Under these assumptions, we could use these components for downstream analysis without any concern for block-wise effects.
+ * - If `false`, the rotation vectors are first computed from the matrix of residuals.
+ *   To obtain PC scores, each cell is then projected onto the associated subspace using its original expression values.
+ *   This approach ensures that inter-block differences do not contribute to the PCA but does not attempt to explicitly remove them.
+ * 
+ * In complex datasets, the assumptions mentioned above for `true` do not hold,
+ * and more sophisticated batch correction methods like [MNN correction](https://github.com/LTLA/CppMnnCorrect) are required.
+ * Some of these methods accept a low-dimensional embedding of cells that can be created as described above with `false`. 
+ *
+ * `blocked_pca()` will adjust the contribution from blocks of cells so that each block contributes more or less equally to the PCA.
+ * This ensures that the definition of the axes of maximum variance are not dominated by the largest block, potentially masking interesting variation in the smaller blocks.
+ * `blocked_pca()` scales the expression values for each block so that each "sufficiently large" block contributes equally to the gene-gene covariance matrix and thus the rotation vectors.
+ * (See `BlockedPcaOptions::block_weight_policy` for the choice of weighting scheme.)
+ * The vector of residuals for each cell - or the original expression values, if `BlockedPcaOptions::components_from_residuals = false` -
+ * is then projected to the subspace defined by these rotation vectors to obtain that cell's PC scores.
+ *
+ * Internally, `blocked_pca()` defers the residual calculation until the matrix multiplication steps within [IRLBA](https://github.com/LTLA/CppIrlba).
+ * This yields the same results as the naive calculation of residuals but is much faster as it can take advantage of efficient sparse operations.
+ *
+ * @tparam Value_ Type of the matrix data.
+ * @tparam Index_ Integer type for the indices.
+ * @tparam Block_ Integer type for the blocking factor.
+ * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
+ * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
+ *
+ * @param[in] mat Input matrix.
+ * Columns should contain cells while rows should contain genes.
+ * Matrix entries are typically log-expression values.
+ * @param[in] block Pointer to an array of length equal to the number of cells, 
+ * containing the block assignment for each cell. 
+ * Each assignment should be an integer in \f$[0, N)\f$ where \f$N\f$ is the number of blocks.
+ * @param options Further options.
+ * @param[out] output On output, the results of the PCA on the residuals. 
+ * This can be re-used across multiple calls to `blocked_pca()`. 
+ */
+template<typename Value_, typename Index_, typename Block_, typename EigenMatrix_, class EigenVector_>
+void blocked_pca(
+    const tatami::Matrix<Value_, Index_>& mat,
+    const Block_* block,
+    const BlockedPcaOptions& options,
+    BlockedPcaResults<EigenMatrix_, EigenVector_>& output
+) {
+    blocked_pca_internal<Value_, Index_, Block_, EigenMatrix_, EigenVector_>(
+        mat,
+        block,
+        options,
+        output,
+        [&](const BlockingDetails<Index_, EigenVector_>&, const EigenMatrix_&, const EigenVector_&) -> void {}
+    );
 }
 
 /**
