@@ -84,7 +84,7 @@ template<typename Index_, class EigenMatrix_>
 void expand_into_matrix_columns(const std::vector<Index_>& subset, const EigenMatrix_& source, EigenMatrix_& dest) {
     const auto nsub = subset.size();
     for (I<decltype(nsub)> s = 0; s < nsub; ++s) {
-        dest.column(subset[s]) = source.column(s);
+        dest.col(subset[s]) = source.col(s);
     }
 }
 /**
@@ -194,7 +194,7 @@ template<typename EigenMatrix_, class EigenVector_>
 using SubsetPcaBlockedResults = BlockedPcaResults<EigenMatrix_, EigenVector_>;
 
 template<typename Value_, typename Index_, typename Block_, typename EigenMatrix_, class EigenVector_>
-void blocked_pca_subset(
+void subset_pca_blocked(
     const tatami::Matrix<Value_, Index_>& mat,
     const std::vector<Index_>& subset,
     const Block_* block, 
@@ -238,22 +238,40 @@ void blocked_pca_subset(
                 sanisizer::cast<Eigen::Index>(num_inv)
             );
             auto inv_scale = sanisizer::create<EigenVector_>(num_inv);
-            compute_blockwise_mean_and_variance_tatami(mat, block, block_details, inv_center, inv_scale, options.num_threads);
+            compute_blockwise_mean_and_variance_tatami(*inv_mat, block, block_details, inv_center, inv_scale, options.num_threads);
+            process_scale_vector(options.scale, inv_scale);
 
-            std::vector<typename EigenVector_::Scalar> output;
-            std::vector<const typename EigenVector_::Scalar*> out_ptrs;
-            multiply_by_rhs_vectors(*inv_mat, rhs_vectors, output, out_ptrs, options.num_threads);
+            // Need to adjust the component matrix to account for any weighting.
+            const EigenMatrix_* rhs_ptr = NULL;
+            std::optional<EigenMatrix_> weighted_rhs;
+            if (block_details.weighted) {
+                weighted_rhs = rhs_vectors;
+                weighted_rhs->array().colwise() *= block_details.expanded_weights.array();
+                rhs_ptr = &(*weighted_rhs);
+            } else {
+                rhs_ptr = &rhs_vectors;
+            }
+
+            std::vector<typename EigenVector_::Scalar> product;
+            std::vector<typename EigenVector_::Scalar*> out_ptrs;
+            multiply_by_right_singular_vectors(
+                *inv_mat,
+                *rhs_ptr,
+                product,
+                out_ptrs,
+                options.num_threads
+            );
 
             const auto rank = rhs_vectors.cols();
             auto shift_buffer = sanisizer::create<EigenVector_>(num_blocks);
             for (I<decltype(rank)> r = 0; r < rank; ++r) {
-                const auto varexp = sing_vals.coeff(r);
-                const auto optr = out_ptrs[r];
                 std::fill(shift_buffer.begin(), shift_buffer.end(), 0);
                 for (I<decltype(num_cells)> i = 0; i < num_cells; ++i) {
-                    shift_buffer.coeff(block[i]) += rhs_vectors.coeff(i, r);
+                    shift_buffer.coeffRef(block[i]) += rhs_vectors.coeff(i, r);
                 }
 
+                const auto varexp = sing_vals.coeff(r);
+                const auto optr = out_ptrs[r];
                 for (I<decltype(num_inv)> i = 0; i < num_inv; ++i) {
                     typename EigenVector_::Scalar curshift = 0;
                     for (I<decltype(num_blocks)> b = 0; b < num_blocks; ++b) {
@@ -286,7 +304,7 @@ void blocked_pca_subset(
     output.rotation.swap(final_rotation);
 }
 
-template<typename Value_, typename Index_, typename Block_, typename EigenMatrix_, class EigenVector_>
+template<typename EigenMatrix_ = Eigen::MatrixXd, class EigenVector_ = Eigen::VectorXd, typename Value_, typename Index_, typename Block_>
 SubsetPcaBlockedResults<EigenMatrix_, EigenVector_>  subset_pca_blocked(
     const tatami::Matrix<Value_, Index_>& mat,
     const std::vector<Index_>& subset,
