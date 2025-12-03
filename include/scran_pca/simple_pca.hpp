@@ -395,8 +395,6 @@ void simple_pca_internal(
         output.scale = EigenVector_();
     }
 }
-
-
 /**
  * @endcond
  */
