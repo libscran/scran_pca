@@ -270,7 +270,7 @@ void subset_pca_blocked(
 
                 const auto varexp = sing_vals.coeff(r);
                 const auto optr = out_ptrs[r];
-                const auto compute = [&](I<decltype(num_inv)> i) -> void {
+                const auto compute = [&](I<decltype(num_inv)> i) -> typename EigenVector_::Scalar {
                     typename EigenVector_::Scalar curshift = 0;
                     for (I<decltype(num_blocks)> b = 0; b < num_blocks; ++b) {
                         curshift += shift_buffer.coeff(b) * inv_center.coeff(b, i);
