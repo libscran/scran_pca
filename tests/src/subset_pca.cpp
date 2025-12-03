@@ -110,54 +110,6 @@ INSTANTIATE_TEST_SUITE_P(
 
 /**************************************************************/
 
-class SubsetPcaRowMajorTest : public ::testing::TestWithParam<std::tuple<bool, int> >, public SubsetPcaTestCore {
-protected:
-    static void SetUpTestSuite() {
-        assemble();
-    }
-};
-
-TEST_P(SubsetPcaRowMajorTest, Basic) {
-    auto param = GetParam();
-    bool scale = std::get<0>(param);
-    int rank = std::get<1>(param);
-
-    scran_pca::SimplePcaOptions opt;
-    opt.scale = scale;
-    opt.number = rank;
-
-    std::vector<int> subset;
-    const auto NR = dense_row->nrow();
-    for (int i = 0; i < NR; i += 2) {
-        subset.push_back(i);
-    }
-    auto ref = scran_pca::subset_pca(*dense_row, subset, opt);
-    EXPECT_FALSE(Eigen::MatrixXd::IsRowMajor);
-
-    typedef Eigen::Matrix<double, -1, -1, Eigen::RowMajor> RowMajorEigenMatrix;
-    EXPECT_TRUE(RowMajorEigenMatrix::IsRowMajor);
-    auto alt = scran_pca::subset_pca<RowMajorEigenMatrix>(*dense_row, subset, opt);
-
-    expect_equal_pcs(alt.components, ref.components);
-    expect_equal_rotation(alt.rotation, ref.rotation);
-    expect_equal_vectors(alt.variance_explained, ref.variance_explained);
-    expect_equal_vectors(alt.center, ref.center);
-    if (scale) {
-        expect_equal_vectors(alt.scale, ref.scale);
-    }
-}
-
-INSTANTIATE_TEST_SUITE_P(
-    SubsetPca,
-    SubsetPcaRowMajorTest,
-    ::testing::Combine(
-        ::testing::Values(false, true), // to scale or not to scale?
-        ::testing::Values(2, 5, 10) // number of PCs to obtain
-    )
-);
-
-/**************************************************************/
-
 class SubsetPcaBlockedTest : public ::testing::TestWithParam<std::tuple<bool, int, int, bool, int> >, public SubsetPcaTestCore {
 protected:
     static void SetUpTestSuite() {
@@ -240,52 +192,3 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::Values(1, 3) // number of threads
     )
 );
-
-/**************************************************************/
-
-//class SubsetPcaBlockedRowMajorTest : public ::testing::TestWithParam<std::tuple<bool, int> >, public SubsetPcaTestCore {
-//protected:
-//    static void SetUpTestSuite() {
-//        assemble();
-//    }
-//};
-//
-//TEST_P(SubsetPcaBlockedRowMajorTest, Basic) {
-//    auto param = GetParam();
-//    bool scale = std::get<0>(param);
-//    int rank = std::get<1>(param);
-//    auto block = generate_blocks(dense_row->ncol(), 7);
-//
-//    scran_pca::SubsetPcaBlockedOptions opt;
-//    opt.scale = scale;
-//    opt.number = rank;
-//
-//    std::vector<int> subset;
-//    const auto NR = dense_row->nrow();
-//    for (int i = 0; i < NR; i += 2) {
-//        subset.push_back(i);
-//    }
-//    auto ref = scran_pca::subset_pca_blocked(*dense_row, subset, block.data(), opt);
-//    EXPECT_FALSE(Eigen::MatrixXd::IsRowMajor);
-//
-//    typedef Eigen::Matrix<double, -1, -1, Eigen::RowMajor> RowMajorEigenMatrix;
-//    EXPECT_TRUE(RowMajorEigenMatrix::IsRowMajor);
-//    auto alt = scran_pca::subset_pca_blocked<RowMajorEigenMatrix>(*dense_row, subset, block.data(), opt);
-//
-//    expect_equal_pcs(alt.components, ref.components);
-//    expect_equal_rotation(alt.rotation, ref.rotation);
-//    expect_equal_vectors(alt.variance_explained, ref.variance_explained);
-//    expect_equal_vectors(alt.center, ref.center);
-//    if (scale) {
-//        expect_equal_vectors(alt.scale, ref.scale);
-//    }
-//}
-//
-//INSTANTIATE_TEST_SUITE_P(
-//    SubsetPca,
-//    SubsetPcaBlockedRowMajorTest,
-//    ::testing::Combine(
-//        ::testing::Values(false, true), // to scale or not to scale?
-//        ::testing::Values(2, 5, 10) // number of PCs to obtain
-//    )
-//);

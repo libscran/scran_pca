@@ -41,21 +41,13 @@ void multiply_by_right_singular_vectors(
     const auto num_features = mat.nrow();
     const auto num_cells = mat.ncol();
     const auto rank = rhs_vectors.cols();
-
-    std::optional<EigenMatrix_> transposed;
-    const EigenMatrix_* target = NULL; 
-    if constexpr(EigenMatrix_::IsRowMajor) {
-        transposed = rhs_vectors.adjoint();
-        target = &(*transposed);
-    } else {
-        target = &rhs_vectors;
-    }
+    static_assert(!EigenMatrix_::IsRowMajor);
 
     output.resize(sanisizer::product<I<decltype(output.size())> >(num_features, rank));
     sanisizer::resize(out_ptrs, rank);
     auto rhs_ptrs = sanisizer::create<std::vector<const typename EigenMatrix_::Scalar*> >(rank);
     for (I<decltype(rank)> r = 0; r < rank; ++r) {
-        rhs_ptrs[r] = target->data() + sanisizer::product_unsafe<std::size_t>(r, num_cells);
+        rhs_ptrs[r] = rhs_vectors.data() + sanisizer::product_unsafe<std::size_t>(r, num_cells);
         out_ptrs[r] = output.data() + sanisizer::product_unsafe<std::size_t>(r, num_features);
     }
 
@@ -75,8 +67,14 @@ void expand_into_vector(const std::vector<Index_>& subset, const EigenVector_& s
 template<typename Index_, class EigenMatrix_>
 void expand_into_matrix_rows(const std::vector<Index_>& subset, const EigenMatrix_& source, EigenMatrix_& dest) {
     const auto nsub = subset.size();
-    for (I<decltype(nsub)> s = 0; s < nsub; ++s) {
-        dest.row(subset[s]) = source.row(s);
+
+    // This access pattern should be a little more cache-friendly for the
+    // default column-major storage of Eigen::MatrixXd's.
+    const auto cols = dest.cols();
+    for (I<decltype(cols)> c = 0; c < cols; ++c) {
+        for (I<decltype(nsub)> s = 0; s < nsub; ++s) {
+            dest.coeffRef(subset[s], c) = source.coeff(s, c);
+        }
     }
 }
 
@@ -241,7 +239,7 @@ void subset_pca_blocked(
             compute_blockwise_mean_and_variance_tatami(*inv_mat, block, block_details, inv_center, inv_scale, options.num_threads);
             process_scale_vector(options.scale, inv_scale);
 
-            // Need to adjust the component matrix to account for any weighting.
+            // Need to adjust the RHS singular vector matrix to mimic weighting of the input matrix.
             const EigenMatrix_* rhs_ptr = NULL;
             std::optional<EigenMatrix_> weighted_rhs;
             if (block_details.weighted) {
@@ -272,16 +270,22 @@ void subset_pca_blocked(
 
                 const auto varexp = sing_vals.coeff(r);
                 const auto optr = out_ptrs[r];
-                for (I<decltype(num_inv)> i = 0; i < num_inv; ++i) {
+                const auto compute = [&](I<decltype(num_inv)> i) -> void {
                     typename EigenVector_::Scalar curshift = 0;
                     for (I<decltype(num_blocks)> b = 0; b < num_blocks; ++b) {
                         curshift += shift_buffer.coeff(b) * inv_center.coeff(b, i);
                     }
-                    auto val = (optr[i] - curshift) / varexp;
-                    if (options.scale) {
-                        val /= inv_scale.coeff(i);
+                    return (optr[i] - curshift) / varexp;
+                };
+
+                if (options.scale) {
+                    for (I<decltype(num_inv)> i = 0; i < num_inv; ++i) {
+                        final_rotation.coeffRef(inv_subset[i], r) = compute(i) / inv_scale.coeff(i);
                     }
-                    final_rotation.coeffRef(inv_subset[i], r) = val;
+                } else {
+                    for (I<decltype(num_inv)> i = 0; i < num_inv; ++i) {
+                        final_rotation.coeffRef(inv_subset[i], r) = compute(i);
+                    }
                 }
             }
 
