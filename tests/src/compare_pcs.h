@@ -60,6 +60,12 @@ inline void expect_equal_rotation(const Eigen::MatrixXd& left, const Eigen::Matr
             auto aright = std::abs(right(i, j));
             scran_tests::compare_almost_equal(aleft, aright, params);
         }
+
+        scran_tests::compare_almost_equal(
+            std::abs(left.row(i).sum()),
+            std::abs(right.row(i).sum()),
+            params
+        );
     }
 }
 
