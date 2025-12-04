@@ -167,7 +167,8 @@ template&lt;typename EigenMatrix_ , typename EigenVector_ &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Matrix of principal component scores. By default, each row corresponds to a PC while each column corresponds to a cell in the input matrix. If <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#a45a65fc15d15e95becb8166f09b0c6fa">SimplePcaOptions::transpose</a> = false</code>, rows are cells instead. The number of PCs is determined by <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#af99a561e7aa50311bd05ea59802cc492">SimplePcaOptions::number</a></code>. </p>
+<p>Matrix of principal component scores. By default, each row corresponds to a PC while each column corresponds to a cell in the input matrix. If <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#a45a65fc15d15e95becb8166f09b0c6fa">SimplePcaOptions::transpose</a> = false</code>, rows are cells instead.</p>
+<p>The number of PCs is the smaller of <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#af99a561e7aa50311bd05ea59802cc492">SimplePcaOptions::number</a></code> and <code>min(NR, NC) - 1</code>, where <code>NR</code> and <code>NC</code> are the number of rows and columns, respectively, of the input matrix. </p>
 
 </div>
 </div>
@@ -201,7 +202,7 @@ template&lt;typename EigenMatrix_ , typename EigenVector_ &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Rotation matrix. Each row corresponds to a feature while each column corresponds to a PC. The number of PCs is determined by <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#af99a561e7aa50311bd05ea59802cc492">SimplePcaOptions::number</a></code>. </p>
+<p>Rotation matrix. Each row corresponds to a feature while each column corresponds to a PC. The number of PCs is as described for <code><a class="el" href="#a1da0c096b49b673dac64a13efca490df">SimplePcaResults::components</a></code>. </p>
 
 </div>
 </div>
@@ -252,7 +253,7 @@ template&lt;typename EigenMatrix_ , typename EigenVector_ &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Variance explained by each PC. Each entry corresponds to a column in <code>components</code> and is in decreasing order. </p>
+<p>Variance explained by each PC. Each entry corresponds to a column in <code>components</code> and is in decreasing order. The number of PCs is as described for <code><a class="el" href="#a1da0c096b49b673dac64a13efca490df">SimplePcaResults::components</a></code>. </p>
 
 </div>
 </div>

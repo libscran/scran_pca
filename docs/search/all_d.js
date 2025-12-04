@@ -24,7 +24,7 @@ var searchData=
   ['principal_20components_20analysis_20duh_21',['Principal components analysis, duh',['../index.html',1,'']]],
   ['process_5fconsecutive_5findices_22',['process_consecutive_indices',['https://tatami-inc.github.io/tatami/namespacetatami.html#adc238346c521152c4273e3552240d7f7',1,'tatami']]],
   ['process_5fconsecutive_5findices_2ehpp_23',['process_consecutive_indices.hpp',['https://tatami-inc.github.io/tatami/process__consecutive__indices_8hpp.html',1,'']]],
-  ['projects_24',['Building projects',['../index.html#autotoc_md3',1,'']]],
+  ['projects_24',['Building projects',['../index.html#autotoc_md5',1,'']]],
   ['pseudooraculardenseextractor_25',['PseudoOracularDenseExtractor',['https://tatami-inc.github.io/tatami/structtatami_1_1PseudoOracularDenseExtractor.html',1,'tatami::PseudoOracularDenseExtractor&lt; typename Value_, typename Index_ &gt;'],['https://tatami-inc.github.io/tatami/structtatami_1_1PseudoOracularDenseExtractor.html#a099afedb958b1c9a7738508eb7cf387f',1,'tatami::PseudoOracularDenseExtractor::PseudoOracularDenseExtractor()']]],
   ['pseudooracularextractor_2ehpp_26',['PseudoOracularExtractor.hpp',['https://tatami-inc.github.io/tatami/PseudoOracularExtractor_8hpp.html',1,'']]],
   ['pseudooracularsparseextractor_27',['PseudoOracularSparseExtractor',['https://tatami-inc.github.io/tatami/structtatami_1_1PseudoOracularSparseExtractor.html',1,'tatami::PseudoOracularSparseExtractor&lt; typename Value_, typename Index_ &gt;'],['https://tatami-inc.github.io/tatami/structtatami_1_1PseudoOracularSparseExtractor.html#a844c7b691709c23d0281b58d9eb50b04',1,'tatami::PseudoOracularSparseExtractor::PseudoOracularSparseExtractor()']]]

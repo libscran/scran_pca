@@ -48,5 +48,6 @@ var searchData=
   ['subsetpcablockedresults_45',['SubsetPcaBlockedResults',['../namespacescran__pca.html#a07326f9ed36d9caa6328b1c918008a64',1,'scran_pca']]],
   ['subsetpcaoptions_46',['SubsetPcaOptions',['../namespacescran__pca.html#a855000c536fb44770cb209037f1f3366',1,'scran_pca']]],
   ['subsetpcaresults_47',['SubsetPcaResults',['../namespacescran__pca.html#a022b0488b926c139064cbff8ae948db2',1,'scran_pca']]],
-  ['substitute_5fhelpers_2ehpp_48',['substitute_helpers.hpp',['https://tatami-inc.github.io/tatami/substitute__helpers_8hpp.html',1,'']]]
+  ['subsets_48',['Feature subsets',['../index.html#autotoc_md4',1,'']]],
+  ['substitute_5fhelpers_2ehpp_49',['substitute_helpers.hpp',['https://tatami-inc.github.io/tatami/substitute__helpers_8hpp.html',1,'']]]
 ];

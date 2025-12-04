@@ -189,279 +189,279 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        dest.col(subset[s]) = source.col(s);</div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    }</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>}</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#a855000c536fb44770cb209037f1f3366">  105</a></span><span class="keyword">typedef</span> <a class="code hl_struct" href="structscran__pca_1_1SimplePcaOptions.html">SimplePcaOptions</a> <a class="code hl_typedef" href="namespacescran__pca.html#a855000c536fb44770cb209037f1f3366">SubsetPcaOptions</a>;</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> EigenMatrix_, <span class="keyword">class</span> EigenVector_&gt;</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#a022b0488b926c139064cbff8ae948db2">  113</a></span><span class="keyword">using </span><a class="code hl_struct" href="structscran__pca_1_1SimplePcaResults.html">SubsetPcaResults</a> = <a class="code hl_struct" href="structscran__pca_1_1SimplePcaResults.html">SimplePcaResults&lt;EigenMatrix_, EigenVector_&gt;</a>;</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
-<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> SubsetVector_, <span class="keyword">typename</span> EigenMatrix_, <span class="keyword">class</span> EigenVector_&gt;</div>
-<div class="foldopen" id="foldopen00141" data-start="{" data-end="}">
-<div class="line"><a id="l00141" name="l00141"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#acc2324f59cfb503374c07ab79979f103">  141</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacescran__pca.html#acc2324f59cfb503374c07ab79979f103">subset_pca</a>(</div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Value_, Index_&gt;</a>&amp; mat,</div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>    <span class="keyword">const</span> SubsetVector_&amp; subset,</div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__pca_1_1SimplePcaOptions.html">SubsetPcaOptions</a>&amp; options,</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>    <a class="code hl_struct" href="structscran__pca_1_1SimplePcaResults.html">SubsetPcaResults&lt;EigenMatrix_, EigenVector_&gt;</a>&amp; output</div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>) {</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    <span class="keyword">const</span> <span class="keyword">auto</span> full_size = mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>();</div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    <span class="keyword">auto</span> final_center = sanisizer::create&lt;EigenVector_&gt;(full_size);</div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    <span class="keyword">auto</span> final_scale = sanisizer::create&lt;EigenVector_&gt;(full_size);</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    EigenMatrix_ final_rotation;</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span> </div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>    <span class="comment">// Don&#39;t move subset into the constructor, we&#39;ll need it later.</span></div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1DelayedSubsetSortedUnique.html">tatami::DelayedSubsetSortedUnique&lt;Value_, Index_, SubsetVector_&gt;</a> sub_mat(<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a5a07f7937bfdbbe8e355cba20d7c0c3a">tatami::wrap_shared_ptr</a>(&amp;mat), subset, <span class="keyword">true</span>);</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span> </div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>    simple_pca_internal(</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>        sub_mat,</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>        options,</div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>        output,</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>        [&amp;](<span class="keyword">const</span> EigenMatrix_&amp; rhs_vectors, <span class="keyword">const</span> EigenVector_&amp; sing_vals) -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>            <span class="keyword">const</span> <span class="keyword">auto</span> inv_subset = invert_subset(mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>(), subset);</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>            <span class="comment">// Don&#39;t move inv_subset into the constructor, we&#39;ll need it later.</span></div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>            <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1DelayedSubsetSortedUnique.html">tatami::DelayedSubsetSortedUnique</a>&lt;Value_, Index_, I&lt;<span class="keyword">decltype</span>(inv_subset)&gt; &gt; inv_mat(<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a5a07f7937bfdbbe8e355cba20d7c0c3a">tatami::wrap_shared_ptr</a>(&amp;mat), inv_subset, <span class="keyword">true</span>);</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span> </div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>            <span class="keyword">const</span> <span class="keyword">auto</span> num_inv = inv_mat.nrow();</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>            <span class="keyword">auto</span> inv_center = sanisizer::create&lt;EigenVector_&gt;(num_inv);</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>            <span class="keyword">auto</span> inv_scale = sanisizer::create&lt;EigenVector_&gt;(num_inv);</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>            <span class="keywordflow">if</span> (inv_mat.sparse()) {</div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>                compute_row_means_and_variances&lt;true&gt;(inv_mat, options.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaOptions.html#a64970ffcc255df6b8bec468be6407a35">num_threads</a>, inv_center, inv_scale);</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>                compute_row_means_and_variances&lt;false&gt;(inv_mat, options.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaOptions.html#a64970ffcc255df6b8bec468be6407a35">num_threads</a>, inv_center, inv_scale);</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>            }</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>            process_scale_vector(options.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaOptions.html#abfc39a6f7cd82a793e41d22641dcd0b2">scale</a>, inv_scale);</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span> </div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>            std::vector&lt;typename EigenVector_::Scalar&gt; product;</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>            std::vector&lt;typename EigenVector_::Scalar*&gt; product_ptrs;</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>            multiply_by_right_singular_vectors(</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>                inv_mat,</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>                rhs_vectors,</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>                product,</div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>                product_ptrs,</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>                options.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaOptions.html#a64970ffcc255df6b8bec468be6407a35">num_threads</a></div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>            );</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span> </div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>            <span class="keyword">const</span> <span class="keyword">auto</span> rank = rhs_vectors.cols();</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>            final_rotation.resize(sanisizer::cast&lt;Eigen::Index&gt;(full_size), rank);</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>            <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(rank)&gt; r = 0; r &lt; rank; ++r) {</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>                <span class="keyword">const</span> <span class="keyword">auto</span> curshift = rhs_vectors.col(r).sum();</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>                <span class="keyword">const</span> <span class="keyword">auto</span> varexp = sing_vals.coeff(r);</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>                <span class="keyword">const</span> <span class="keyword">auto</span> optr = product_ptrs[r];</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>                <span class="keyword">const</span> <span class="keyword">auto</span> compute = [&amp;](I&lt;<span class="keyword">decltype</span>(num_inv)&gt; i) -&gt; <span class="keyword">typename</span> EigenVector_::Scalar {</div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>                    <span class="keywordflow">return</span> (optr[i] - curshift * inv_center.coeff(i)) / varexp;</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>                };</div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span> </div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>                <span class="keywordflow">if</span> (!options.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaOptions.html#abfc39a6f7cd82a793e41d22641dcd0b2">scale</a>) {</div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>                    <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(num_inv)&gt; i = 0; i &lt; num_inv; ++i) {</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>                        final_rotation.coeffRef(inv_subset[i], r) = compute(i);</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>                    }</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>                } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>                    <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(num_inv)&gt; i = 0; i &lt; num_inv; ++i) {</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>                        final_rotation.coeffRef(inv_subset[i], r) = compute(i) / inv_scale.coeff(i);</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>                    }</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>                }</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>            }</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span> </div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>            expand_into_vector(inv_subset, inv_center, final_center);</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>            <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaOptions.html#abfc39a6f7cd82a793e41d22641dcd0b2">scale</a>) {</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>                expand_into_vector(inv_subset, inv_scale, final_scale);</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>            }</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>        }</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    );</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span> </div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>    expand_into_vector(subset, output.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaResults.html#ace27de1e888eaf093e0544ccee7bacd0">center</a>, final_center);</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>    output.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaResults.html#ace27de1e888eaf093e0544ccee7bacd0">center</a>.swap(final_center);</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span> </div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaOptions.html#abfc39a6f7cd82a793e41d22641dcd0b2">scale</a>) {</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>        expand_into_vector(subset, output.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaResults.html#ad9f61059704fb822342fbb776cb66617">scale</a>, final_scale);</div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>        output.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaResults.html#ad9f61059704fb822342fbb776cb66617">scale</a>.swap(final_scale);</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>    }</div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span> </div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    expand_into_matrix_rows(subset, output.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaResults.html#a3cc8c8bf58ca8fc62eb2bd141f4d6b73">rotation</a>, final_rotation);</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>    output.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaResults.html#a3cc8c8bf58ca8fc62eb2bd141f4d6b73">rotation</a>.swap(final_rotation);</div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>}</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#a855000c536fb44770cb209037f1f3366">  106</a></span><span class="keyword">typedef</span> <a class="code hl_struct" href="structscran__pca_1_1SimplePcaOptions.html">SimplePcaOptions</a> <a class="code hl_typedef" href="namespacescran__pca.html#a855000c536fb44770cb209037f1f3366">SubsetPcaOptions</a>;</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> EigenMatrix_, <span class="keyword">class</span> EigenVector_&gt;</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#a022b0488b926c139064cbff8ae948db2">  119</a></span><span class="keyword">using </span><a class="code hl_struct" href="structscran__pca_1_1SimplePcaResults.html">SubsetPcaResults</a> = <a class="code hl_struct" href="structscran__pca_1_1SimplePcaResults.html">SimplePcaResults&lt;EigenMatrix_, EigenVector_&gt;</a>;</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> SubsetVector_, <span class="keyword">typename</span> EigenMatrix_, <span class="keyword">class</span> EigenVector_&gt;</div>
+<div class="foldopen" id="foldopen00147" data-start="{" data-end="}">
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#acc2324f59cfb503374c07ab79979f103">  147</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacescran__pca.html#acc2324f59cfb503374c07ab79979f103">subset_pca</a>(</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Value_, Index_&gt;</a>&amp; mat,</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    <span class="keyword">const</span> SubsetVector_&amp; subset,</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__pca_1_1SimplePcaOptions.html">SubsetPcaOptions</a>&amp; options,</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    <a class="code hl_struct" href="structscran__pca_1_1SimplePcaResults.html">SubsetPcaResults&lt;EigenMatrix_, EigenVector_&gt;</a>&amp; output</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>) {</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    <span class="keyword">const</span> <span class="keyword">auto</span> full_size = mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>();</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    <span class="keyword">auto</span> final_center = sanisizer::create&lt;EigenVector_&gt;(full_size);</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>    <span class="keyword">auto</span> final_scale = sanisizer::create&lt;EigenVector_&gt;(full_size);</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    EigenMatrix_ final_rotation;</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span> </div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    <span class="comment">// Don&#39;t move subset into the constructor, we&#39;ll need it later.</span></div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>    <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1DelayedSubsetSortedUnique.html">tatami::DelayedSubsetSortedUnique&lt;Value_, Index_, SubsetVector_&gt;</a> sub_mat(<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a5a07f7937bfdbbe8e355cba20d7c0c3a">tatami::wrap_shared_ptr</a>(&amp;mat), subset, <span class="keyword">true</span>);</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span> </div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    simple_pca_internal(</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>        sub_mat,</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>        options,</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        output,</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        [&amp;](<span class="keyword">const</span> EigenMatrix_&amp; rhs_vectors, <span class="keyword">const</span> EigenVector_&amp; sing_vals) -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>            <span class="keyword">const</span> <span class="keyword">auto</span> inv_subset = invert_subset(mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>(), subset);</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>            <span class="comment">// Don&#39;t move inv_subset into the constructor, we&#39;ll need it later.</span></div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>            <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1DelayedSubsetSortedUnique.html">tatami::DelayedSubsetSortedUnique</a>&lt;Value_, Index_, I&lt;<span class="keyword">decltype</span>(inv_subset)&gt; &gt; inv_mat(<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a5a07f7937bfdbbe8e355cba20d7c0c3a">tatami::wrap_shared_ptr</a>(&amp;mat), inv_subset, <span class="keyword">true</span>);</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span> </div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>            <span class="keyword">const</span> <span class="keyword">auto</span> num_inv = inv_mat.nrow();</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>            <span class="keyword">auto</span> inv_center = sanisizer::create&lt;EigenVector_&gt;(num_inv);</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>            <span class="keyword">auto</span> inv_scale = sanisizer::create&lt;EigenVector_&gt;(num_inv);</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>            <span class="keywordflow">if</span> (inv_mat.sparse()) {</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>                compute_row_means_and_variances&lt;true&gt;(inv_mat, options.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaOptions.html#a64970ffcc255df6b8bec468be6407a35">num_threads</a>, inv_center, inv_scale);</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>                compute_row_means_and_variances&lt;false&gt;(inv_mat, options.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaOptions.html#a64970ffcc255df6b8bec468be6407a35">num_threads</a>, inv_center, inv_scale);</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>            }</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>            process_scale_vector(options.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaOptions.html#abfc39a6f7cd82a793e41d22641dcd0b2">scale</a>, inv_scale);</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span> </div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>            std::vector&lt;typename EigenVector_::Scalar&gt; product;</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>            std::vector&lt;typename EigenVector_::Scalar*&gt; product_ptrs;</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>            multiply_by_right_singular_vectors(</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>                inv_mat,</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>                rhs_vectors,</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>                product,</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>                product_ptrs,</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>                options.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaOptions.html#a64970ffcc255df6b8bec468be6407a35">num_threads</a></div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>            );</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span> </div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>            <span class="keyword">const</span> <span class="keyword">auto</span> rank = rhs_vectors.cols();</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>            final_rotation.resize(sanisizer::cast&lt;Eigen::Index&gt;(full_size), rank);</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>            <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(rank)&gt; r = 0; r &lt; rank; ++r) {</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>                <span class="keyword">const</span> <span class="keyword">auto</span> curshift = rhs_vectors.col(r).sum();</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>                <span class="keyword">const</span> <span class="keyword">auto</span> varexp = sing_vals.coeff(r);</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>                <span class="keyword">const</span> <span class="keyword">auto</span> optr = product_ptrs[r];</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>                <span class="keyword">const</span> <span class="keyword">auto</span> compute = [&amp;](I&lt;<span class="keyword">decltype</span>(num_inv)&gt; i) -&gt; <span class="keyword">typename</span> EigenVector_::Scalar {</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>                    <span class="keywordflow">return</span> (optr[i] - curshift * inv_center.coeff(i)) / varexp;</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>                };</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span> </div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>                <span class="keywordflow">if</span> (!options.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaOptions.html#abfc39a6f7cd82a793e41d22641dcd0b2">scale</a>) {</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>                    <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(num_inv)&gt; i = 0; i &lt; num_inv; ++i) {</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>                        final_rotation.coeffRef(inv_subset[i], r) = compute(i);</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>                    }</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>                    <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(num_inv)&gt; i = 0; i &lt; num_inv; ++i) {</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>                        final_rotation.coeffRef(inv_subset[i], r) = compute(i) / inv_scale.coeff(i);</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>                    }</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>                }</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>            }</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span> </div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>            expand_into_vector(inv_subset, inv_center, final_center);</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>            <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaOptions.html#abfc39a6f7cd82a793e41d22641dcd0b2">scale</a>) {</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>                expand_into_vector(inv_subset, inv_scale, final_scale);</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>            }</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>        }</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>    );</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span> </div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>    expand_into_vector(subset, output.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaResults.html#ace27de1e888eaf093e0544ccee7bacd0">center</a>, final_center);</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>    output.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaResults.html#ace27de1e888eaf093e0544ccee7bacd0">center</a>.swap(final_center);</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span> </div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>    <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaOptions.html#abfc39a6f7cd82a793e41d22641dcd0b2">scale</a>) {</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>        expand_into_vector(subset, output.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaResults.html#ad9f61059704fb822342fbb776cb66617">scale</a>, final_scale);</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>        output.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaResults.html#ad9f61059704fb822342fbb776cb66617">scale</a>.swap(final_scale);</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>    }</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span> </div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>    expand_into_matrix_rows(subset, output.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaResults.html#a3cc8c8bf58ca8fc62eb2bd141f4d6b73">rotation</a>, final_rotation);</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>    output.<a class="code hl_variable" href="structscran__pca_1_1SimplePcaResults.html#a3cc8c8bf58ca8fc62eb2bd141f4d6b73">rotation</a>.swap(final_rotation);</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>}</div>
 </div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> EigenMatrix_ = Eigen::MatrixXd, <span class="keyword">class</span> EigenVector_ = Eigen::VectorXd, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">class</span> SubsetVector_&gt;</div>
-<div class="foldopen" id="foldopen00244" data-start="{" data-end="}">
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#a91dc675cf9b90a727cd2edac798612ec">  244</a></span><a class="code hl_struct" href="structscran__pca_1_1SimplePcaResults.html">SubsetPcaResults&lt;EigenMatrix_, EigenVector_&gt;</a> <a class="code hl_function" href="namespacescran__pca.html#acc2324f59cfb503374c07ab79979f103">subset_pca</a>(</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Value_, Index_&gt;</a>&amp; mat,</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>    <span class="keyword">const</span> SubsetVector_&amp; subset,</div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__pca_1_1SimplePcaOptions.html">SubsetPcaOptions</a>&amp; options</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>) {</div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>    <a class="code hl_struct" href="structscran__pca_1_1SimplePcaResults.html">SubsetPcaResults&lt;EigenMatrix_, EigenVector_&gt;</a> output;</div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>    <a class="code hl_function" href="namespacescran__pca.html#acc2324f59cfb503374c07ab79979f103">subset_pca</a>(mat, subset, options, output);</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    <span class="keywordflow">return</span> output;</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>}</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span> </div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> EigenMatrix_ = Eigen::MatrixXd, <span class="keyword">class</span> EigenVector_ = Eigen::VectorXd, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">class</span> SubsetVector_&gt;</div>
+<div class="foldopen" id="foldopen00250" data-start="{" data-end="}">
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#a91dc675cf9b90a727cd2edac798612ec">  250</a></span><a class="code hl_struct" href="structscran__pca_1_1SimplePcaResults.html">SubsetPcaResults&lt;EigenMatrix_, EigenVector_&gt;</a> <a class="code hl_function" href="namespacescran__pca.html#acc2324f59cfb503374c07ab79979f103">subset_pca</a>(</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Value_, Index_&gt;</a>&amp; mat,</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>    <span class="keyword">const</span> SubsetVector_&amp; subset,</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__pca_1_1SimplePcaOptions.html">SubsetPcaOptions</a>&amp; options</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>) {</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>    <a class="code hl_struct" href="structscran__pca_1_1SimplePcaResults.html">SubsetPcaResults&lt;EigenMatrix_, EigenVector_&gt;</a> output;</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    <a class="code hl_function" href="namespacescran__pca.html#acc2324f59cfb503374c07ab79979f103">subset_pca</a>(mat, subset, options, output);</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>    <span class="keywordflow">return</span> output;</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>}</div>
 </div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span> </div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#a2b01372e07f4d3b8208007e58a6eeac5">  257</a></span><span class="keyword">typedef</span> <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions</a> <a class="code hl_typedef" href="namespacescran__pca.html#a2b01372e07f4d3b8208007e58a6eeac5">SubsetPcaBlockedOptions</a>;</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span> </div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> EigenMatrix_, <span class="keyword">class</span> EigenVector_&gt;</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#a07326f9ed36d9caa6328b1c918008a64">  265</a></span><span class="keyword">using </span><a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">SubsetPcaBlockedResults</a> = <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults&lt;EigenMatrix_, EigenVector_&gt;</a>;</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span> </div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">class</span> SubsetVector_, <span class="keyword">typename</span> Block_, <span class="keyword">typename</span> EigenMatrix_, <span class="keyword">class</span> EigenVector_&gt;</div>
-<div class="foldopen" id="foldopen00296" data-start="{" data-end="}">
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#a5b4377041bebeeae5cb461c64bbb65ea">  296</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacescran__pca.html#a5b4377041bebeeae5cb461c64bbb65ea">subset_pca_blocked</a>(</div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Value_, Index_&gt;</a>&amp; mat,</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>    <span class="keyword">const</span> SubsetVector_&amp; subset,</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>    <span class="keyword">const</span> Block_* block, </div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaOptions.html">SubsetPcaBlockedOptions</a>&amp; options,</div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>    <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">SubsetPcaBlockedResults&lt;EigenMatrix_, EigenVector_&gt;</a>&amp; output</div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>) {</div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>    <span class="keyword">const</span> <span class="keyword">auto</span> full_size = mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>();</div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>    EigenMatrix_ final_center;</div>
-<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>    <span class="keyword">auto</span> final_scale = sanisizer::create&lt;EigenVector_&gt;(full_size);</div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>    EigenMatrix_ final_rotation;</div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span> </div>
-<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>    <span class="comment">// Don&#39;t move subset into the constructor, we&#39;ll need it later.</span></div>
-<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>    <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1DelayedSubsetSortedUnique.html">tatami::DelayedSubsetSortedUnique&lt;Value_, Index_, SubsetVector_&gt;</a> sub_mat(<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a5a07f7937bfdbbe8e355cba20d7c0c3a">tatami::wrap_shared_ptr</a>(&amp;mat), subset, <span class="keyword">true</span>);</div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span> </div>
-<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>    blocked_pca_internal&lt;Value_, Index_, Block_, EigenMatrix_, EigenVector_&gt;(</div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>        sub_mat,</div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>        block,</div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>        options,</div>
-<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>        output,</div>
-<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>        [&amp;](</div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>            <span class="keyword">const</span> BlockingDetails&lt;Index_, EigenVector_&gt;&amp; block_details,</div>
-<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>            <span class="keyword">const</span> EigenMatrix_&amp; rhs_vectors,</div>
-<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>            <span class="keyword">const</span> EigenVector_&amp; sing_vals</div>
-<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>        ) -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>            final_center.resize(</div>
-<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>                sanisizer::cast&lt;I&lt;<span class="keyword">decltype</span>(final_center.rows())&gt; &gt;(block_details.block_size.size()),</div>
-<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>                sanisizer::cast&lt;I&lt;<span class="keyword">decltype</span>(final_center.cols())&gt; &gt;(full_size)</div>
-<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>            );</div>
-<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>            final_rotation.resize(</div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>                sanisizer::cast&lt;I&lt;<span class="keyword">decltype</span>(final_rotation.rows())&gt; &gt;(full_size),</div>
-<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>                rhs_vectors.cols()</div>
-<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>            ); </div>
-<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span> </div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>            <span class="keyword">auto</span> inv_subset = invert_subset(mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>(), subset);</div>
-<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>            <span class="comment">// Don&#39;t move inv_subset into the constructor, we&#39;ll need it later.</span></div>
-<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>            <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1DelayedSubsetSortedUnique.html">tatami::DelayedSubsetSortedUnique</a>&lt;Value_, Index_, I&lt;<span class="keyword">decltype</span>(inv_subset)&gt; &gt; inv_mat(<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a5a07f7937bfdbbe8e355cba20d7c0c3a">tatami::wrap_shared_ptr</a>(&amp;mat), inv_subset, <span class="keyword">true</span>);</div>
-<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span> </div>
-<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>            <span class="keyword">const</span> <span class="keyword">auto</span> num_cells = inv_mat.ncol();</div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>            <span class="keyword">const</span> <span class="keyword">auto</span> num_inv = inv_mat.nrow();</div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>            <span class="keyword">const</span> <span class="keyword">auto</span> num_blocks = block_details.block_size.size();</div>
-<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>            EigenMatrix_ inv_center(</div>
-<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>                sanisizer::cast&lt;Eigen::Index&gt;(num_blocks),</div>
-<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>                sanisizer::cast&lt;Eigen::Index&gt;(num_inv)</div>
-<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>            );</div>
-<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>            <span class="keyword">auto</span> inv_scale = sanisizer::create&lt;EigenVector_&gt;(num_inv);</div>
-<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>            compute_blockwise_mean_and_variance_tatami(inv_mat, block, block_details, inv_center, inv_scale, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a3ab64262b56d4740ae5ce4501202e857">num_threads</a>);</div>
-<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>            process_scale_vector(options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#abd67f8510e403f541b6275e34f5ad61b">scale</a>, inv_scale);</div>
-<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span> </div>
-<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>            <span class="comment">// Need to adjust the RHS singular vector matrix to mimic weighting of the input matrix.</span></div>
-<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>            <span class="keyword">const</span> EigenMatrix_* rhs_ptr = NULL;</div>
-<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>            std::optional&lt;EigenMatrix_&gt; weighted_rhs;</div>
-<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>            <span class="keywordflow">if</span> (block_details.weighted) {</div>
-<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>                weighted_rhs = rhs_vectors;</div>
-<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>                weighted_rhs-&gt;array().colwise() *= block_details.expanded_weights.array();</div>
-<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>                rhs_ptr = &amp;(*weighted_rhs);</div>
-<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>                rhs_ptr = &amp;rhs_vectors;</div>
-<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>            }</div>
-<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span> </div>
-<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>            std::vector&lt;typename EigenVector_::Scalar&gt; product;</div>
-<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>            std::vector&lt;typename EigenVector_::Scalar*&gt; out_ptrs;</div>
-<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>            multiply_by_right_singular_vectors(</div>
-<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>                inv_mat,</div>
-<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>                *rhs_ptr,</div>
-<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>                product,</div>
-<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>                out_ptrs,</div>
-<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>                options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a3ab64262b56d4740ae5ce4501202e857">num_threads</a></div>
-<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>            );</div>
-<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span> </div>
-<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>            <span class="keyword">const</span> <span class="keyword">auto</span> rank = rhs_vectors.cols();</div>
-<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>            <span class="keyword">auto</span> shift_buffer = sanisizer::create&lt;EigenVector_&gt;(num_blocks);</div>
-<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>            <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(rank)&gt; r = 0; r &lt; rank; ++r) {</div>
-<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>                std::fill(shift_buffer.begin(), shift_buffer.end(), 0);</div>
-<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>                <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(num_cells)&gt; i = 0; i &lt; num_cells; ++i) {</div>
-<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>                    shift_buffer.coeffRef(block[i]) += rhs_vectors.coeff(i, r);</div>
-<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>                }</div>
-<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span> </div>
-<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>                <span class="keyword">const</span> <span class="keyword">auto</span> varexp = sing_vals.coeff(r);</div>
-<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>                <span class="keyword">const</span> <span class="keyword">auto</span> optr = out_ptrs[r];</div>
-<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>                <span class="keyword">const</span> <span class="keyword">auto</span> compute = [&amp;](I&lt;<span class="keyword">decltype</span>(num_inv)&gt; i) -&gt; <span class="keyword">typename</span> EigenVector_::Scalar {</div>
-<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>                    <span class="keyword">typename</span> EigenVector_::Scalar curshift = 0;</div>
-<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>                    <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(num_blocks)&gt; b = 0; b &lt; num_blocks; ++b) {</div>
-<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>                        curshift += shift_buffer.coeff(b) * inv_center.coeff(b, i);</div>
-<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>                    }</div>
-<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>                    <span class="keywordflow">return</span> (optr[i] - curshift) / varexp;</div>
-<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>                };</div>
-<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span> </div>
-<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>                <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#abd67f8510e403f541b6275e34f5ad61b">scale</a>) {</div>
-<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>                    <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(num_inv)&gt; i = 0; i &lt; num_inv; ++i) {</div>
-<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>                        final_rotation.coeffRef(inv_subset[i], r) = compute(i) / inv_scale.coeff(i);</div>
-<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>                    }</div>
-<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>                } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>                    <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(num_inv)&gt; i = 0; i &lt; num_inv; ++i) {</div>
-<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>                        final_rotation.coeffRef(inv_subset[i], r) = compute(i);</div>
-<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>                    }</div>
-<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>                }</div>
-<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>            }</div>
-<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span> </div>
-<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>            expand_into_matrix_columns(inv_subset, inv_center, final_center);</div>
-<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>            <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#abd67f8510e403f541b6275e34f5ad61b">scale</a>) {</div>
-<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>                expand_into_vector(inv_subset, inv_scale, final_scale);</div>
-<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>            }</div>
-<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>        }</div>
-<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>    );</div>
-<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span> </div>
-<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>    expand_into_matrix_columns(subset, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>, final_center);</div>
-<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>    output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>.swap(final_center);</div>
-<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span> </div>
-<div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>    <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#abd67f8510e403f541b6275e34f5ad61b">scale</a>) {</div>
-<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>        expand_into_vector(subset, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scale</a>, final_scale);</div>
-<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>        output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scale</a>.swap(final_scale);</div>
-<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>    }</div>
-<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span> </div>
-<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>    expand_into_matrix_rows(subset, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">rotation</a>, final_rotation);</div>
-<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>    output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">rotation</a>.swap(final_rotation);</div>
-<div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>}</div>
-</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span> </div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#a2b01372e07f4d3b8208007e58a6eeac5">  264</a></span><span class="keyword">typedef</span> <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions</a> <a class="code hl_typedef" href="namespacescran__pca.html#a2b01372e07f4d3b8208007e58a6eeac5">SubsetPcaBlockedOptions</a>;</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span> </div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> EigenMatrix_, <span class="keyword">class</span> EigenVector_&gt;</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#a07326f9ed36d9caa6328b1c918008a64">  277</a></span><span class="keyword">using </span><a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">SubsetPcaBlockedResults</a> = <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults&lt;EigenMatrix_, EigenVector_&gt;</a>;</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span> </div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">class</span> SubsetVector_, <span class="keyword">typename</span> Block_, <span class="keyword">typename</span> EigenMatrix_, <span class="keyword">class</span> EigenVector_&gt;</div>
+<div class="foldopen" id="foldopen00308" data-start="{" data-end="}">
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#a5b4377041bebeeae5cb461c64bbb65ea">  308</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacescran__pca.html#a5b4377041bebeeae5cb461c64bbb65ea">subset_pca_blocked</a>(</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Value_, Index_&gt;</a>&amp; mat,</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>    <span class="keyword">const</span> SubsetVector_&amp; subset,</div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>    <span class="keyword">const</span> Block_* block, </div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaOptions.html">SubsetPcaBlockedOptions</a>&amp; options,</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>    <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">SubsetPcaBlockedResults&lt;EigenMatrix_, EigenVector_&gt;</a>&amp; output</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>) {</div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>    <span class="keyword">const</span> <span class="keyword">auto</span> full_size = mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>();</div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>    EigenMatrix_ final_center;</div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>    <span class="keyword">auto</span> final_scale = sanisizer::create&lt;EigenVector_&gt;(full_size);</div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>    EigenMatrix_ final_rotation;</div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span> </div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>    <span class="comment">// Don&#39;t move subset into the constructor, we&#39;ll need it later.</span></div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>    <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1DelayedSubsetSortedUnique.html">tatami::DelayedSubsetSortedUnique&lt;Value_, Index_, SubsetVector_&gt;</a> sub_mat(<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a5a07f7937bfdbbe8e355cba20d7c0c3a">tatami::wrap_shared_ptr</a>(&amp;mat), subset, <span class="keyword">true</span>);</div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span> </div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>    blocked_pca_internal&lt;Value_, Index_, Block_, EigenMatrix_, EigenVector_&gt;(</div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>        sub_mat,</div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>        block,</div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>        options,</div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>        output,</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>        [&amp;](</div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>            <span class="keyword">const</span> BlockingDetails&lt;Index_, EigenVector_&gt;&amp; block_details,</div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>            <span class="keyword">const</span> EigenMatrix_&amp; rhs_vectors,</div>
+<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>            <span class="keyword">const</span> EigenVector_&amp; sing_vals</div>
+<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>        ) -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>            final_center.resize(</div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>                sanisizer::cast&lt;I&lt;<span class="keyword">decltype</span>(final_center.rows())&gt; &gt;(block_details.block_size.size()),</div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>                sanisizer::cast&lt;I&lt;<span class="keyword">decltype</span>(final_center.cols())&gt; &gt;(full_size)</div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>            );</div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>            final_rotation.resize(</div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>                sanisizer::cast&lt;I&lt;<span class="keyword">decltype</span>(final_rotation.rows())&gt; &gt;(full_size),</div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>                rhs_vectors.cols()</div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>            ); </div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span> </div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>            <span class="keyword">auto</span> inv_subset = invert_subset(mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>(), subset);</div>
+<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>            <span class="comment">// Don&#39;t move inv_subset into the constructor, we&#39;ll need it later.</span></div>
+<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>            <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1DelayedSubsetSortedUnique.html">tatami::DelayedSubsetSortedUnique</a>&lt;Value_, Index_, I&lt;<span class="keyword">decltype</span>(inv_subset)&gt; &gt; inv_mat(<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a5a07f7937bfdbbe8e355cba20d7c0c3a">tatami::wrap_shared_ptr</a>(&amp;mat), inv_subset, <span class="keyword">true</span>);</div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span> </div>
+<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>            <span class="keyword">const</span> <span class="keyword">auto</span> num_cells = inv_mat.ncol();</div>
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>            <span class="keyword">const</span> <span class="keyword">auto</span> num_inv = inv_mat.nrow();</div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>            <span class="keyword">const</span> <span class="keyword">auto</span> num_blocks = block_details.block_size.size();</div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>            EigenMatrix_ inv_center(</div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>                sanisizer::cast&lt;Eigen::Index&gt;(num_blocks),</div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>                sanisizer::cast&lt;Eigen::Index&gt;(num_inv)</div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>            );</div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>            <span class="keyword">auto</span> inv_scale = sanisizer::create&lt;EigenVector_&gt;(num_inv);</div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>            compute_blockwise_mean_and_variance_tatami(inv_mat, block, block_details, inv_center, inv_scale, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a3ab64262b56d4740ae5ce4501202e857">num_threads</a>);</div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>            process_scale_vector(options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#abd67f8510e403f541b6275e34f5ad61b">scale</a>, inv_scale);</div>
+<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span> </div>
+<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>            <span class="comment">// Need to adjust the RHS singular vector matrix to mimic weighting of the input matrix.</span></div>
+<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>            <span class="keyword">const</span> EigenMatrix_* rhs_ptr = NULL;</div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>            std::optional&lt;EigenMatrix_&gt; weighted_rhs;</div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>            <span class="keywordflow">if</span> (block_details.weighted) {</div>
+<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>                weighted_rhs = rhs_vectors;</div>
+<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>                weighted_rhs-&gt;array().colwise() *= block_details.expanded_weights.array();</div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>                rhs_ptr = &amp;(*weighted_rhs);</div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>                rhs_ptr = &amp;rhs_vectors;</div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>            }</div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span> </div>
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>            std::vector&lt;typename EigenVector_::Scalar&gt; product;</div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>            std::vector&lt;typename EigenVector_::Scalar*&gt; out_ptrs;</div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>            multiply_by_right_singular_vectors(</div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>                inv_mat,</div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>                *rhs_ptr,</div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>                product,</div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>                out_ptrs,</div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>                options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a3ab64262b56d4740ae5ce4501202e857">num_threads</a></div>
+<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>            );</div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span> </div>
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>            <span class="keyword">const</span> <span class="keyword">auto</span> rank = rhs_vectors.cols();</div>
+<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>            <span class="keyword">auto</span> shift_buffer = sanisizer::create&lt;EigenVector_&gt;(num_blocks);</div>
+<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>            <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(rank)&gt; r = 0; r &lt; rank; ++r) {</div>
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>                std::fill(shift_buffer.begin(), shift_buffer.end(), 0);</div>
+<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>                <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(num_cells)&gt; i = 0; i &lt; num_cells; ++i) {</div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>                    shift_buffer.coeffRef(block[i]) += rhs_vectors.coeff(i, r);</div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>                }</div>
+<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span> </div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>                <span class="keyword">const</span> <span class="keyword">auto</span> varexp = sing_vals.coeff(r);</div>
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>                <span class="keyword">const</span> <span class="keyword">auto</span> optr = out_ptrs[r];</div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>                <span class="keyword">const</span> <span class="keyword">auto</span> compute = [&amp;](I&lt;<span class="keyword">decltype</span>(num_inv)&gt; i) -&gt; <span class="keyword">typename</span> EigenVector_::Scalar {</div>
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>                    <span class="keyword">typename</span> EigenVector_::Scalar curshift = 0;</div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>                    <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(num_blocks)&gt; b = 0; b &lt; num_blocks; ++b) {</div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>                        curshift += shift_buffer.coeff(b) * inv_center.coeff(b, i);</div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>                    }</div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>                    <span class="keywordflow">return</span> (optr[i] - curshift) / varexp;</div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>                };</div>
+<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span> </div>
+<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>                <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#abd67f8510e403f541b6275e34f5ad61b">scale</a>) {</div>
+<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>                    <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(num_inv)&gt; i = 0; i &lt; num_inv; ++i) {</div>
+<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>                        final_rotation.coeffRef(inv_subset[i], r) = compute(i) / inv_scale.coeff(i);</div>
+<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>                    }</div>
+<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>                } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>                    <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(num_inv)&gt; i = 0; i &lt; num_inv; ++i) {</div>
+<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>                        final_rotation.coeffRef(inv_subset[i], r) = compute(i);</div>
+<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>                    }</div>
+<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>                }</div>
+<div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>            }</div>
+<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span> </div>
+<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>            expand_into_matrix_columns(inv_subset, inv_center, final_center);</div>
+<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>            <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#abd67f8510e403f541b6275e34f5ad61b">scale</a>) {</div>
+<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>                expand_into_vector(inv_subset, inv_scale, final_scale);</div>
+<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>            }</div>
+<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>        }</div>
+<div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>    );</div>
 <div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span> </div>
-<div class="line"><a id="l00437" name="l00437"></a><span class="lineno">  437</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> EigenMatrix_ = Eigen::MatrixXd, <span class="keyword">class</span> EigenVector_ = Eigen::VectorXd, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">class</span> SubsetVector_, <span class="keyword">typename</span> Block_&gt;</div>
-<div class="foldopen" id="foldopen00438" data-start="{" data-end="}">
-<div class="line"><a id="l00438" name="l00438"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#aaa8690847b5ba26799e2a98829a1668a">  438</a></span><a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">SubsetPcaBlockedResults&lt;EigenMatrix_, EigenVector_&gt;</a>  <a class="code hl_function" href="namespacescran__pca.html#a5b4377041bebeeae5cb461c64bbb65ea">subset_pca_blocked</a>(</div>
-<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Value_, Index_&gt;</a>&amp; mat,</div>
-<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>    <span class="keyword">const</span> SubsetVector_&amp; subset,</div>
-<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>    <span class="keyword">const</span> Block_* block, </div>
-<div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaOptions.html">SubsetPcaBlockedOptions</a>&amp; options</div>
-<div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>) {</div>
-<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>    <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">SubsetPcaBlockedResults&lt;EigenMatrix_, EigenVector_&gt;</a> output;</div>
-<div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>    <a class="code hl_function" href="namespacescran__pca.html#a5b4377041bebeeae5cb461c64bbb65ea">subset_pca_blocked</a>(mat, subset, block, options, output);</div>
-<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>    <span class="keywordflow">return</span> output;</div>
-<div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>}</div>
+<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>    expand_into_matrix_columns(subset, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>, final_center);</div>
+<div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span>    output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>.swap(final_center);</div>
+<div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span> </div>
+<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span>    <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#abd67f8510e403f541b6275e34f5ad61b">scale</a>) {</div>
+<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>        expand_into_vector(subset, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scale</a>, final_scale);</div>
+<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>        output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scale</a>.swap(final_scale);</div>
+<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>    }</div>
+<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span> </div>
+<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>    expand_into_matrix_rows(subset, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">rotation</a>, final_rotation);</div>
+<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>    output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">rotation</a>.swap(final_rotation);</div>
+<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>}</div>
 </div>
-<div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span> </div>
-<div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span>}</div>
-<div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span> </div>
-<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="ablocked__pca_8hpp_html"><div class="ttname"><a href="blocked__pca_8hpp.html">blocked_pca.hpp</a></div><div class="ttdoc">Perform PCA on residuals after regressing out a blocking factor.</div></div>
+<div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span> </div>
+<div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> EigenMatrix_ = Eigen::MatrixXd, <span class="keyword">class</span> EigenVector_ = Eigen::VectorXd, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">class</span> SubsetVector_, <span class="keyword">typename</span> Block_&gt;</div>
+<div class="foldopen" id="foldopen00450" data-start="{" data-end="}">
+<div class="line"><a id="l00450" name="l00450"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#aaa8690847b5ba26799e2a98829a1668a">  450</a></span><a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">SubsetPcaBlockedResults&lt;EigenMatrix_, EigenVector_&gt;</a>  <a class="code hl_function" href="namespacescran__pca.html#a5b4377041bebeeae5cb461c64bbb65ea">subset_pca_blocked</a>(</div>
+<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Value_, Index_&gt;</a>&amp; mat,</div>
+<div class="line"><a id="l00452" name="l00452"></a><span class="lineno">  452</span>    <span class="keyword">const</span> SubsetVector_&amp; subset,</div>
+<div class="line"><a id="l00453" name="l00453"></a><span class="lineno">  453</span>    <span class="keyword">const</span> Block_* block, </div>
+<div class="line"><a id="l00454" name="l00454"></a><span class="lineno">  454</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaOptions.html">SubsetPcaBlockedOptions</a>&amp; options</div>
+<div class="line"><a id="l00455" name="l00455"></a><span class="lineno">  455</span>) {</div>
+<div class="line"><a id="l00456" name="l00456"></a><span class="lineno">  456</span>    <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">SubsetPcaBlockedResults&lt;EigenMatrix_, EigenVector_&gt;</a> output;</div>
+<div class="line"><a id="l00457" name="l00457"></a><span class="lineno">  457</span>    <a class="code hl_function" href="namespacescran__pca.html#a5b4377041bebeeae5cb461c64bbb65ea">subset_pca_blocked</a>(mat, subset, block, options, output);</div>
+<div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span>    <span class="keywordflow">return</span> output;</div>
+<div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>}</div>
+</div>
+<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span> </div>
+<div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>}</div>
+<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span> </div>
+<div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span><span class="preprocessor">#endif</span></div>
+<div class="ttc" id="ablocked__pca_8hpp_html"><div class="ttname"><a href="blocked__pca_8hpp.html">blocked_pca.hpp</a></div><div class="ttdoc">PCA on residuals after regressing out a blocking factor.</div></div>
 <div class="ttc" id="aclasstatami_1_1DelayedSubsetSortedUnique_html"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1DelayedSubsetSortedUnique.html">tatami::DelayedSubsetSortedUnique</a></div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a></div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_a1f6fec43d5bae3f831841646bc02377b"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">tatami::Matrix::ncol</a></div><div class="ttdeci">virtual Index_ ncol() const=0</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_a54fe7b4baf78069d35ff00357a1b6cc6"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">tatami::Matrix::nrow</a></div><div class="ttdeci">virtual Index_ nrow() const=0</div></div>
 <div class="ttc" id="anamespacescran__pca_html"><div class="ttname"><a href="namespacescran__pca.html">scran_pca</a></div><div class="ttdoc">Principal component analysis on single-cell data.</div></div>
-<div class="ttc" id="anamespacescran__pca_html_a2b01372e07f4d3b8208007e58a6eeac5"><div class="ttname"><a href="namespacescran__pca.html#a2b01372e07f4d3b8208007e58a6eeac5">scran_pca::SubsetPcaBlockedOptions</a></div><div class="ttdeci">BlockedPcaOptions SubsetPcaBlockedOptions</div><div class="ttdef"><b>Definition</b> subset_pca.hpp:257</div></div>
-<div class="ttc" id="anamespacescran__pca_html_a5b4377041bebeeae5cb461c64bbb65ea"><div class="ttname"><a href="namespacescran__pca.html#a5b4377041bebeeae5cb461c64bbb65ea">scran_pca::subset_pca_blocked</a></div><div class="ttdeci">void subset_pca_blocked(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const Block_ *block, const SubsetPcaBlockedOptions &amp;options, SubsetPcaBlockedResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</div><div class="ttdef"><b>Definition</b> subset_pca.hpp:296</div></div>
-<div class="ttc" id="anamespacescran__pca_html_a855000c536fb44770cb209037f1f3366"><div class="ttname"><a href="namespacescran__pca.html#a855000c536fb44770cb209037f1f3366">scran_pca::SubsetPcaOptions</a></div><div class="ttdeci">SimplePcaOptions SubsetPcaOptions</div><div class="ttdef"><b>Definition</b> subset_pca.hpp:105</div></div>
-<div class="ttc" id="anamespacescran__pca_html_acc2324f59cfb503374c07ab79979f103"><div class="ttname"><a href="namespacescran__pca.html#acc2324f59cfb503374c07ab79979f103">scran_pca::subset_pca</a></div><div class="ttdeci">void subset_pca(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const SubsetPcaOptions &amp;options, SubsetPcaResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</div><div class="ttdef"><b>Definition</b> subset_pca.hpp:141</div></div>
+<div class="ttc" id="anamespacescran__pca_html_a2b01372e07f4d3b8208007e58a6eeac5"><div class="ttname"><a href="namespacescran__pca.html#a2b01372e07f4d3b8208007e58a6eeac5">scran_pca::SubsetPcaBlockedOptions</a></div><div class="ttdeci">BlockedPcaOptions SubsetPcaBlockedOptions</div><div class="ttdef"><b>Definition</b> subset_pca.hpp:264</div></div>
+<div class="ttc" id="anamespacescran__pca_html_a5b4377041bebeeae5cb461c64bbb65ea"><div class="ttname"><a href="namespacescran__pca.html#a5b4377041bebeeae5cb461c64bbb65ea">scran_pca::subset_pca_blocked</a></div><div class="ttdeci">void subset_pca_blocked(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const Block_ *block, const SubsetPcaBlockedOptions &amp;options, SubsetPcaBlockedResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</div><div class="ttdef"><b>Definition</b> subset_pca.hpp:308</div></div>
+<div class="ttc" id="anamespacescran__pca_html_a855000c536fb44770cb209037f1f3366"><div class="ttname"><a href="namespacescran__pca.html#a855000c536fb44770cb209037f1f3366">scran_pca::SubsetPcaOptions</a></div><div class="ttdeci">SimplePcaOptions SubsetPcaOptions</div><div class="ttdef"><b>Definition</b> subset_pca.hpp:106</div></div>
+<div class="ttc" id="anamespacescran__pca_html_acc2324f59cfb503374c07ab79979f103"><div class="ttname"><a href="namespacescran__pca.html#acc2324f59cfb503374c07ab79979f103">scran_pca::subset_pca</a></div><div class="ttdeci">void subset_pca(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const SubsetPcaOptions &amp;options, SubsetPcaResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</div><div class="ttdef"><b>Definition</b> subset_pca.hpp:147</div></div>
 <div class="ttc" id="anamespacetatami_html_a5a07f7937bfdbbe8e355cba20d7c0c3a"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/namespacetatami.html#a5a07f7937bfdbbe8e355cba20d7c0c3a">tatami::wrap_shared_ptr</a></div><div class="ttdeci">std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; wrap_shared_ptr(const Matrix&lt; Value_, Index_ &gt; *const ptr)</div></div>
-<div class="ttc" id="asimple__pca_8hpp_html"><div class="ttname"><a href="simple__pca_8hpp.html">simple_pca.hpp</a></div><div class="ttdoc">Perform a simple PCA on a gene-by-cell matrix.</div></div>
-<div class="ttc" id="astructscran__pca_1_1BlockedPcaOptions_html"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaOptions.html">scran_pca::BlockedPcaOptions</a></div><div class="ttdoc">Options for blocked_pca().</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:31</div></div>
-<div class="ttc" id="astructscran__pca_1_1BlockedPcaOptions_html_a3ab64262b56d4740ae5ce4501202e857"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaOptions.html#a3ab64262b56d4740ae5ce4501202e857">scran_pca::BlockedPcaOptions::num_threads</a></div><div class="ttdeci">int num_threads</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:98</div></div>
-<div class="ttc" id="astructscran__pca_1_1BlockedPcaOptions_html_abd67f8510e403f541b6275e34f5ad61b"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaOptions.html#abd67f8510e403f541b6275e34f5ad61b">scran_pca::BlockedPcaOptions::scale</a></div><div class="ttdeci">bool scale</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:56</div></div>
-<div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html">scran_pca::BlockedPcaResults</a></div><div class="ttdoc">Results of blocked_pca().</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:828</div></div>
-<div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a442055b2a3841303ec4019394496c057"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">scran_pca::BlockedPcaResults::rotation</a></div><div class="ttdeci">EigenMatrix_ rotation</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:855</div></div>
-<div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a910c7e46f4cc53f12b9b15eea7170659"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scran_pca::BlockedPcaResults::scale</a></div><div class="ttdeci">EigenVector_ scale</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:868</div></div>
-<div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a97057089c28f6338d93081dabfad2785"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">scran_pca::BlockedPcaResults::center</a></div><div class="ttdeci">EigenMatrix_ center</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:862</div></div>
+<div class="ttc" id="asimple__pca_8hpp_html"><div class="ttname"><a href="simple__pca_8hpp.html">simple_pca.hpp</a></div><div class="ttdoc">PCA on a gene-by-cell matrix.</div></div>
+<div class="ttc" id="astructscran__pca_1_1BlockedPcaOptions_html"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaOptions.html">scran_pca::BlockedPcaOptions</a></div><div class="ttdoc">Options for blocked_pca().</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:30</div></div>
+<div class="ttc" id="astructscran__pca_1_1BlockedPcaOptions_html_a3ab64262b56d4740ae5ce4501202e857"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaOptions.html#a3ab64262b56d4740ae5ce4501202e857">scran_pca::BlockedPcaOptions::num_threads</a></div><div class="ttdeci">int num_threads</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:97</div></div>
+<div class="ttc" id="astructscran__pca_1_1BlockedPcaOptions_html_abd67f8510e403f541b6275e34f5ad61b"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaOptions.html#abd67f8510e403f541b6275e34f5ad61b">scran_pca::BlockedPcaOptions::scale</a></div><div class="ttdeci">bool scale</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:55</div></div>
+<div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html">scran_pca::BlockedPcaResults</a></div><div class="ttdoc">Results of blocked_pca().</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:827</div></div>
+<div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a442055b2a3841303ec4019394496c057"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">scran_pca::BlockedPcaResults::rotation</a></div><div class="ttdeci">EigenMatrix_ rotation</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:856</div></div>
+<div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a910c7e46f4cc53f12b9b15eea7170659"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scran_pca::BlockedPcaResults::scale</a></div><div class="ttdeci">EigenVector_ scale</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:869</div></div>
+<div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a97057089c28f6338d93081dabfad2785"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">scran_pca::BlockedPcaResults::center</a></div><div class="ttdeci">EigenMatrix_ center</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:863</div></div>
 <div class="ttc" id="astructscran__pca_1_1SimplePcaOptions_html"><div class="ttname"><a href="structscran__pca_1_1SimplePcaOptions.html">scran_pca::SimplePcaOptions</a></div><div class="ttdoc">Options for simple_pca().</div><div class="ttdef"><b>Definition</b> simple_pca.hpp:28</div></div>
 <div class="ttc" id="astructscran__pca_1_1SimplePcaOptions_html_a64970ffcc255df6b8bec468be6407a35"><div class="ttname"><a href="structscran__pca_1_1SimplePcaOptions.html#a64970ffcc255df6b8bec468be6407a35">scran_pca::SimplePcaOptions::num_threads</a></div><div class="ttdeci">int num_threads</div><div class="ttdef"><b>Definition</b> simple_pca.hpp:70</div></div>
 <div class="ttc" id="astructscran__pca_1_1SimplePcaOptions_html_abfc39a6f7cd82a793e41d22641dcd0b2"><div class="ttname"><a href="structscran__pca_1_1SimplePcaOptions.html#abfc39a6f7cd82a793e41d22641dcd0b2">scran_pca::SimplePcaOptions::scale</a></div><div class="ttdeci">bool scale</div><div class="ttdef"><b>Definition</b> simple_pca.hpp:52</div></div>
-<div class="ttc" id="astructscran__pca_1_1SimplePcaResults_html"><div class="ttname"><a href="structscran__pca_1_1SimplePcaResults.html">scran_pca::SimplePcaResults</a></div><div class="ttdoc">Results of simple_pca().</div><div class="ttdef"><b>Definition</b> simple_pca.hpp:319</div></div>
-<div class="ttc" id="astructscran__pca_1_1SimplePcaResults_html_a3cc8c8bf58ca8fc62eb2bd141f4d6b73"><div class="ttname"><a href="structscran__pca_1_1SimplePcaResults.html#a3cc8c8bf58ca8fc62eb2bd141f4d6b73">scran_pca::SimplePcaResults::rotation</a></div><div class="ttdeci">EigenMatrix_ rotation</div><div class="ttdef"><b>Definition</b> simple_pca.hpp:345</div></div>
-<div class="ttc" id="astructscran__pca_1_1SimplePcaResults_html_ace27de1e888eaf093e0544ccee7bacd0"><div class="ttname"><a href="structscran__pca_1_1SimplePcaResults.html#ace27de1e888eaf093e0544ccee7bacd0">scran_pca::SimplePcaResults::center</a></div><div class="ttdeci">EigenVector_ center</div><div class="ttdef"><b>Definition</b> simple_pca.hpp:351</div></div>
-<div class="ttc" id="astructscran__pca_1_1SimplePcaResults_html_ad9f61059704fb822342fbb776cb66617"><div class="ttname"><a href="structscran__pca_1_1SimplePcaResults.html#ad9f61059704fb822342fbb776cb66617">scran_pca::SimplePcaResults::scale</a></div><div class="ttdeci">EigenVector_ scale</div><div class="ttdef"><b>Definition</b> simple_pca.hpp:357</div></div>
+<div class="ttc" id="astructscran__pca_1_1SimplePcaResults_html"><div class="ttname"><a href="structscran__pca_1_1SimplePcaResults.html">scran_pca::SimplePcaResults</a></div><div class="ttdoc">Results of simple_pca().</div><div class="ttdef"><b>Definition</b> simple_pca.hpp:320</div></div>
+<div class="ttc" id="astructscran__pca_1_1SimplePcaResults_html_a3cc8c8bf58ca8fc62eb2bd141f4d6b73"><div class="ttname"><a href="structscran__pca_1_1SimplePcaResults.html#a3cc8c8bf58ca8fc62eb2bd141f4d6b73">scran_pca::SimplePcaResults::rotation</a></div><div class="ttdeci">EigenMatrix_ rotation</div><div class="ttdef"><b>Definition</b> simple_pca.hpp:349</div></div>
+<div class="ttc" id="astructscran__pca_1_1SimplePcaResults_html_ace27de1e888eaf093e0544ccee7bacd0"><div class="ttname"><a href="structscran__pca_1_1SimplePcaResults.html#ace27de1e888eaf093e0544ccee7bacd0">scran_pca::SimplePcaResults::center</a></div><div class="ttdeci">EigenVector_ center</div><div class="ttdef"><b>Definition</b> simple_pca.hpp:355</div></div>
+<div class="ttc" id="astructscran__pca_1_1SimplePcaResults_html_ad9f61059704fb822342fbb776cb66617"><div class="ttname"><a href="structscran__pca_1_1SimplePcaResults.html#ad9f61059704fb822342fbb776cb66617">scran_pca::SimplePcaResults::scale</a></div><div class="ttdeci">EigenVector_ scale</div><div class="ttdef"><b>Definition</b> simple_pca.hpp:361</div></div>
 <div class="ttc" id="atatami_8hpp_html"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/tatami_8hpp.html">tatami.hpp</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
