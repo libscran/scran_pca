@@ -40,6 +40,10 @@ opt.realize_matrix = false;
 auto res2 = scran_pca::simple_pca(mat, opt);
 ```
 
+Check out the [reference documentation](https://libscran.github.io/scran_pca) for more details.
+
+## With blocking
+
 In the presence of multiple blocks, we can perform the PCA on the residuals after regressing out the blocking factor.
 This ensures that the inter-block differences do not contribute to the first few PCs, instead favoring the representation of intra-block variation.
 
@@ -64,7 +68,32 @@ bopt.components_from_residuals = false;
 auto bres2 = scran_pca::blocked_pca(mat, blocks.data(), bopt);
 ```
 
-Check out the [reference documentation](https://libscran.github.io/scran_pca) for more details.
+## Feature subsets
+
+If we have only a subset of features of interest, the obvious approach is to subset the input matrix like so:
+
+```cpp
+std::vector<int> subset{ 0, 1, 10, 1000};
+auto sumat = tatami::make_DelayedSubset(mat, subset);
+auto subres = scran_pca::simple_pca(*submat, opt);
+subres.rotation; // has rows equal to subset.size()
+```
+
+This is fine for the PC scores but will only report the rotation matrix and centering/scaling vectors for the subset of features.
+If we want to, say, create a low-rank approximation of the entire input matrix, we should instead do:
+
+```cpp
+auto subres2 = scran_pca::subset_pca(mat, subset, opt);
+subres2.rotation; // has rows equal to mat.nrow()
+```
+
+This returns a rotation matrix that contains entries for all features, not just those in the subset of interest.
+We can then easily compute the low-rank approximation for any feature in our input matrix:
+
+```cpp
+int feat_of_interest = 99;
+Eigen::VectorXd approximated = subres2.rotation.row(feat_of_interest) * subres2.components;
+```
 
 ## Building projects
 
@@ -115,5 +144,6 @@ See the tags in [`extern/CMakeLists.txt`](extern/CMakeLists.txt) to find compati
 
 ### Manual
 
-If you're not using CMake, the simple approach is to just copy the files in `include/` - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's `-I`.
-This also requires the external dependencies listed in [`extern/CMakeLists.txt`](extern/CMakeLists.txt).
+If you're not using CMake, the simple approach is to just copy the files in `include/` - either directly or with Git submodules -
+and include their path during compilation with, e.g., GCC's `-I`.
+This requires the external dependencies listed in [`extern/CMakeLists.txt`](extern/CMakeLists.txt).

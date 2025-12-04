@@ -19,8 +19,7 @@
 
 /**
  * @file blocked_pca.hpp
- *
- * @brief Perform PCA on residuals after regressing out a blocking factor.
+ * @brief PCA on residuals after regressing out a blocking factor.
  */
 
 namespace scran_pca {
@@ -830,14 +829,16 @@ struct BlockedPcaResults {
      * Matrix of principal component scores.
      * By default, each row corresponds to a PC while each column corresponds to a cell in the input matrix.
      * If `BlockedPcaOptions::transpose = false`, rows are cells instead.
-     * The number of PCs is determined by `BlockedPcaOptions::number`. 
+     *
+     * The number of PCs is the smaller of `BlockedPcaOptions::number` and `min(NR, NC) - 1`,
+     * where `NR` and `NC` are the number of rows and columns, respectively, of the input matrix.
      */
     EigenMatrix_ components;
 
     /**
      * Variance explained by each PC.
      * Each entry corresponds to a column in `components` and is in decreasing order.
-     * The length of the vector is determined by `BlockedPcaOptions::number`. 
+     * The number of PCs is as described for `BlockedPcaResults::components`.
      */
     EigenVector_ variance_explained;
 
@@ -850,7 +851,7 @@ struct BlockedPcaResults {
     /**
      * Rotation matrix.
      * Each row corresponds to a gene while each column corresponds to a PC.
-     * The number of PCs is determined by `BlockedPcaOptions::number`. 
+     * The number of PCs is as described for `BlockedPcaResults::components`.
      */
     EigenMatrix_ rotation;
 
@@ -1081,7 +1082,9 @@ void blocked_pca_internal(
  */
 
 /**
- * As discussed in `simple_pca()`, we would like to extract the top principal components from a single-cell dataset for downstream cell-based procedures like clustering.
+ * Principal components analysis on residuals, after regressing out a blocking factor across cells.
+ *
+ * As discussed in `simple_pca()`, we extract the top PCs from a single-cell dataset for downstream cell-based procedures like clustering.
  * In the presence of a blocking factor (e.g., batches, samples), we want to ensure that the PCA is not driven by uninteresting differences between blocks of cells.
  * To achieve this, `blocked_pca()` centers the expression of each gene in each blocking level and uses the residuals for PCA.
  * This means that the gene-gene covariance matrix will only contain variation within each batch, 
@@ -1098,10 +1101,10 @@ void blocked_pca_internal(
  *   This approach ensures that inter-block differences do not contribute to the PCA but does not attempt to explicitly remove them.
  * 
  * In complex datasets, the assumptions mentioned above for `true` do not hold,
- * and more sophisticated batch correction methods like [MNN correction](https://github.com/LTLA/CppMnnCorrect) are required.
- * Some of these methods accept a low-dimensional embedding of cells that can be created as described above with `false`. 
+ * and more sophisticated batch correction methods like [MNN correction](https://github.com/libscran/mnncorrect) are required.
+ * Some of these methods accept a low-dimensional embedding of cells that can be created as described above with `BlockedPcaOptions::components_from_residuals = false`. 
  *
- * `blocked_pca()` will adjust the contribution from blocks of cells so that each block contributes more or less equally to the PCA.
+ * `blocked_pca()` will weight the contribution from blocks of cells so that each block contributes more or less equally to the PCA.
  * This ensures that the definition of the axes of maximum variance are not dominated by the largest block, potentially masking interesting variation in the smaller blocks.
  * `blocked_pca()` scales the expression values for each block so that each "sufficiently large" block contributes equally to the gene-gene covariance matrix and thus the rotation vectors.
  * (See `BlockedPcaOptions::block_weight_policy` for the choice of weighting scheme.)

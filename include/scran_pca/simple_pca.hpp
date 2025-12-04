@@ -17,7 +17,7 @@
 
 /**
  * @file simple_pca.hpp
- * @brief Perform a simple PCA on a gene-by-cell matrix.
+ * @brief PCA on a gene-by-cell matrix.
  */
 
 namespace scran_pca {
@@ -321,13 +321,16 @@ struct SimplePcaResults {
      * Matrix of principal component scores.
      * By default, each row corresponds to a PC while each column corresponds to a cell in the input matrix.
      * If `SimplePcaOptions::transpose = false`, rows are cells instead.
-     * The number of PCs is determined by `SimplePcaOptions::number`. 
+     *
+     * The number of PCs is the smaller of `SimplePcaOptions::number` and `min(NR, NC) - 1`,
+     * where `NR` and `NC` are the number of rows and columns, respectively, of the input matrix.
      */
     EigenMatrix_ components;
 
     /**
      * Variance explained by each PC.
      * Each entry corresponds to a column in `components` and is in decreasing order.
+     * The number of PCs is as described for `SimplePcaResults::components`.
      */
     EigenVector_ variance_explained;
 
@@ -340,7 +343,7 @@ struct SimplePcaResults {
     /**
      * Rotation matrix. 
      * Each row corresponds to a feature while each column corresponds to a PC.
-     * The number of PCs is determined by `SimplePcaOptions::number`.
+     * The number of PCs is as described for `SimplePcaResults::components`.
      */
     EigenMatrix_ rotation;
 

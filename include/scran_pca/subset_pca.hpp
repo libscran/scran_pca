@@ -101,11 +101,17 @@ void expand_into_matrix_columns(const std::vector<Index_>& subset, const EigenMa
 
 /**
  * Options for `subset_pca()`.
+ * These are identical to those for `simple_pca()`.
  */
 typedef SimplePcaOptions SubsetPcaOptions;
 
 /**
  * Results of `subset_pca()`.
+ *
+ * These are mostly the same as the results for `simple_pca()`.
+ * The only difference is that the number of PCs is the smaller of `SimplePcaOptions::number` and `min(subset.size(), NC) - 1`,
+ * where `subset` is the subset vector and `NC` is the number of columns of the input matrix.
+ *
  * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
  * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
  */
@@ -253,11 +259,17 @@ SubsetPcaResults<EigenMatrix_, EigenVector_> subset_pca(
 
 /**
  * Options for `subset_pca_blocked()`.
+ * These are identical to the options for `blocked_pca()`.
  */
 typedef BlockedPcaOptions SubsetPcaBlockedOptions;
 
 /**
  * Results of `subset_pca_blocked()`.
+ *
+ * These are mostly the same as the results for `blocked_pca()`.
+ * The only difference is that the number of PCs is the smaller of `BlockedPcaOptions::number` and `min(subset.size(), NC) - 1`,
+ * where `subset` is the subset vector and `NC` is the number of columns of the input matrix.
+ *
  * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
  * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
  */
