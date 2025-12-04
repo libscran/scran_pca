@@ -113,12 +113,13 @@ template<typename EigenMatrix_, class EigenVector_>
 using SubsetPcaResults = SimplePcaResults<EigenMatrix_, EigenVector_>;
 
 /**
- * Principal components analysis on a subset of features in the input matrix.
+ * Principal components analysis on a subset of features. 
  *
- * This function performs PCA on a subset of interesting features, e.g., from highly variable genes.
- * The results are almost equivalent to subsetting the input matrix before running `simple_pca()`.
+ * This function performs PCA on a subset of features (e.g., from highly variable genes) in the input matrix.
+ * The results are almost equivalent to subsetting the input matrix and then running `simple_pca()`.
  * However, `subset_pca()` will also populate the rotation matrix, centering vector and scaling vector for features outside of the subset.
  * For the rotation matrix, this is done by projecting the unused features into the low-dimensional space defined by the PCs.
+ * The goal is to allow callers to create a low-rank approximation of the entire input matrix, even if only a subset of the features are relevant to the PCA.
  *
  * @tparam Value_ Type of the matrix data.
  * @tparam Index_ Integer type for the indices.
@@ -267,9 +268,10 @@ using SubsetPcaBlockedResults = BlockedPcaResults<EigenMatrix_, EigenVector_>;
  * Principal components analysis on a subset of features in the input matrix, with blocking.
  *
  * This function performs PCA on a subset of interesting features (e.g., from highly variable genes) while accounting for a blocking factor.
- * The results are almost equivalent to subsetting the input matrix before running `blocked_pca()`.
+ * The results are almost equivalent to subsetting the input matrix and then running `blocked_pca()`.
  * However, `subset_pca_blocked()` will also populate the rotation matrix, centering matrix and scaling vector for features outside of the subset.
  * For the rotation matrix, this is done by projecting the unused features into the low-dimensional space defined by the top PCs.
+ * The goal is to allow callers to create a low-rank approximation of the entire input matrix, even if only a subset of the features are relevant to the PCA.
  *
  * @tparam Value_ Type of the matrix data.
  * @tparam Index_ Integer type for the indices.
