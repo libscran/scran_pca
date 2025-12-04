@@ -254,16 +254,17 @@ std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_dense_matrix
     if (options.realize_matrix) {
         // Create a matrix with genes in columns.
         const Index_ ncells = mat.ncol();
-        auto emat = std::make_unique<Eigen::MatrixXd>(
+        auto emat = std::make_unique<EigenMatrix_>(
             sanisizer::cast<I<decltype(std::declval<EigenMatrix_>().rows())> >(ncells),
             sanisizer::cast<I<decltype(std::declval<EigenMatrix_>().cols())> >(ngenes)
         );
 
-        // If emat is row-major, we want to fill it with columns of 'mat', so row_major = false.
-        // If emat is column-major, we want to fill it with rows of 'mat', so row_major = true.
+        // By default, Eigen's matrices are column major. In such cases, because we want to do
+        // a transposition, we pretend it's row major during the conversion.
+        static_assert(!EigenMatrix_::IsRowMajor);
         tatami::convert_to_dense(
             mat,
-            /* row_major = */ !(emat->IsRowMajor),
+            /* row_major = */ true,
             emat->data(),
             [&]{
                 tatami::ConvertToDenseOptions opt;
