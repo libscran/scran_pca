@@ -24,14 +24,15 @@ namespace scran_pca {
 /**
  * @cond
  */
-template<typename Index_>
-std::vector<Index_> invert_subset(const Index_ total, const std::vector<Index_>& subset) {
+template<typename Index_, class SubsetVector_>
+std::vector<Index_> invert_subset(const Index_ total, const SubsetVector_& subset) {
     std::vector<Index_> output;
     output.reserve(total - subset.size());
-    auto ptr = subset.begin(), end = subset.end();
+    const auto end = subset.size(); 
+    I<decltype(end)> pos = 0;
     for (Index_ i = 0; i < total; ++i) {
-        if (ptr != end && *ptr == i) {
-            ++ptr;
+        if (pos != end && sanisizer::is_equal(subset[pos], i)) {
+            ++pos;
             continue;
         }
         output.push_back(i);

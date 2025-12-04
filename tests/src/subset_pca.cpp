@@ -8,6 +8,113 @@
 
 #include "scran_pca/subset_pca.hpp"
 
+TEST(InvertSubset, Basic) {
+    {
+        std::vector<int> sub{ 0, 1, 4 };
+        auto out = scran_pca::invert_subset(5, sub);
+        std::vector<int> expected { 2, 3 };
+        EXPECT_EQ(out, expected);
+    }
+
+    {
+        std::vector<unsigned> sub{ 2, 3 };
+        auto out = scran_pca::invert_subset(5, sub);
+        std::vector<int> expected { 0, 1, 4 };
+        EXPECT_EQ(out, expected);
+    }
+
+    {
+        std::vector<unsigned> sub;
+        auto out = scran_pca::invert_subset(5, sub);
+        std::vector<int> expected { 0, 1, 2, 3, 4 };
+        EXPECT_EQ(out, expected);
+    }
+
+    {
+        std::vector<int> sub{0, 1, 2, 3, 4};
+        auto out = scran_pca::invert_subset(5, sub);
+        EXPECT_TRUE(out.empty());
+    }
+}
+
+TEST(Expand, Vector) {
+    Eigen::VectorXd foo(10);
+    for (int i = 0; i < 10; ++i) {
+        foo.coeffRef(i) = (i + 1) * 10;
+    }
+
+    std::vector<int> sub{ 1, 3, 7, 8 };
+    Eigen::VectorXd bar(sub.size());
+    for (int i = 0; i < 4; ++i) {
+        bar[i] = (sub[i] + 1) * 10;
+    }
+
+    auto copy = foo;
+    for (auto s : sub) {
+        copy.coeffRef(s) = -100;
+    }
+    scran_pca::expand_into_vector(sub, bar, copy);
+    expect_equal_vectors(copy, foo);
+}
+
+TEST(Expand, MatrixRow) {
+    Eigen::MatrixXd foo(10, 3);
+    for (int r = 0; r < 10; ++r) {
+        int val = (r + 1) * 10;
+        for (int c = 0; c < 3; ++c) {
+            foo.coeffRef(r, c) = val + c;
+        }
+    }
+
+    std::vector<int> sub{ 2, 5, 6, 9 };
+    Eigen::MatrixXd bar(sub.size(), 3);
+    for (int i = 0; i < 4; ++i) {
+        int val = (sub[i] + 1) * 10;
+        for (int c = 0; c < 3; ++c) {
+            bar.coeffRef(i, c) = val + c;
+        }
+    }
+
+    auto copy = foo;
+    for (auto s : sub) {
+        for (int c = 0; c < 3; ++c) {
+            copy.coeffRef(s, c) = -100;
+        }
+    }
+    scran_pca::expand_into_matrix_rows(sub, bar, copy);
+    expect_equal_matrices(copy, foo);
+}
+
+TEST(Expand, MatrixColumn) {
+    Eigen::MatrixXd foo(3, 10);
+    for (int c = 0; c < 10; ++c) {
+        int val = (c + 1) * 10;
+        for (int r = 0; r < 3; ++r) {
+            foo.coeffRef(r, c) = val + r;
+        }
+    }
+
+    std::vector<int> sub{ 0, 1, 3, 7, 8 };
+    Eigen::MatrixXd bar(3, sub.size());
+    for (int i = 0; i < 5; ++i) {
+        int val = (sub[i] + 1) * 10;
+        for (int r = 0; r < 3; ++r) {
+            bar.coeffRef(r, i) = val + r;
+        }
+    }
+
+    auto copy = foo;
+    for (auto s : sub) {
+        for (int r = 0; r < 3; ++r) {
+            copy.coeffRef(r, s) = -100;
+        }
+    }
+    scran_pca::expand_into_matrix_columns(sub, bar, copy);
+    expect_equal_matrices(copy, foo);
+}
+
+/**************************************************************/
+
 class SubsetPcaTestCore {
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_row, dense_column, sparse_row, sparse_column;
@@ -55,7 +162,7 @@ TEST_P(SubsetPcaBasicTest, Basic) {
     opt.num_threads = threads;
     // We tightened the tolerances so that the rotation matrix comparisons are more accurate,
     // as otherwise the rotation matrix is not quite equal to the matrix * components product.
-    opt.irlba_options.convergence_tolerance = 1e-10; 
+    opt.irlba_options.convergence_tolerance = 1e-12; 
     auto ref = scran_pca::simple_pca(*dense_row, opt);
 
     const auto NR = dense_row->nrow();
@@ -138,7 +245,7 @@ TEST_P(SubsetPcaBlockedTest, Basic) {
 
     // We tightened the tolerances so that the rotation matrix comparisons are more accurate,
     // as otherwise the rotation matrix is not quite equal to the matrix * components product.
-    opt.irlba_options.convergence_tolerance = 1e-10; 
+    opt.irlba_options.convergence_tolerance = 1e-12; 
     auto ref = scran_pca::blocked_pca(*dense_row, block.data(), opt);
 
     const auto NR = dense_row->nrow();
