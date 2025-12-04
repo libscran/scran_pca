@@ -3,6 +3,7 @@
 
 #include "simple_pca.hpp"
 #include "blocked_pca.hpp"
+#include "subset_pca.hpp"
 
 /**
  * @file scran_pca.hpp

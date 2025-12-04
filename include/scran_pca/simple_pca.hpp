@@ -4,7 +4,7 @@
 #include <vector>
 #include <type_traits>
 #include <algorithm>
-#include <optional>
+#include <memory>
 
 #include "tatami/tatami.hpp"
 #include "tatami_stats/tatami_stats.hpp"

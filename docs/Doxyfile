@@ -920,6 +920,7 @@ WARN_LOGFILE           =
 INPUT                  = ../include/scran_pca/scran_pca.hpp \
                          ../include/scran_pca/simple_pca.hpp \
                          ../include/scran_pca/blocked_pca.hpp \
+                         ../include/scran_pca/subset_pca.hpp \
                          ../README.md
 
 # This tag can be used to specify the character encoding of the source files

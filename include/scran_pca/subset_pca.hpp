@@ -2,13 +2,22 @@
 #define SCRAN_PCA_SUBSET_HPP
 
 #include <vector>
+#include <optional>
+#include <cstddef>
 
 #include "simple_pca.hpp"
 #include "blocked_pca.hpp"
 #include "utils.hpp"
 
 #include "sanisizer/sanisizer.hpp"
+#include "tatami_mult/tatami_mult.hpp"
 #include "tatami/tatami.hpp"
+#include "Eigen/Dense"
+
+/**
+ * @file subset_pca.hpp
+ * @brief PCA on a subset of features.
+ */
 
 namespace scran_pca {
 
@@ -89,15 +98,47 @@ void expand_into_matrix_columns(const std::vector<Index_>& subset, const EigenMa
  * @endcond
  */
 
+/**
+ * Options for `subset_pca()`.
+ */
 typedef SimplePcaOptions SubsetPcaOptions;
 
+/**
+ * Results of `subset_pca()`.
+ * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
+ * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
+ */
 template<typename EigenMatrix_, class EigenVector_>
 using SubsetPcaResults = SimplePcaResults<EigenMatrix_, EigenVector_>;
 
-template<typename Value_, typename Index_, typename EigenMatrix_, class EigenVector_>
+/**
+ * Principal components analysis on a subset of features in the input matrix.
+ *
+ * This function performs PCA on a subset of interesting features, e.g., from highly variable genes.
+ * The results are almost equivalent to subsetting the input matrix before running `simple_pca()`.
+ * However, `subset_pca()` will also populate the rotation matrix, centering vector and scaling vector for features outside of the subset.
+ * For the rotation matrix, this is done by projecting the unused features into the low-dimensional space defined by the PCs.
+ *
+ * @tparam Value_ Type of the matrix data.
+ * @tparam Index_ Integer type for the indices.
+ * @tparam SubsetVector_ Container of the row indices.
+ * Should support `[]`, `size()` and copy construction. 
+ * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
+ * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
+ *
+ * @param[in] mat The input matrix.
+ * Columns should contain cells while rows should contain genes.
+ * Matrix entries are typically log-expression values.
+ * @param subset Vector of indices for rows to be used in the PCA.
+ * This should be sorted and unique.
+ * @param options Further options.
+ * @param[out] output On output, the results of the PCA on `mat`.
+ * This can be re-used across multiple calls to `subset_pca()`. 
+ */
+template<typename Value_, typename Index_, typename SubsetVector_, typename EigenMatrix_, class EigenVector_>
 void subset_pca(
     const tatami::Matrix<Value_, Index_>& mat,
-    const std::vector<Index_>& subset,
+    const SubsetVector_& subset,
     const SubsetPcaOptions& options,
     SubsetPcaResults<EigenMatrix_, EigenVector_>& output
 ) {
@@ -106,29 +147,32 @@ void subset_pca(
     auto final_scale = sanisizer::create<EigenVector_>(full_size);
     EigenMatrix_ final_rotation;
 
-    auto sub_mat = tatami::make_DelayedSubset(tatami::wrap_shared_ptr(&mat), subset, true); // don't move subset, we'll need it later.
+    // Don't move subset into the constructor, we'll need it later.
+    tatami::DelayedSubsetSortedUnique<Value_, Index_, SubsetVector_> sub_mat(tatami::wrap_shared_ptr(&mat), subset, true);
+
     simple_pca_internal(
-        *sub_mat,
+        sub_mat,
         options,
         output,
         [&](const EigenMatrix_& rhs_vectors, const EigenVector_& sing_vals) -> void {
-            auto inv_subset = invert_subset(mat.nrow(), subset);
-            auto inv_mat = tatami::make_DelayedSubset(tatami::wrap_shared_ptr(&mat), inv_subset, true); // don't move inv_subset, we'll need it later.
+            const auto inv_subset = invert_subset(mat.nrow(), subset);
+            // Don't move inv_subset into the constructor, we'll need it later.
+            tatami::DelayedSubsetSortedUnique<Value_, Index_, I<decltype(inv_subset)> > inv_mat(tatami::wrap_shared_ptr(&mat), inv_subset, true);
 
-            const auto num_inv = inv_mat->nrow();
+            const auto num_inv = inv_mat.nrow();
             auto inv_center = sanisizer::create<EigenVector_>(num_inv);
             auto inv_scale = sanisizer::create<EigenVector_>(num_inv);
-            if (inv_mat->sparse()) {
-                compute_row_means_and_variances<true>(*inv_mat, options.num_threads, inv_center, inv_scale);
+            if (inv_mat.sparse()) {
+                compute_row_means_and_variances<true>(inv_mat, options.num_threads, inv_center, inv_scale);
             } else {
-                compute_row_means_and_variances<false>(*inv_mat, options.num_threads, inv_center, inv_scale);
+                compute_row_means_and_variances<false>(inv_mat, options.num_threads, inv_center, inv_scale);
             }
             process_scale_vector(options.scale, inv_scale);
 
             std::vector<typename EigenVector_::Scalar> product;
             std::vector<typename EigenVector_::Scalar*> product_ptrs;
             multiply_by_right_singular_vectors(
-                *inv_mat,
+                inv_mat,
                 rhs_vectors,
                 product,
                 product_ptrs,
@@ -175,10 +219,29 @@ void subset_pca(
     output.rotation.swap(final_rotation);
 }
 
-template<typename EigenMatrix_ = Eigen::MatrixXd, class EigenVector_ = Eigen::VectorXd, typename Value_, typename Index_>
+/**
+ * Overload of `subset_pca()` that allocates memory for the output.
+ *
+ * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
+ * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
+ * @tparam Value_ Type of the matrix data.
+ * @tparam Index_ Integer type for the indices.
+ * @tparam SubsetVector_ Container of the row indices.
+ * Should support `[]`, `size()` and copy construction. 
+ *
+ * @param[in] mat The input matrix.
+ * Columns should contain cells while rows should contain genes.
+ * Matrix entries are typically log-expression values.
+ * @param subset Vector of indices for rows to be used in the PCA.
+ * This should be sorted and unique.
+ * @param options Further options.
+ *
+ * @return Results of the subsetted PCA.
+ */
+template<typename EigenMatrix_ = Eigen::MatrixXd, class EigenVector_ = Eigen::VectorXd, typename Value_, typename Index_, class SubsetVector_>
 SubsetPcaResults<EigenMatrix_, EigenVector_> subset_pca(
     const tatami::Matrix<Value_, Index_>& mat,
-    const std::vector<Index_>& subset,
+    const SubsetVector_& subset,
     const SubsetPcaOptions& options
 ) {
     SubsetPcaResults<EigenMatrix_, EigenVector_> output;
@@ -186,15 +249,50 @@ SubsetPcaResults<EigenMatrix_, EigenVector_> subset_pca(
     return output;
 }
 
+/**
+ * Options for `subset_pca_blocked()`.
+ */
 typedef BlockedPcaOptions SubsetPcaBlockedOptions;
 
+/**
+ * Results of `subset_pca_blocked()`.
+ * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
+ * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
+ */
 template<typename EigenMatrix_, class EigenVector_>
 using SubsetPcaBlockedResults = BlockedPcaResults<EigenMatrix_, EigenVector_>;
 
-template<typename Value_, typename Index_, typename Block_, typename EigenMatrix_, class EigenVector_>
+/**
+ * Principal components analysis on a subset of features in the input matrix, with blocking.
+ *
+ * This function performs PCA on a subset of interesting features (e.g., from highly variable genes) while accounting for a blocking factor.
+ * The results are almost equivalent to subsetting the input matrix before running `blocked_pca()`.
+ * However, `subset_pca_blocked()` will also populate the rotation matrix, centering matrix and scaling vector for features outside of the subset.
+ * For the rotation matrix, this is done by projecting the unused features into the low-dimensional space defined by the top PCs.
+ *
+ * @tparam Value_ Type of the matrix data.
+ * @tparam Index_ Integer type for the indices.
+ * @tparam SubsetVector_ Container of the row indices.
+ * Should support `[]`, `size()` and copy construction. 
+ * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
+ * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
+ *
+ * @param[in] mat The input matrix.
+ * Columns should contain cells while rows should contain genes.
+ * Matrix entries are typically log-expression values.
+ * @param subset Vector of indices for rows to be used in the PCA.
+ * This should be sorted and unique.
+ * @param[in] block Pointer to an array of length equal to the number of cells, 
+ * containing the block assignment for each cell. 
+ * Each assignment should be an integer in \f$[0, N)\f$ where \f$N\f$ is the number of blocks.
+ * @param options Further options.
+ * @param[out] output On output, the results of the PCA on `mat`.
+ * This can be re-used across multiple calls to `subset_pca_blocked()`. 
+ */
+template<typename Value_, typename Index_, class SubsetVector_, typename Block_, typename EigenMatrix_, class EigenVector_>
 void subset_pca_blocked(
     const tatami::Matrix<Value_, Index_>& mat,
-    const std::vector<Index_>& subset,
+    const SubsetVector_& subset,
     const Block_* block, 
     const SubsetPcaBlockedOptions& options,
     SubsetPcaBlockedResults<EigenMatrix_, EigenVector_>& output
@@ -204,9 +302,11 @@ void subset_pca_blocked(
     auto final_scale = sanisizer::create<EigenVector_>(full_size);
     EigenMatrix_ final_rotation;
 
-    auto submat = tatami::make_DelayedSubset(tatami::wrap_shared_ptr(&mat), subset, true); // don't move the subset, we'll need it later.
+    // Don't move subset into the constructor, we'll need it later.
+    tatami::DelayedSubsetSortedUnique<Value_, Index_, SubsetVector_> sub_mat(tatami::wrap_shared_ptr(&mat), subset, true);
+
     blocked_pca_internal<Value_, Index_, Block_, EigenMatrix_, EigenVector_>(
-        *submat,
+        sub_mat,
         block,
         options,
         output,
@@ -215,7 +315,6 @@ void subset_pca_blocked(
             const EigenMatrix_& rhs_vectors,
             const EigenVector_& sing_vals
         ) -> void {
-
             final_center.resize(
                 sanisizer::cast<I<decltype(final_center.rows())> >(block_details.block_size.size()),
                 sanisizer::cast<I<decltype(final_center.cols())> >(full_size)
@@ -226,17 +325,18 @@ void subset_pca_blocked(
             ); 
 
             auto inv_subset = invert_subset(mat.nrow(), subset);
-            auto inv_mat = tatami::make_DelayedSubset(tatami::wrap_shared_ptr(&mat), inv_subset, true); // don't move inv_subset, we'll need it later.
+            // Don't move inv_subset into the constructor, we'll need it later.
+            tatami::DelayedSubsetSortedUnique<Value_, Index_, I<decltype(inv_subset)> > inv_mat(tatami::wrap_shared_ptr(&mat), inv_subset, true);
 
-            const auto num_cells = inv_mat->ncol();
-            const auto num_inv = inv_mat->nrow();
+            const auto num_cells = inv_mat.ncol();
+            const auto num_inv = inv_mat.nrow();
             const auto num_blocks = block_details.block_size.size();
             EigenMatrix_ inv_center(
                 sanisizer::cast<Eigen::Index>(num_blocks),
                 sanisizer::cast<Eigen::Index>(num_inv)
             );
             auto inv_scale = sanisizer::create<EigenVector_>(num_inv);
-            compute_blockwise_mean_and_variance_tatami(*inv_mat, block, block_details, inv_center, inv_scale, options.num_threads);
+            compute_blockwise_mean_and_variance_tatami(inv_mat, block, block_details, inv_center, inv_scale, options.num_threads);
             process_scale_vector(options.scale, inv_scale);
 
             // Need to adjust the RHS singular vector matrix to mimic weighting of the input matrix.
@@ -253,7 +353,7 @@ void subset_pca_blocked(
             std::vector<typename EigenVector_::Scalar> product;
             std::vector<typename EigenVector_::Scalar*> out_ptrs;
             multiply_by_right_singular_vectors(
-                *inv_mat,
+                inv_mat,
                 *rhs_ptr,
                 product,
                 out_ptrs,
@@ -308,10 +408,33 @@ void subset_pca_blocked(
     output.rotation.swap(final_rotation);
 }
 
-template<typename EigenMatrix_ = Eigen::MatrixXd, class EigenVector_ = Eigen::VectorXd, typename Value_, typename Index_, typename Block_>
+/**
+ * Overload of `subset_pca_blocked()` that allocates memory for the output.
+ *
+ * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
+ * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
+ * @tparam Value_ Type of the matrix data.
+ * @tparam Index_ Integer type for the indices.
+ * @tparam SubsetVector_ Container of the row indices.
+ * Should support `[]`, `size()` and copy construction. 
+ * @tparam Block_ Integer type for the blocking factor.
+ *
+ * @param[in] mat Input matrix.
+ * Columns should contain cells while rows should contain genes.
+ * Matrix entries are typically log-expression values.
+ * @param subset Vector of indices for rows to be used in the PCA.
+ * This should be sorted and unique.
+ * @param[in] block Pointer to an array of length equal to the number of cells, 
+ * containing the block assignment for each cell. 
+ * Each assignment should be an integer in \f$[0, N)\f$ where \f$N\f$ is the number of blocks.
+ * @param options Further options.
+ *
+ * @return Results of the blocked and subsetted PCA. 
+ */
+template<typename EigenMatrix_ = Eigen::MatrixXd, class EigenVector_ = Eigen::VectorXd, typename Value_, typename Index_, class SubsetVector_, typename Block_>
 SubsetPcaBlockedResults<EigenMatrix_, EigenVector_>  subset_pca_blocked(
     const tatami::Matrix<Value_, Index_>& mat,
-    const std::vector<Index_>& subset,
+    const SubsetVector_& subset,
     const Block_* block, 
     const SubsetPcaBlockedOptions& options
 ) {

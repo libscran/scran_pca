@@ -23,7 +23,7 @@ protected:
             sparams.density = 0.1;
             sparams.lower = -10;
             sparams.upper = 10;
-            sparams.seed = 69;
+            sparams.seed = 2025;
             return sparams;
         }());
 
@@ -192,3 +192,32 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::Values(1, 3) // number of threads
     )
 );
+
+/**************************************************************/
+
+class SubsetPcaErrorTest : public ::testing::Test, public SubsetPcaTestCore {
+protected:
+    static void SetUpTestSuite() {
+        assemble();
+    }
+};
+
+TEST_F(SubsetPcaErrorTest, Basic) {
+    std::vector<int> first_sub(2);
+    first_sub[0] = 1;
+
+    scran_tests::expect_error(
+        [&]() -> void {
+            scran_pca::subset_pca(*dense_row, first_sub, scran_pca::SubsetPcaOptions{});
+        },
+        "sorted"
+    ); 
+
+    auto block = generate_blocks(dense_row->ncol(), 2);
+    scran_tests::expect_error(
+        [&]() -> void {
+            scran_pca::subset_pca_blocked(*dense_row, first_sub, block.data(), scran_pca::SubsetPcaBlockedOptions{});
+        },
+        "sorted"
+    ); 
+}
