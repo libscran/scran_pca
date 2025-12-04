@@ -10,6 +10,8 @@ var searchData=
   ['simplepcaresults_7',['SimplePcaResults',['../structscran__pca_1_1SimplePcaResults.html',1,'scran_pca']]],
   ['simplerealizeworkspace_8',['SimpleRealizeWorkspace',['https://ltla.github.io/CppIrlba/classirlba_1_1SimpleRealizeWorkspace.html',1,'irlba']]],
   ['simpleworkspace_9',['SimpleWorkspace',['https://ltla.github.io/CppIrlba/classirlba_1_1SimpleWorkspace.html',1,'irlba']]],
-  ['somenumericarray_10',['SomeNumericArray',['https://tatami-inc.github.io/tatami/classtatami_1_1SomeNumericArray.html',1,'tatami']]],
-  ['sparserange_11',['SparseRange',['https://tatami-inc.github.io/tatami/structtatami_1_1SparseRange.html',1,'tatami']]]
+  ['singlequantile_10',['SingleQuantile',['https://libscran.github.io/scran_blocks/classscran__blocks_1_1SingleQuantile.html',1,'scran_blocks']]],
+  ['singlequantilevariable_11',['SingleQuantileVariable',['https://libscran.github.io/scran_blocks/classscran__blocks_1_1SingleQuantileVariable.html',1,'scran_blocks']]],
+  ['somenumericarray_12',['SomeNumericArray',['https://tatami-inc.github.io/tatami/classtatami_1_1SomeNumericArray.html',1,'tatami']]],
+  ['sparserange_13',['SparseRange',['https://tatami-inc.github.io/tatami/structtatami_1_1SparseRange.html',1,'tatami']]]
 ];

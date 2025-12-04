@@ -9,5 +9,6 @@ var searchData=
   ['sparse_2ehpp_6',['sparse.hpp',['https://ltla.github.io/CppIrlba/sparse_8hpp.html',1,'']]],
   ['sparserange_2ehpp_7',['SparseRange.hpp',['https://tatami-inc.github.io/tatami/SparseRange_8hpp.html',1,'']]],
   ['sparsifiedwrapper_2ehpp_8',['SparsifiedWrapper.hpp',['https://tatami-inc.github.io/tatami/SparsifiedWrapper_8hpp.html',1,'']]],
-  ['substitute_5fhelpers_2ehpp_9',['substitute_helpers.hpp',['https://tatami-inc.github.io/tatami/substitute__helpers_8hpp.html',1,'']]]
+  ['subset_5fpca_2ehpp_9',['subset_pca.hpp',['../subset__pca_8hpp.html',1,'']]],
+  ['substitute_5fhelpers_2ehpp_10',['substitute_helpers.hpp',['https://tatami-inc.github.io/tatami/substitute__helpers_8hpp.html',1,'']]]
 ];
