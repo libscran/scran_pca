@@ -66,16 +66,16 @@ void multiply_by_right_singular_vectors(
     tatami_mult::multiply(mat, rhs_ptrs, out_ptrs, opt);
 }
 
-template<typename Index_, class EigenVector_>
-void expand_into_vector(const std::vector<Index_>& subset, const EigenVector_& source, EigenVector_& dest) {
+template<class SubsetVector_, class EigenVector_>
+void expand_into_vector(const SubsetVector_& subset, const EigenVector_& source, EigenVector_& dest) {
     const auto nsub = subset.size();
     for (I<decltype(nsub)> s = 0; s < nsub; ++s) {
         dest.coeffRef(subset[s]) = source.coeff(s);
     }
 }
 
-template<typename Index_, class EigenMatrix_>
-void expand_into_matrix_rows(const std::vector<Index_>& subset, const EigenMatrix_& source, EigenMatrix_& dest) {
+template<class SubsetVector_, class EigenMatrix_>
+void expand_into_matrix_rows(const SubsetVector_& subset, const EigenMatrix_& source, EigenMatrix_& dest) {
     const auto nsub = subset.size();
 
     // This access pattern should be a little more cache-friendly for the
@@ -88,8 +88,8 @@ void expand_into_matrix_rows(const std::vector<Index_>& subset, const EigenMatri
     }
 }
 
-template<typename Index_, class EigenMatrix_>
-void expand_into_matrix_columns(const std::vector<Index_>& subset, const EigenMatrix_& source, EigenMatrix_& dest) {
+template<class SubsetVector_, class EigenMatrix_>
+void expand_into_matrix_columns(const SubsetVector_& subset, const EigenMatrix_& source, EigenMatrix_& dest) {
     const auto nsub = subset.size();
     for (I<decltype(nsub)> s = 0; s < nsub; ++s) {
         dest.col(subset[s]) = source.col(s);
