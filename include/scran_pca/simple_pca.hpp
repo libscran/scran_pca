@@ -10,6 +10,7 @@
 #include "tatami_stats/tatami_stats.hpp"
 #include "irlba/irlba.hpp"
 #include "irlba/parallel.hpp"
+#include "irlba_tatami/irlba_tatami.hpp"
 #include "Eigen/Dense"
 #include "sanisizer/sanisizer.hpp"
 
@@ -233,7 +234,9 @@ std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_sparse_matri
         compute_row_means_and_variances<true>(mat, options.num_threads, center_v, scale_v);
         total_var = process_scale_vector(options.scale, scale_v);
 
-        output.reset(new TransposedTatamiWrapperMatrix<EigenVector_, EigenMatrix_, Value_, Index_>(mat, options.num_threads)); 
+        output.reset(
+            new irlba_tatami::Transposed<EigenVector_, EigenMatrix_, Value_, Index_, decltype(&mat)>(&mat, options.num_threads)
+        ); 
     }
 
     return prepare_deferred_matrix_for_irlba(std::move(output), options, center_v, scale_v);
@@ -302,7 +305,7 @@ std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_dense_matrix
         total_var = process_scale_vector(options.scale, scale_v);
 
         std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > output(
-            new TransposedTatamiWrapperMatrix<EigenVector_, EigenMatrix_, Value_, Index_>(mat, options.num_threads)
+            new irlba_tatami::Transposed<EigenVector_, EigenMatrix_, Value_, Index_, decltype(&mat)>(&mat, options.num_threads)
         ); 
         return prepare_deferred_matrix_for_irlba(std::move(output), options, center_v, scale_v);
     }

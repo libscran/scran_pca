@@ -20,8 +20,14 @@ FetchContent_Declare(
 
 FetchContent_Declare(
   irlba
-  GIT_REPOSITORY https://github.com/LTLA/CppIrlba
+  GIT_REPOSITORY https://github.com/libscran/irlba
   GIT_TAG master # ^3.0.0
+)
+
+FetchContent_Declare(
+  irlba_tatami
+  GIT_REPOSITORY https://github.com/libscran/irlba_tatami
+  GIT_TAG master # ^0.1.0
 )
 
 FetchContent_Declare(
@@ -52,5 +58,6 @@ option(EIGEN_BUILD_CMAKE_PACKAGE "Build the Eigen Cmake package" ON)
 FetchContent_MakeAvailable(eigen)
 
 FetchContent_MakeAvailable(irlba)
+FetchContent_MakeAvailable(irlba_tatami)
 FetchContent_MakeAvailable(scran_blocks)
 FetchContent_MakeAvailable(sanisizer)

@@ -11,6 +11,7 @@
 #include "tatami/tatami.hpp"
 #include "irlba/irlba.hpp"
 #include "irlba/parallel.hpp"
+#include "irlba_tatami/irlba_tatami.hpp"
 #include "Eigen/Dense"
 #include "scran_blocks/scran_blocks.hpp"
 #include "sanisizer/sanisizer.hpp"
@@ -900,7 +901,7 @@ void blocked_pca_internal(
     std::function<void(const EigenMatrix_&)> projector;
 
     if (!options.realize_matrix) {
-        ptr.reset(new TransposedTatamiWrapperMatrix<EigenVector_, EigenMatrix_, Value_, Index_>(mat, options.num_threads));
+        ptr.reset(new irlba_tatami::Transposed<EigenVector_, EigenMatrix_, Value_, Index_, decltype(&mat)>(&mat, options.num_threads));
         compute_blockwise_mean_and_variance_tatami(mat, block, block_details, output.center, output.scale, options.num_threads);
 
         projector = [&](const EigenMatrix_& scaled_rotation) -> void {
