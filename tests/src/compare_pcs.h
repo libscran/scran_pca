@@ -47,23 +47,23 @@ inline void expect_equal_pcs(const Eigen::MatrixXd& left, const Eigen::MatrixXd&
 }
 
 inline void expect_equal_rotation(const Eigen::MatrixXd& left, const Eigen::MatrixXd& right, double tol=1e-8) {
-    int ndims = left.rows(), ngenes = left.cols();
-    ASSERT_EQ(ngenes, right.cols());
-    ASSERT_EQ(ndims, right.rows());
+    int ndims = left.cols(), ngenes = left.rows();
+    ASSERT_EQ(ngenes, right.rows());
+    ASSERT_EQ(ndims, right.cols());
 
     scran_tests::CompareAlmostEqualParameters params;
     params.relative_tolerance = tol;
 
     for (int i = 0; i < ndims; ++i) {
         for (int j = 0; j < ngenes; ++j) {
-            auto aleft = std::abs(left(i, j));
-            auto aright = std::abs(right(i, j));
+            auto aleft = std::abs(left(j, i));
+            auto aright = std::abs(right(j, i));
             scran_tests::compare_almost_equal(aleft, aright, params);
         }
 
         scran_tests::compare_almost_equal(
-            std::abs(left.row(i).sum()),
-            std::abs(right.row(i).sum()),
+            std::abs(left.col(i).sum()),
+            std::abs(right.col(i).sum()),
             params
         );
     }
