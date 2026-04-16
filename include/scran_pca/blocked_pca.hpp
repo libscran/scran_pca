@@ -27,7 +27,10 @@ namespace scran_pca {
 
 /**
  * @brief Options for `blocked_pca()`.
+ *
+ * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
  */
+template<typename EigenVector_ = Eigen::VectorXd>
 struct BlockedPcaOptions {
     /**
      * @cond
@@ -100,7 +103,7 @@ struct BlockedPcaOptions {
     /**
      * Further options to pass to `irlba::compute()`.
      */
-    irlba::Options<Eigen::VectorXd> irlba_options;
+    irlba::Options<EigenVector_> irlba_options;
 };
 
 /**
@@ -902,7 +905,7 @@ template<typename Value_, typename Index_, typename Block_, typename EigenMatrix
 void blocked_pca_internal(
     const tatami::Matrix<Value_, Index_>& mat,
     const Block_* block,
-    const BlockedPcaOptions& options,
+    const BlockedPcaOptions<EigenVector_>& options,
     BlockedPcaResults<EigenMatrix_, EigenVector_>& output,
     SubsetFunction_ subset_fun
 ) {
@@ -1153,7 +1156,7 @@ template<typename Value_, typename Index_, typename Block_, typename EigenMatrix
 void blocked_pca(
     const tatami::Matrix<Value_, Index_>& mat,
     const Block_* block,
-    const BlockedPcaOptions& options,
+    const BlockedPcaOptions<EigenVector_>& options,
     BlockedPcaResults<EigenMatrix_, EigenVector_>& output
 ) {
     blocked_pca_internal<Value_, Index_, Block_, EigenMatrix_, EigenVector_>(
@@ -1185,7 +1188,7 @@ void blocked_pca(
  * @return Results of the PCA on the residuals. 
  */
 template<typename EigenMatrix_ = Eigen::MatrixXd, class EigenVector_ = Eigen::VectorXd, typename Value_, typename Index_, typename Block_>
-BlockedPcaResults<EigenMatrix_, EigenVector_> blocked_pca(const tatami::Matrix<Value_, Index_>& mat, const Block_* block, const BlockedPcaOptions& options) {
+BlockedPcaResults<EigenMatrix_, EigenVector_> blocked_pca(const tatami::Matrix<Value_, Index_>& mat, const Block_* block, const BlockedPcaOptions<EigenVector_>& options) {
     BlockedPcaResults<EigenMatrix_, EigenVector_> output;
     blocked_pca(mat, block, options, output);
     return output;

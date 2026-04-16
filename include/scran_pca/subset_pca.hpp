@@ -102,8 +102,11 @@ void expand_into_matrix_columns(const SubsetVector_& subset, const EigenMatrix_&
 /**
  * Options for `subset_pca()`.
  * These are identical to those for `simple_pca()`.
+ *
+ * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
  */
-typedef SimplePcaOptions SubsetPcaOptions;
+template<typename EigenVector_ = Eigen::VectorXd>
+using SubsetPcaOptions = SimplePcaOptions<EigenVector_>;
 
 /**
  * Results of `subset_pca()`.
@@ -147,7 +150,7 @@ template<typename Value_, typename Index_, typename SubsetVector_, typename Eige
 void subset_pca(
     const tatami::Matrix<Value_, Index_>& mat,
     const SubsetVector_& subset,
-    const SubsetPcaOptions& options,
+    const SubsetPcaOptions<EigenVector_>& options,
     SubsetPcaResults<EigenMatrix_, EigenVector_>& output
 ) {
     const auto full_size = mat.nrow();
@@ -250,7 +253,7 @@ template<typename EigenMatrix_ = Eigen::MatrixXd, class EigenVector_ = Eigen::Ve
 SubsetPcaResults<EigenMatrix_, EigenVector_> subset_pca(
     const tatami::Matrix<Value_, Index_>& mat,
     const SubsetVector_& subset,
-    const SubsetPcaOptions& options
+    const SubsetPcaOptions<EigenVector_>& options
 ) {
     SubsetPcaResults<EigenMatrix_, EigenVector_> output;
     subset_pca(mat, subset, options, output);
@@ -260,8 +263,11 @@ SubsetPcaResults<EigenMatrix_, EigenVector_> subset_pca(
 /**
  * Options for `subset_pca_blocked()`.
  * These are identical to the options for `blocked_pca()`.
+ *
+ * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
  */
-typedef BlockedPcaOptions SubsetPcaBlockedOptions;
+template<typename EigenVector_ = Eigen::VectorXd>
+using SubsetPcaBlockedOptions = BlockedPcaOptions<EigenVector_>;
 
 /**
  * Results of `subset_pca_blocked()`.
@@ -309,7 +315,7 @@ void subset_pca_blocked(
     const tatami::Matrix<Value_, Index_>& mat,
     const SubsetVector_& subset,
     const Block_* block, 
-    const SubsetPcaBlockedOptions& options,
+    const SubsetPcaBlockedOptions<EigenVector_>& options,
     SubsetPcaBlockedResults<EigenMatrix_, EigenVector_>& output
 ) {
     const auto full_size = mat.nrow();
@@ -451,7 +457,7 @@ SubsetPcaBlockedResults<EigenMatrix_, EigenVector_>  subset_pca_blocked(
     const tatami::Matrix<Value_, Index_>& mat,
     const SubsetVector_& subset,
     const Block_* block, 
-    const SubsetPcaBlockedOptions& options
+    const SubsetPcaBlockedOptions<EigenVector_>& options
 ) {
     SubsetPcaBlockedResults<EigenMatrix_, EigenVector_> output;
     subset_pca_blocked(mat, subset, block, options, output);

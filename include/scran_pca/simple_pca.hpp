@@ -25,7 +25,10 @@ namespace scran_pca {
 
 /**
  * @brief Options for `simple_pca()`.
+ *
+ * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
  */
+template<typename EigenVector_ = Eigen::VectorXd>
 struct SimplePcaOptions {
     /**
      * @cond
@@ -73,7 +76,7 @@ struct SimplePcaOptions {
     /**
      * Further options to pass to `irlba::compute()`.
      */
-    irlba::Options<Eigen::VectorXd> irlba_options;
+    irlba::Options<EigenVector_> irlba_options;
 };
 
 /**
@@ -154,7 +157,7 @@ void compute_row_means_and_variances(const tatami::Matrix<Value_, Index_>& mat, 
 template<class EigenVector_, class EigenMatrix_>
 std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_deferred_matrix_for_irlba(
     std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > ptr,
-    const SimplePcaOptions& options,
+    const SimplePcaOptions<EigenVector_>& options,
     const EigenVector_& center_v,
     const EigenVector_& scale_v
 ) {
@@ -173,7 +176,7 @@ std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_deferred_mat
 template<class EigenMatrix_, typename Value_, typename Index_, class EigenVector_>
 std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_sparse_matrix_for_irlba(
     const tatami::Matrix<Value_, Index_>& mat, 
-    const SimplePcaOptions& options,
+    const SimplePcaOptions<EigenVector_>& options,
     EigenVector_& center_v,
     EigenVector_& scale_v,
     typename EigenVector_::Scalar& total_var
@@ -245,7 +248,7 @@ std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_sparse_matri
 template<class EigenMatrix_, typename Value_, typename Index_, class EigenVector_>
 std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_dense_matrix_for_irlba(
     const tatami::Matrix<Value_, Index_>& mat, 
-    const SimplePcaOptions& options,
+    const SimplePcaOptions<EigenVector_>& options,
     EigenVector_& center_v,
     EigenVector_& scale_v,
     typename EigenVector_::Scalar& total_var
@@ -375,7 +378,7 @@ struct SimplePcaResults {
 template<typename Value_, typename Index_, typename EigenMatrix_, class EigenVector_, class SubsetFunction_>
 void simple_pca_internal(
     const tatami::Matrix<Value_, Index_>& mat,
-    const SimplePcaOptions& options,
+    const SimplePcaOptions<EigenVector_>& options,
     SimplePcaResults<EigenMatrix_, EigenVector_>& output,
     SubsetFunction_ subset_fun
 ) {
@@ -429,7 +432,7 @@ void simple_pca_internal(
  * This can be re-used across multiple calls to `simple_pca()`. 
  */
 template<typename Value_, typename Index_, typename EigenMatrix_, class EigenVector_>
-void simple_pca(const tatami::Matrix<Value_, Index_>& mat, const SimplePcaOptions& options, SimplePcaResults<EigenMatrix_, EigenVector_>& output) {
+void simple_pca(const tatami::Matrix<Value_, Index_>& mat, const SimplePcaOptions<EigenVector_>& options, SimplePcaResults<EigenMatrix_, EigenVector_>& output) {
     simple_pca_internal(
         mat,
         options,
@@ -454,7 +457,7 @@ void simple_pca(const tatami::Matrix<Value_, Index_>& mat, const SimplePcaOption
  * @return Results of the PCA.
  */
 template<typename EigenMatrix_ = Eigen::MatrixXd, class EigenVector_ = Eigen::VectorXd, typename Value_, typename Index_>
-SimplePcaResults<EigenMatrix_, EigenVector_> simple_pca(const tatami::Matrix<Value_, Index_>& mat, const SimplePcaOptions& options) {
+SimplePcaResults<EigenMatrix_, EigenVector_> simple_pca(const tatami::Matrix<Value_, Index_>& mat, const SimplePcaOptions<EigenVector_>& options) {
     SimplePcaResults<EigenMatrix_, EigenVector_> output;
     simple_pca(mat, options, output);
     return output;
