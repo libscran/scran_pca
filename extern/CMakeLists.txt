@@ -21,7 +21,7 @@ FetchContent_Declare(
 FetchContent_Declare(
   irlba
   GIT_REPOSITORY https://github.com/libscran/irlba
-  GIT_TAG master # ^3.0.0
+  GIT_TAG master # ^3.1.0
 )
 
 FetchContent_Declare(
