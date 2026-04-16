@@ -254,7 +254,11 @@ TEST_P(BlockedPcaBasicTest, WeightedConsistency) {
     opts.scale = scale;
     opts.components_from_residuals = use_resids;
     opts.block_weight_policy = scran_blocks::WeightPolicy::EQUAL;
+    // We tightened the tolerances so that the component matrix comparisons are more accurate,
+    // specifically to reduce the effect of floating-point error during multiplication on the final values.
+    opts.irlba_options.convergence_tolerance = 1e-10;
     opts.number = rank;
+
     auto ref = scran_pca::blocked_pca(*dense_row, block.data(), opts);
 
     if (nthreads == 1) {
