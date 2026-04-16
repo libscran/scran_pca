@@ -890,9 +890,9 @@ struct BlockedPcaResults {
     EigenVector_ scale;
 
     /**
-     * Whether the algorithm converged.
+     * Metrics for IRLBA, including whether the algorithm converged and the number of iterations/multiplications required.
      */
-    bool converged = false;
+    irlba::Metrics metrics;
 };
 
 /**
@@ -1048,8 +1048,7 @@ void blocked_pca_internal(
         );
         ptr.swap(alt);
 
-        auto out = irlba::compute(*ptr, options.number, output.components, output.rotation, output.variance_explained, options.irlba_options);
-        output.converged = out.first;
+        output.metrics = irlba::compute(*ptr, options.number, output.components, output.rotation, output.variance_explained, options.irlba_options);
 
         subset_fun(block_details, output.components, output.variance_explained);
 
@@ -1071,8 +1070,7 @@ void blocked_pca_internal(
         }
 
     } else {
-        const auto out = irlba::compute(*ptr, options.number, output.components, output.rotation, output.variance_explained, options.irlba_options);
-        output.converged = out.first;
+        output.metrics = irlba::compute(*ptr, options.number, output.components, output.rotation, output.variance_explained, options.irlba_options);
 
         subset_fun(block_details, output.components, output.variance_explained);
 

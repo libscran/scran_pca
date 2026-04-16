@@ -364,9 +364,9 @@ struct SimplePcaResults {
     EigenVector_ scale;
 
     /**
-     * Whether the algorithm converged.
+     * Metrics for IRLBA, including whether the algorithm converged and the number of iterations/multiplications required. 
      */
-    bool converged = false;
+    irlba::Metrics metrics;
 };
 
 /**
@@ -388,8 +388,7 @@ void simple_pca_internal(
         ptr = prepare_dense_matrix_for_irlba<EigenMatrix_>(mat, options, output.center, output.scale, output.total_variance);
     }
 
-    const auto stats = irlba::compute(*ptr, options.number, output.components, output.rotation, output.variance_explained, options.irlba_options);
-    output.converged = stats.first;
+    output.metrics = irlba::compute(*ptr, options.number, output.components, output.rotation, output.variance_explained, options.irlba_options);
 
     subset_fun(output.components, output.variance_explained);
 
