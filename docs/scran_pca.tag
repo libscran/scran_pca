@@ -36,67 +36,68 @@
   <compound kind="struct">
     <name>scran_pca::BlockedPcaOptions</name>
     <filename>structscran__pca_1_1BlockedPcaOptions.html</filename>
+    <templarg>typename EigenVector_</templarg>
     <member kind="variable">
       <type>int</type>
       <name>number</name>
       <anchorfile>structscran__pca_1_1BlockedPcaOptions.html</anchorfile>
-      <anchor>aae8f4926b3d8e11588565fa82be60cbd</anchor>
+      <anchor>a05081d55f605a9140315cb29a6c787e2</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>bool</type>
       <name>scale</name>
       <anchorfile>structscran__pca_1_1BlockedPcaOptions.html</anchorfile>
-      <anchor>abd67f8510e403f541b6275e34f5ad61b</anchor>
+      <anchor>a9a6ae44f80e309c57d337e9f0885a647</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>bool</type>
       <name>transpose</name>
       <anchorfile>structscran__pca_1_1BlockedPcaOptions.html</anchorfile>
-      <anchor>a65498bbdde95073a362a51e942de4fe5</anchor>
+      <anchor>a641144c07ab833ef1129919d736cbbe5</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>scran_blocks::WeightPolicy</type>
       <name>block_weight_policy</name>
       <anchorfile>structscran__pca_1_1BlockedPcaOptions.html</anchorfile>
-      <anchor>aa5ac168e8a3384d0fde25a966db0bdac</anchor>
+      <anchor>a90ea56570afdc1ac9b6d62e26bbab18f</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>scran_blocks::VariableWeightParameters</type>
       <name>variable_block_weight_parameters</name>
       <anchorfile>structscran__pca_1_1BlockedPcaOptions.html</anchorfile>
-      <anchor>a300f43e9e22d2f66224f2fbf9611ed4a</anchor>
+      <anchor>a6ee1dfa151e497faf4c2c436883c5579</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>bool</type>
       <name>components_from_residuals</name>
       <anchorfile>structscran__pca_1_1BlockedPcaOptions.html</anchorfile>
-      <anchor>a3e2503517358ed97e08dc9111e35e791</anchor>
+      <anchor>a5f74122547b03b8cd833d1787211c453</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>bool</type>
       <name>realize_matrix</name>
       <anchorfile>structscran__pca_1_1BlockedPcaOptions.html</anchorfile>
-      <anchor>a4bb1c0bd64ba1dc70246ce90f941dd1b</anchor>
+      <anchor>ac1ef520bbfe708b6bb8ddf0cab8cccfe</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>num_threads</name>
       <anchorfile>structscran__pca_1_1BlockedPcaOptions.html</anchorfile>
-      <anchor>a3ab64262b56d4740ae5ce4501202e857</anchor>
+      <anchor>af84d32f6a888a991a2dc7fba3139edce</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>irlba::Options&lt; Eigen::VectorXd &gt;</type>
+      <type>irlba::Options&lt; EigenVector_ &gt;</type>
       <name>irlba_options</name>
       <anchorfile>structscran__pca_1_1BlockedPcaOptions.html</anchorfile>
-      <anchor>a5b60e2a25de87678343d8740522f546a</anchor>
+      <anchor>a47b4fbf7461a5160001b5f681b87d9f6</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -148,56 +149,57 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>bool</type>
-      <name>converged</name>
+      <type>irlba::Metrics</type>
+      <name>metrics</name>
       <anchorfile>structscran__pca_1_1BlockedPcaResults.html</anchorfile>
-      <anchor>a0ea80804052ad25021c71c2c506f2f32</anchor>
+      <anchor>a4350c3ad11efb406ff5e2d2ac0c9b041</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
     <name>scran_pca::SimplePcaOptions</name>
     <filename>structscran__pca_1_1SimplePcaOptions.html</filename>
+    <templarg>typename EigenVector_</templarg>
     <member kind="variable">
       <type>int</type>
       <name>number</name>
       <anchorfile>structscran__pca_1_1SimplePcaOptions.html</anchorfile>
-      <anchor>af99a561e7aa50311bd05ea59802cc492</anchor>
+      <anchor>a5aa1d15f2f308a994b600890ff1d7299</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>bool</type>
       <name>scale</name>
       <anchorfile>structscran__pca_1_1SimplePcaOptions.html</anchorfile>
-      <anchor>abfc39a6f7cd82a793e41d22641dcd0b2</anchor>
+      <anchor>a0dce270d9989cc7fb4c7e1d34c7612bf</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>bool</type>
       <name>transpose</name>
       <anchorfile>structscran__pca_1_1SimplePcaOptions.html</anchorfile>
-      <anchor>a45a65fc15d15e95becb8166f09b0c6fa</anchor>
+      <anchor>ad5081e360db00cab293f8217c7328333</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>bool</type>
       <name>realize_matrix</name>
       <anchorfile>structscran__pca_1_1SimplePcaOptions.html</anchorfile>
-      <anchor>a2d20fac36e65846f1431042ac5a48660</anchor>
+      <anchor>a6db1b3773dff9849634fc304b200fff4</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>num_threads</name>
       <anchorfile>structscran__pca_1_1SimplePcaOptions.html</anchorfile>
-      <anchor>a64970ffcc255df6b8bec468be6407a35</anchor>
+      <anchor>a97a84e669f11af4363a70e7c17fd1599</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>irlba::Options&lt; Eigen::VectorXd &gt;</type>
+      <type>irlba::Options&lt; EigenVector_ &gt;</type>
       <name>irlba_options</name>
       <anchorfile>structscran__pca_1_1SimplePcaOptions.html</anchorfile>
-      <anchor>a3c36f177ab52e01c663d1fea5b90a528</anchor>
+      <anchor>af261dda8b883533fb5b2ea4894d8d983</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -249,10 +251,10 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>bool</type>
-      <name>converged</name>
+      <type>irlba::Metrics</type>
+      <name>metrics</name>
       <anchorfile>structscran__pca_1_1SimplePcaResults.html</anchorfile>
-      <anchor>a3dd28009927a0546c3c4e6b5352c3150</anchor>
+      <anchor>afdc06d82cd7b5b015043fab279159d22</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -264,10 +266,10 @@
     <class kind="struct">scran_pca::SimplePcaOptions</class>
     <class kind="struct">scran_pca::SimplePcaResults</class>
     <member kind="typedef">
-      <type>SimplePcaOptions</type>
+      <type>SimplePcaOptions&lt; EigenVector_ &gt;</type>
       <name>SubsetPcaOptions</name>
       <anchorfile>namespacescran__pca.html</anchorfile>
-      <anchor>a855000c536fb44770cb209037f1f3366</anchor>
+      <anchor>a30f6e8f0e067aa30d174ba6c4ff05c38</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
@@ -278,10 +280,10 @@
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>BlockedPcaOptions</type>
+      <type>BlockedPcaOptions&lt; EigenVector_ &gt;</type>
       <name>SubsetPcaBlockedOptions</name>
       <anchorfile>namespacescran__pca.html</anchorfile>
-      <anchor>a2b01372e07f4d3b8208007e58a6eeac5</anchor>
+      <anchor>a5b01976867caaee9e326435554b5007d</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
@@ -295,57 +297,57 @@
       <type>void</type>
       <name>simple_pca</name>
       <anchorfile>namespacescran__pca.html</anchorfile>
-      <anchor>afbe9b43fbd114829551a10897067905c</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SimplePcaOptions &amp;options, SimplePcaResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</arglist>
+      <anchor>a9eaf1d09c8c4fcdf821abd142d7ab8cd</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SimplePcaOptions&lt; EigenVector_ &gt; &amp;options, SimplePcaResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</arglist>
     </member>
     <member kind="function">
       <type>SimplePcaResults&lt; EigenMatrix_, EigenVector_ &gt;</type>
       <name>simple_pca</name>
       <anchorfile>namespacescran__pca.html</anchorfile>
-      <anchor>a91b16a98870f1d46939c2a07c60e6156</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SimplePcaOptions &amp;options)</arglist>
+      <anchor>a7d5fdd12c497c154dbce39b3c06cf54e</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SimplePcaOptions&lt; EigenVector_ &gt; &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>blocked_pca</name>
       <anchorfile>namespacescran__pca.html</anchorfile>
-      <anchor>a41ce273ad9e5faaa398afd5dceb88500</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const BlockedPcaOptions &amp;options, BlockedPcaResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</arglist>
+      <anchor>a01f33f85f7508d2d1bcc083484ba095e</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const BlockedPcaOptions&lt; EigenVector_ &gt; &amp;options, BlockedPcaResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</arglist>
     </member>
     <member kind="function">
       <type>BlockedPcaResults&lt; EigenMatrix_, EigenVector_ &gt;</type>
       <name>blocked_pca</name>
       <anchorfile>namespacescran__pca.html</anchorfile>
-      <anchor>a1d13627678bf5f96d522fcf82400a213</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const BlockedPcaOptions &amp;options)</arglist>
+      <anchor>aef8d8fcc39408dad09e3aa0048470d56</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const BlockedPcaOptions&lt; EigenVector_ &gt; &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>subset_pca</name>
       <anchorfile>namespacescran__pca.html</anchorfile>
-      <anchor>acc2324f59cfb503374c07ab79979f103</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const SubsetPcaOptions &amp;options, SubsetPcaResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</arglist>
+      <anchor>ac8c0f28265747d9a8c80dedee1076253</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const SubsetPcaOptions&lt; EigenVector_ &gt; &amp;options, SubsetPcaResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</arglist>
     </member>
     <member kind="function">
       <type>SubsetPcaResults&lt; EigenMatrix_, EigenVector_ &gt;</type>
       <name>subset_pca</name>
       <anchorfile>namespacescran__pca.html</anchorfile>
-      <anchor>a91dc675cf9b90a727cd2edac798612ec</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const SubsetPcaOptions &amp;options)</arglist>
+      <anchor>a9863b52d1424211f123f49b12e99e968</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const SubsetPcaOptions&lt; EigenVector_ &gt; &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>subset_pca_blocked</name>
       <anchorfile>namespacescran__pca.html</anchorfile>
-      <anchor>a5b4377041bebeeae5cb461c64bbb65ea</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const Block_ *block, const SubsetPcaBlockedOptions &amp;options, SubsetPcaBlockedResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</arglist>
+      <anchor>aff6bb974714400dc60ef955d4da1f2f7</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const Block_ *block, const SubsetPcaBlockedOptions&lt; EigenVector_ &gt; &amp;options, SubsetPcaBlockedResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</arglist>
     </member>
     <member kind="function">
       <type>SubsetPcaBlockedResults&lt; EigenMatrix_, EigenVector_ &gt;</type>
       <name>subset_pca_blocked</name>
       <anchorfile>namespacescran__pca.html</anchorfile>
-      <anchor>aaa8690847b5ba26799e2a98829a1668a</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const Block_ *block, const SubsetPcaBlockedOptions &amp;options)</arglist>
+      <anchor>a16c4e80530a8a1f10692204c5086c440</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const Block_ *block, const SubsetPcaBlockedOptions&lt; EigenVector_ &gt; &amp;options)</arglist>
     </member>
   </compound>
   <compound kind="page">

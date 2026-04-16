@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>scran_pca: scran_pca::BlockedPcaOptions Struct Reference</title>
+<title>scran_pca: scran_pca::BlockedPcaOptions&lt; EigenVector_ &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -100,109 +100,126 @@ $(function(){ initResizable(false); });
   <div class="summary">
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structscran__pca_1_1BlockedPcaOptions-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">scran_pca::BlockedPcaOptions Struct Reference</div></div>
+  <div class="headertitle"><div class="title">scran_pca::BlockedPcaOptions&lt; EigenVector_ &gt; Struct Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Options for <code><a class="el" href="namespacescran__pca.html#a41ce273ad9e5faaa398afd5dceb88500">blocked_pca()</a></code>.  
+<p>Options for <code><a class="el" href="namespacescran__pca.html#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code>.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="blocked__pca_8hpp_source.html">blocked_pca.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:aae8f4926b3d8e11588565fa82be60cbd" id="r_aae8f4926b3d8e11588565fa82be60cbd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae8f4926b3d8e11588565fa82be60cbd">number</a> = 25</td></tr>
-<tr class="separator:aae8f4926b3d8e11588565fa82be60cbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd67f8510e403f541b6275e34f5ad61b" id="r_abd67f8510e403f541b6275e34f5ad61b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abd67f8510e403f541b6275e34f5ad61b">scale</a> = false</td></tr>
-<tr class="separator:abd67f8510e403f541b6275e34f5ad61b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65498bbdde95073a362a51e942de4fe5" id="r_a65498bbdde95073a362a51e942de4fe5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a65498bbdde95073a362a51e942de4fe5">transpose</a> = true</td></tr>
-<tr class="separator:a65498bbdde95073a362a51e942de4fe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5ac168e8a3384d0fde25a966db0bdac" id="r_aa5ac168e8a3384d0fde25a966db0bdac"><td class="memItemLeft" align="right" valign="top"><a class="elRef" href="https://libscran.github.io/scran_blocks/namespacescran__blocks.html#ac2412948da94055ff438267ba089ba97">scran_blocks::WeightPolicy</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa5ac168e8a3384d0fde25a966db0bdac">block_weight_policy</a> = scran_blocks::WeightPolicy::VARIABLE</td></tr>
-<tr class="separator:aa5ac168e8a3384d0fde25a966db0bdac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a300f43e9e22d2f66224f2fbf9611ed4a" id="r_a300f43e9e22d2f66224f2fbf9611ed4a"><td class="memItemLeft" align="right" valign="top"><a class="elRef" href="https://libscran.github.io/scran_blocks/structscran__blocks_1_1VariableWeightParameters.html">scran_blocks::VariableWeightParameters</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a300f43e9e22d2f66224f2fbf9611ed4a">variable_block_weight_parameters</a></td></tr>
-<tr class="separator:a300f43e9e22d2f66224f2fbf9611ed4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e2503517358ed97e08dc9111e35e791" id="r_a3e2503517358ed97e08dc9111e35e791"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3e2503517358ed97e08dc9111e35e791">components_from_residuals</a> = true</td></tr>
-<tr class="separator:a3e2503517358ed97e08dc9111e35e791"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4bb1c0bd64ba1dc70246ce90f941dd1b" id="r_a4bb1c0bd64ba1dc70246ce90f941dd1b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4bb1c0bd64ba1dc70246ce90f941dd1b">realize_matrix</a> = true</td></tr>
-<tr class="separator:a4bb1c0bd64ba1dc70246ce90f941dd1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ab64262b56d4740ae5ce4501202e857" id="r_a3ab64262b56d4740ae5ce4501202e857"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ab64262b56d4740ae5ce4501202e857">num_threads</a> = 1</td></tr>
-<tr class="separator:a3ab64262b56d4740ae5ce4501202e857"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b60e2a25de87678343d8740522f546a" id="r_a5b60e2a25de87678343d8740522f546a"><td class="memItemLeft" align="right" valign="top"><a class="elRef" href="https://ltla.github.io/CppIrlba/structirlba_1_1Options.html">irlba::Options</a>&lt; Eigen::VectorXd &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5b60e2a25de87678343d8740522f546a">irlba_options</a></td></tr>
-<tr class="separator:a5b60e2a25de87678343d8740522f546a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05081d55f605a9140315cb29a6c787e2" id="r_a05081d55f605a9140315cb29a6c787e2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a05081d55f605a9140315cb29a6c787e2">number</a> = 25</td></tr>
+<tr class="separator:a05081d55f605a9140315cb29a6c787e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a6ae44f80e309c57d337e9f0885a647" id="r_a9a6ae44f80e309c57d337e9f0885a647"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9a6ae44f80e309c57d337e9f0885a647">scale</a> = false</td></tr>
+<tr class="separator:a9a6ae44f80e309c57d337e9f0885a647"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a641144c07ab833ef1129919d736cbbe5" id="r_a641144c07ab833ef1129919d736cbbe5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a641144c07ab833ef1129919d736cbbe5">transpose</a> = true</td></tr>
+<tr class="separator:a641144c07ab833ef1129919d736cbbe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90ea56570afdc1ac9b6d62e26bbab18f" id="r_a90ea56570afdc1ac9b6d62e26bbab18f"><td class="memItemLeft" align="right" valign="top"><a class="elRef" href="https://libscran.github.io/scran_blocks/namespacescran__blocks.html#ac2412948da94055ff438267ba089ba97">scran_blocks::WeightPolicy</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a90ea56570afdc1ac9b6d62e26bbab18f">block_weight_policy</a> = scran_blocks::WeightPolicy::VARIABLE</td></tr>
+<tr class="separator:a90ea56570afdc1ac9b6d62e26bbab18f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ee1dfa151e497faf4c2c436883c5579" id="r_a6ee1dfa151e497faf4c2c436883c5579"><td class="memItemLeft" align="right" valign="top"><a class="elRef" href="https://libscran.github.io/scran_blocks/structscran__blocks_1_1VariableWeightParameters.html">scran_blocks::VariableWeightParameters</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ee1dfa151e497faf4c2c436883c5579">variable_block_weight_parameters</a></td></tr>
+<tr class="separator:a6ee1dfa151e497faf4c2c436883c5579"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f74122547b03b8cd833d1787211c453" id="r_a5f74122547b03b8cd833d1787211c453"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f74122547b03b8cd833d1787211c453">components_from_residuals</a> = true</td></tr>
+<tr class="separator:a5f74122547b03b8cd833d1787211c453"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1ef520bbfe708b6bb8ddf0cab8cccfe" id="r_ac1ef520bbfe708b6bb8ddf0cab8cccfe"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac1ef520bbfe708b6bb8ddf0cab8cccfe">realize_matrix</a> = true</td></tr>
+<tr class="separator:ac1ef520bbfe708b6bb8ddf0cab8cccfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af84d32f6a888a991a2dc7fba3139edce" id="r_af84d32f6a888a991a2dc7fba3139edce"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af84d32f6a888a991a2dc7fba3139edce">num_threads</a> = 1</td></tr>
+<tr class="separator:af84d32f6a888a991a2dc7fba3139edce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47b4fbf7461a5160001b5f681b87d9f6" id="r_a47b4fbf7461a5160001b5f681b87d9f6"><td class="memItemLeft" align="right" valign="top"><a class="elRef" href="https://ltla.github.io/CppIrlba/structirlba_1_1Options.html">irlba::Options</a>&lt; EigenVector_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47b4fbf7461a5160001b5f681b87d9f6">irlba_options</a></td></tr>
+<tr class="separator:a47b4fbf7461a5160001b5f681b87d9f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Options for <code><a class="el" href="namespacescran__pca.html#a41ce273ad9e5faaa398afd5dceb88500">blocked_pca()</a></code>. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename EigenVector_ = Eigen::VectorXd&gt;<br />
+struct scran_pca::BlockedPcaOptions&lt; EigenVector_ &gt;</div><p>Options for <code><a class="el" href="namespacescran__pca.html#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code>. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">EigenVector_</td><td>A floating-point <code>Eigen::Vector</code> class. </td></tr>
+  </table>
+  </dd>
+</dl>
 </div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="aa5ac168e8a3384d0fde25a966db0bdac" name="aa5ac168e8a3384d0fde25a966db0bdac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa5ac168e8a3384d0fde25a966db0bdac">&#9670;&#160;</a></span>block_weight_policy</h2>
+<a id="a90ea56570afdc1ac9b6d62e26bbab18f" name="a90ea56570afdc1ac9b6d62e26bbab18f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90ea56570afdc1ac9b6d62e26bbab18f">&#9670;&#160;</a></span>block_weight_policy</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename EigenVector_  = Eigen::VectorXd&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="elRef" href="https://libscran.github.io/scran_blocks/namespacescran__blocks.html#ac2412948da94055ff438267ba089ba97">scran_blocks::WeightPolicy</a> scran_pca::BlockedPcaOptions::block_weight_policy = scran_blocks::WeightPolicy::VARIABLE</td>
+          <td class="memname"><a class="elRef" href="https://libscran.github.io/scran_blocks/namespacescran__blocks.html#ac2412948da94055ff438267ba089ba97">scran_blocks::WeightPolicy</a> <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">scran_pca::BlockedPcaOptions</a>&lt; EigenVector_ &gt;::block_weight_policy = scran_blocks::WeightPolicy::VARIABLE</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>Policy for weighting the contribution of blocks of different size.</p>
-<p>The default of <code>scran_blocks::WeightPolicy::VARIABLE</code> is to define equal weights for blocks once they reach a certain size (see <code><a class="el" href="#a300f43e9e22d2f66224f2fbf9611ed4a">BlockedPcaOptions::variable_block_weight_parameters</a></code>). For smaller blocks, the weight is linearly proportional to its size to avoid outsized contributions from very small blocks.</p>
+<p>The default of <code>scran_blocks::WeightPolicy::VARIABLE</code> is to define equal weights for blocks once they reach a certain size (see <code><a class="el" href="#a6ee1dfa151e497faf4c2c436883c5579">BlockedPcaOptions::variable_block_weight_parameters</a></code>). For smaller blocks, the weight is linearly proportional to its size to avoid outsized contributions from very small blocks.</p>
 <p>Other options include <code>scran_blocks::WeightPolicy::EQUAL</code>, where all blocks are equally weighted regardless of size; and <code>scran_blocks::WeightPolicy::NONE</code>, where the contribution of each block is proportional to its size. </p>
 
 </div>
 </div>
-<a id="a3e2503517358ed97e08dc9111e35e791" name="a3e2503517358ed97e08dc9111e35e791"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3e2503517358ed97e08dc9111e35e791">&#9670;&#160;</a></span>components_from_residuals</h2>
+<a id="a5f74122547b03b8cd833d1787211c453" name="a5f74122547b03b8cd833d1787211c453"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f74122547b03b8cd833d1787211c453">&#9670;&#160;</a></span>components_from_residuals</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename EigenVector_  = Eigen::VectorXd&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool scran_pca::BlockedPcaOptions::components_from_residuals = true</td>
+          <td class="memname">bool <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">scran_pca::BlockedPcaOptions</a>&lt; EigenVector_ &gt;::components_from_residuals = true</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Whether to compute the principal components from the residuals. If <code>false</code>, only the rotation vector is computed from the residuals and the original expression values are projected onto the new axes. This avoids strong assumptions about the nature of the differences between blocks as discussed in <code><a class="el" href="namespacescran__pca.html#a41ce273ad9e5faaa398afd5dceb88500">blocked_pca()</a></code>. </p>
+<p>Whether to compute the principal components from the residuals. If <code>false</code>, only the rotation vector is computed from the residuals and the original expression values are projected onto the new axes. This avoids strong assumptions about the nature of the differences between blocks as discussed in <code><a class="el" href="namespacescran__pca.html#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code>. </p>
 
 </div>
 </div>
-<a id="a5b60e2a25de87678343d8740522f546a" name="a5b60e2a25de87678343d8740522f546a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5b60e2a25de87678343d8740522f546a">&#9670;&#160;</a></span>irlba_options</h2>
+<a id="a47b4fbf7461a5160001b5f681b87d9f6" name="a47b4fbf7461a5160001b5f681b87d9f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47b4fbf7461a5160001b5f681b87d9f6">&#9670;&#160;</a></span>irlba_options</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename EigenVector_  = Eigen::VectorXd&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="elRef" href="https://ltla.github.io/CppIrlba/structirlba_1_1Options.html">irlba::Options</a>&lt;Eigen::VectorXd&gt; scran_pca::BlockedPcaOptions::irlba_options</td>
+          <td class="memname"><a class="elRef" href="https://ltla.github.io/CppIrlba/structirlba_1_1Options.html">irlba::Options</a>&lt;EigenVector_&gt; <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">scran_pca::BlockedPcaOptions</a>&lt; EigenVector_ &gt;::irlba_options</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Further options to pass to <code>irlba::compute()</code>. </p>
+<p>Further options to pass to <code><a class="elRef" href="https://ltla.github.io/CppIrlba/namespaceirlba.html#a3ef50b4731ec01ea6a1a035e4863390b">irlba::compute()</a></code>. </p>
 
 </div>
 </div>
-<a id="a3ab64262b56d4740ae5ce4501202e857" name="a3ab64262b56d4740ae5ce4501202e857"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3ab64262b56d4740ae5ce4501202e857">&#9670;&#160;</a></span>num_threads</h2>
+<a id="af84d32f6a888a991a2dc7fba3139edce" name="af84d32f6a888a991a2dc7fba3139edce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af84d32f6a888a991a2dc7fba3139edce">&#9670;&#160;</a></span>num_threads</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename EigenVector_  = Eigen::VectorXd&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">int scran_pca::BlockedPcaOptions::num_threads = 1</td>
+          <td class="memname">int <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">scran_pca::BlockedPcaOptions</a>&lt; EigenVector_ &gt;::num_threads = 1</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of threads to use. The parallelization scheme is determined by <code><a class="elRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a3ea65e5b93eb55c03b00aca301e0396f">tatami::parallelize()</a></code> and <code>irlba::parallelize()</code>. </p>
+<p>Number of threads to use. The parallelization scheme is determined by <code><a class="elRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a9c3979c60e3d7e066be533f7ee3a2f97">tatami::parallelize()</a></code> and <code><a class="elRef" href="https://ltla.github.io/CppIrlba/namespaceirlba.html#a7ddcae16077f8210cfab2f59ee3effed">irlba::parallelize()</a></code>. </p>
 
 </div>
 </div>
-<a id="aae8f4926b3d8e11588565fa82be60cbd" name="aae8f4926b3d8e11588565fa82be60cbd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aae8f4926b3d8e11588565fa82be60cbd">&#9670;&#160;</a></span>number</h2>
+<a id="a05081d55f605a9140315cb29a6c787e2" name="a05081d55f605a9140315cb29a6c787e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05081d55f605a9140315cb29a6c787e2">&#9670;&#160;</a></span>number</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename EigenVector_  = Eigen::VectorXd&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">int scran_pca::BlockedPcaOptions::number = 25</td>
+          <td class="memname">int <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">scran_pca::BlockedPcaOptions</a>&lt; EigenVector_ &gt;::number = 25</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -210,14 +227,16 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a4bb1c0bd64ba1dc70246ce90f941dd1b" name="a4bb1c0bd64ba1dc70246ce90f941dd1b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4bb1c0bd64ba1dc70246ce90f941dd1b">&#9670;&#160;</a></span>realize_matrix</h2>
+<a id="ac1ef520bbfe708b6bb8ddf0cab8cccfe" name="ac1ef520bbfe708b6bb8ddf0cab8cccfe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac1ef520bbfe708b6bb8ddf0cab8cccfe">&#9670;&#160;</a></span>realize_matrix</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename EigenVector_  = Eigen::VectorXd&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool scran_pca::BlockedPcaOptions::realize_matrix = true</td>
+          <td class="memname">bool <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">scran_pca::BlockedPcaOptions</a>&lt; EigenVector_ &gt;::realize_matrix = true</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -225,14 +244,16 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="abd67f8510e403f541b6275e34f5ad61b" name="abd67f8510e403f541b6275e34f5ad61b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abd67f8510e403f541b6275e34f5ad61b">&#9670;&#160;</a></span>scale</h2>
+<a id="a9a6ae44f80e309c57d337e9f0885a647" name="a9a6ae44f80e309c57d337e9f0885a647"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a6ae44f80e309c57d337e9f0885a647">&#9670;&#160;</a></span>scale</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename EigenVector_  = Eigen::VectorXd&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool scran_pca::BlockedPcaOptions::scale = false</td>
+          <td class="memname">bool <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">scran_pca::BlockedPcaOptions</a>&lt; EigenVector_ &gt;::scale = false</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -240,14 +261,16 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a65498bbdde95073a362a51e942de4fe5" name="a65498bbdde95073a362a51e942de4fe5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a65498bbdde95073a362a51e942de4fe5">&#9670;&#160;</a></span>transpose</h2>
+<a id="a641144c07ab833ef1129919d736cbbe5" name="a641144c07ab833ef1129919d736cbbe5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a641144c07ab833ef1129919d736cbbe5">&#9670;&#160;</a></span>transpose</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename EigenVector_  = Eigen::VectorXd&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool scran_pca::BlockedPcaOptions::transpose = true</td>
+          <td class="memname">bool <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">scran_pca::BlockedPcaOptions</a>&lt; EigenVector_ &gt;::transpose = true</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -255,18 +278,20 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a300f43e9e22d2f66224f2fbf9611ed4a" name="a300f43e9e22d2f66224f2fbf9611ed4a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a300f43e9e22d2f66224f2fbf9611ed4a">&#9670;&#160;</a></span>variable_block_weight_parameters</h2>
+<a id="a6ee1dfa151e497faf4c2c436883c5579" name="a6ee1dfa151e497faf4c2c436883c5579"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ee1dfa151e497faf4c2c436883c5579">&#9670;&#160;</a></span>variable_block_weight_parameters</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename EigenVector_  = Eigen::VectorXd&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="elRef" href="https://libscran.github.io/scran_blocks/structscran__blocks_1_1VariableWeightParameters.html">scran_blocks::VariableWeightParameters</a> scran_pca::BlockedPcaOptions::variable_block_weight_parameters</td>
+          <td class="memname"><a class="elRef" href="https://libscran.github.io/scran_blocks/structscran__blocks_1_1VariableWeightParameters.html">scran_blocks::VariableWeightParameters</a> <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">scran_pca::BlockedPcaOptions</a>&lt; EigenVector_ &gt;::variable_block_weight_parameters</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Parameters for the variable block weights, including the threshold at which blocks are considered to be large enough to have equal weight. Only used when <code><a class="el" href="#aa5ac168e8a3384d0fde25a966db0bdac">BlockedPcaOptions::block_weight_policy</a> = scran_blocks::WeightPolicy::VARIABLE</code>. </p>
+<p>Parameters for the variable block weights, including the threshold at which blocks are considered to be large enough to have equal weight. Only used when <code><a class="el" href="#a90ea56570afdc1ac9b6d62e26bbab18f">BlockedPcaOptions::block_weight_policy</a> = scran_blocks::WeightPolicy::VARIABLE</code>. </p>
 
 </div>
 </div>

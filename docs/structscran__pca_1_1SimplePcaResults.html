@@ -104,7 +104,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Results of <code><a class="el" href="namespacescran__pca.html#afbe9b43fbd114829551a10897067905c">simple_pca()</a></code>.  
+<p>Results of <code><a class="el" href="namespacescran__pca.html#a9eaf1d09c8c4fcdf821abd142d7ab8cd">simple_pca()</a></code>.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="simple__pca_8hpp_source.html">simple_pca.hpp</a>&gt;</code></p>
@@ -123,12 +123,12 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ace27de1e888eaf093e0544ccee7bacd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad9f61059704fb822342fbb776cb66617" id="r_ad9f61059704fb822342fbb776cb66617"><td class="memItemLeft" align="right" valign="top">EigenVector_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad9f61059704fb822342fbb776cb66617">scale</a></td></tr>
 <tr class="separator:ad9f61059704fb822342fbb776cb66617"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3dd28009927a0546c3c4e6b5352c3150" id="r_a3dd28009927a0546c3c4e6b5352c3150"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3dd28009927a0546c3c4e6b5352c3150">converged</a> = false</td></tr>
-<tr class="separator:a3dd28009927a0546c3c4e6b5352c3150"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afdc06d82cd7b5b015043fab279159d22" id="r_afdc06d82cd7b5b015043fab279159d22"><td class="memItemLeft" align="right" valign="top"><a class="elRef" href="https://ltla.github.io/CppIrlba/structirlba_1_1Metrics.html">irlba::Metrics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afdc06d82cd7b5b015043fab279159d22">metrics</a></td></tr>
+<tr class="separator:afdc06d82cd7b5b015043fab279159d22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename EigenMatrix_, typename EigenVector_&gt;<br />
-struct scran_pca::SimplePcaResults&lt; EigenMatrix_, EigenVector_ &gt;</div><p>Results of <code><a class="el" href="namespacescran__pca.html#afbe9b43fbd114829551a10897067905c">simple_pca()</a></code>. </p>
+struct scran_pca::SimplePcaResults&lt; EigenMatrix_, EigenVector_ &gt;</div><p>Results of <code><a class="el" href="namespacescran__pca.html#a9eaf1d09c8c4fcdf821abd142d7ab8cd">simple_pca()</a></code>. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">EigenMatrix_</td><td>A floating-point column-major <code>Eigen::Matrix</code> class. </td></tr>
@@ -167,13 +167,13 @@ template&lt;typename EigenMatrix_ , typename EigenVector_ &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Matrix of principal component scores. By default, each row corresponds to a PC while each column corresponds to a cell in the input matrix. If <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#a45a65fc15d15e95becb8166f09b0c6fa">SimplePcaOptions::transpose</a> = false</code>, rows are cells instead.</p>
-<p>The number of PCs is the smaller of <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#af99a561e7aa50311bd05ea59802cc492">SimplePcaOptions::number</a></code> and <code>min(NR, NC) - 1</code>, where <code>NR</code> and <code>NC</code> are the number of rows and columns, respectively, of the input matrix. </p>
+<p>Matrix of principal component scores. By default, each row corresponds to a PC while each column corresponds to a cell in the input matrix. If <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#ad5081e360db00cab293f8217c7328333">SimplePcaOptions::transpose</a> = false</code>, rows are cells instead.</p>
+<p>The number of PCs is the smaller of <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#a5aa1d15f2f308a994b600890ff1d7299">SimplePcaOptions::number</a></code> and <code>min(NR, NC) - 1</code>, where <code>NR</code> and <code>NC</code> are the number of rows and columns, respectively, of the input matrix. </p>
 
 </div>
 </div>
-<a id="a3dd28009927a0546c3c4e6b5352c3150" name="a3dd28009927a0546c3c4e6b5352c3150"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3dd28009927a0546c3c4e6b5352c3150">&#9670;&#160;</a></span>converged</h2>
+<a id="afdc06d82cd7b5b015043fab279159d22" name="afdc06d82cd7b5b015043fab279159d22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afdc06d82cd7b5b015043fab279159d22">&#9670;&#160;</a></span>metrics</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -181,11 +181,11 @@ template&lt;typename EigenMatrix_ , typename EigenVector_ &gt; </div>
 template&lt;typename EigenMatrix_ , typename EigenVector_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="structscran__pca_1_1SimplePcaResults.html">scran_pca::SimplePcaResults</a>&lt; EigenMatrix_, EigenVector_ &gt;::converged = false</td>
+          <td class="memname"><a class="elRef" href="https://ltla.github.io/CppIrlba/structirlba_1_1Metrics.html">irlba::Metrics</a> <a class="el" href="structscran__pca_1_1SimplePcaResults.html">scran_pca::SimplePcaResults</a>&lt; EigenMatrix_, EigenVector_ &gt;::metrics</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Whether the algorithm converged. </p>
+<p>Metrics for IRLBA, including whether the algorithm converged and the number of iterations/multiplications required. </p>
 
 </div>
 </div>
@@ -219,7 +219,7 @@ template&lt;typename EigenMatrix_ , typename EigenVector_ &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Scaling vector, only returned if <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#abfc39a6f7cd82a793e41d22641dcd0b2">SimplePcaOptions::scale</a> = true</code>. Each entry corresponds to a row in the matrix and contains the scaling factor used to divide the feature values if <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#abfc39a6f7cd82a793e41d22641dcd0b2">SimplePcaOptions::scale</a> = true</code>. </p>
+<p>Scaling vector, only returned if <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#a0dce270d9989cc7fb4c7e1d34c7612bf">SimplePcaOptions::scale</a> = true</code>. Each entry corresponds to a row in the matrix and contains the scaling factor used to divide the feature values if <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#a0dce270d9989cc7fb4c7e1d34c7612bf">SimplePcaOptions::scale</a> = true</code>. </p>
 
 </div>
 </div>
@@ -236,7 +236,7 @@ template&lt;typename EigenMatrix_ , typename EigenVector_ &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Total variance of the dataset (possibly after scaling, if <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#abfc39a6f7cd82a793e41d22641dcd0b2">SimplePcaOptions::scale</a> = true</code>). This can be used to divide <code>variance_explained</code> to obtain the percentage of variance explained. </p>
+<p>Total variance of the dataset (possibly after scaling, if <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#a0dce270d9989cc7fb4c7e1d34c7612bf">SimplePcaOptions::scale</a> = true</code>). This can be used to divide <code>variance_explained</code> to obtain the percentage of variance explained. </p>
 
 </div>
 </div>
