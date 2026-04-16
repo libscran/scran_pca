@@ -164,7 +164,7 @@ template&lt;typename EigenVector_  = Eigen::VectorXd&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of threads to use. The parallelization scheme is determined by <code><a class="elRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a9c3979c60e3d7e066be533f7ee3a2f97">tatami::parallelize()</a></code> and <code><a class="elRef" href="https://ltla.github.io/CppIrlba/namespaceirlba.html#a7ddcae16077f8210cfab2f59ee3effed">irlba::parallelize()</a></code>. </p>
+<p>Number of threads to use. The parallelization scheme is determined by <code><a class="elRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a9c3979c60e3d7e066be533f7ee3a2f97">tatami::parallelize()</a></code> and <code><a class="elRef" href="https://ltla.github.io/CppIrlba/namespaceirlba.html#a7ddcae16077f8210cfab2f59ee3effed">irlba::parallelize()</a></code>. Note that the exact values returned by <code><a class="el" href="namespacescran__pca.html#a9eaf1d09c8c4fcdf821abd142d7ab8cd">simple_pca()</a></code> will change slightly with different <code>num_threads</code>, due to (deterministic) differences in the order of floating-point summations. </p>
 
 </div>
 </div>
