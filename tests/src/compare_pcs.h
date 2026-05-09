@@ -11,17 +11,10 @@
 #include "tatami/tatami.hpp"
 
 inline void are_pcs_centered(const Eigen::MatrixXd& pcs, double tol = 1e-8) {
-    int ndims = pcs.rows(), ncells = pcs.cols();
-    for (int r = 0; r < ndims; ++r) {
-        auto ptr = pcs.data() + r;
-
-        double mean = 0;
-        for (int c = 0; c < ncells; ++c, ptr += ndims) {
-            mean += *ptr;
-        }
-        mean /= ncells;
-
-        EXPECT_LT(std::abs(mean), tol);
+    const Eigen::VectorXd means = pcs.rowwise().mean();
+    ASSERT_EQ(means.size(), pcs.rows());
+    for (auto m : means) {
+        EXPECT_LT(std::abs(m), tol);
     }
 }
 

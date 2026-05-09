@@ -9,7 +9,6 @@
 #include "scran_pca/blocked_pca.hpp"
 #include "scran_pca/simple_pca.hpp"
 
-
 TEST(ResidualWrapperTest, EigenDense) {
     size_t NR = 30, NC = 10, NB = 3;
     auto block = generate_blocks(NR, NB);
@@ -133,6 +132,28 @@ protected:
         dense_row.reset(new tatami::DenseRowMatrix<double, int>(nr, nc, std::move(vec)));
         return;
     }
+
+    template<typename Block_>
+    static void are_blocks_centered(const Eigen::MatrixXd& scores, const std::vector<Block_>& block, const int nblocks, double tol = 1e-8) {
+        std::vector<Eigen::VectorXd> centers;
+        centers.reserve(nblocks);
+        const auto ndim = scores.rows();
+        for (int b = 0; b < nblocks; ++b) {
+            centers.emplace_back(ndim);
+            centers.back().setZero();
+        }
+
+        const int ncells = block.size();
+        for (int c = 0; c < ncells; ++c) {
+            centers[block[c]] += scores.col(c);
+        }
+
+        for (int b = 0; b < nblocks; ++b) {
+            for (auto m : centers[b]) {
+                EXPECT_LT(std::abs(m / ncells), tol);
+            }
+        }
+    }
 };
 
 /******************************************/
@@ -152,7 +173,7 @@ protected:
 TEST_P(BlockedPcaBasicTest, BasicConsistency) {
     auto param = GetParam();
     bool scale = std::get<0>(param);
-    bool use_resids = std::get<1>(param);
+    bool block_center = std::get<1>(param);
     int rank = std::get<2>(param);
     int nblocks = std::get<3>(param);
     int nthreads = std::get<4>(param);
@@ -161,7 +182,7 @@ TEST_P(BlockedPcaBasicTest, BasicConsistency) {
 
     scran_pca::BlockedPcaOptions opts;
     opts.scale = scale;
-    opts.components_from_residuals = use_resids;
+    opts.center_scores_by_block = block_center;
     opts.block_weight_policy = scran_blocks::WeightPolicy::NONE;
     opts.number = rank;
     auto ref = scran_pca::blocked_pca(*dense_row, block.data(), opts);
@@ -169,9 +190,11 @@ TEST_P(BlockedPcaBasicTest, BasicConsistency) {
     if (nthreads == 1) {
         EXPECT_EQ(ref.components.rows(), rank);
         EXPECT_EQ(ref.components.cols(), dense_row->ncol());
-        EXPECT_EQ(ref.variance_explained.size(), rank);
-
         are_pcs_centered(ref.components);
+        if (block_center) {
+            are_blocks_centered(ref.components, block, nblocks);
+        }
+        EXPECT_EQ(ref.variance_explained.size(), rank);
         EXPECT_TRUE(ref.total_variance >= std::accumulate(ref.variance_explained.begin(), ref.variance_explained.end(), 0.0));
 
         // Total variance makes sense. Remember, this doesn't consider the
@@ -243,7 +266,7 @@ TEST_P(BlockedPcaBasicTest, BasicConsistency) {
 TEST_P(BlockedPcaBasicTest, WeightedConsistency) {
     auto param = GetParam();
     bool scale = std::get<0>(param);
-    bool use_resids = std::get<1>(param);
+    bool block_center = std::get<1>(param);
     int rank = std::get<2>(param);
     int nblocks = std::get<3>(param);
     int nthreads = std::get<4>(param);
@@ -252,7 +275,7 @@ TEST_P(BlockedPcaBasicTest, WeightedConsistency) {
 
     scran_pca::BlockedPcaOptions opts;
     opts.scale = scale;
-    opts.components_from_residuals = use_resids;
+    opts.center_scores_by_block = block_center;
     opts.block_weight_policy = scran_blocks::WeightPolicy::EQUAL;
     // We tightened the tolerances so that the component matrix comparisons are more accurate,
     // specifically to reduce the effect of floating-point error during multiplication on the final values.
@@ -263,6 +286,9 @@ TEST_P(BlockedPcaBasicTest, WeightedConsistency) {
 
     if (nthreads == 1) {
         are_pcs_centered(ref.components);
+        if (block_center) {
+            are_blocks_centered(ref.components, block, nblocks);
+        }
         EXPECT_TRUE(ref.total_variance >= std::accumulate(ref.variance_explained.begin(), ref.variance_explained.end(), 0.0));
 
         if (scale) {
@@ -355,14 +381,14 @@ protected:
 TEST_P(BlockedPcaMoreTest, VersusSimple) {
     auto param = GetParam();
     bool scale = std::get<0>(param);
-    bool use_resids = std::get<1>(param);
+    bool block_center = std::get<1>(param);
     int rank = std::get<2>(param);
     int nblocks = std::get<3>(param);
     auto block = generate_blocks(dense_row->ncol(), nblocks);
 
     scran_pca::BlockedPcaOptions opt;
     opt.scale = scale;
-    opt.components_from_residuals = use_resids;
+    opt.center_scores_by_block = block_center;
     opt.block_weight_policy = scran_blocks::WeightPolicy::NONE;
     opt.number = rank;
     auto res1 = scran_pca::blocked_pca(*dense_row, block.data(), opt);
@@ -420,7 +446,7 @@ TEST_P(BlockedPcaMoreTest, VersusSimple) {
         expect_equal_vectors(res1.variance_explained, res2.variance_explained);
         EXPECT_FLOAT_EQ(res1.total_variance, res2.total_variance);
 
-        if (use_resids) {
+        if (block_center) {
             expect_equal_pcs(res1.components, res2.components);
         } else {
             are_pcs_centered(res1.components);
@@ -459,7 +485,7 @@ class BlockedPcaWeightedTest : public ::testing::TestWithParam<std::tuple<bool, 
 TEST_P(BlockedPcaWeightedTest, VersusReference) {
     auto param = GetParam();
     bool scale = std::get<0>(param);
-    bool use_resids = std::get<1>(param);
+    bool block_center = std::get<1>(param);
     int rank = std::get<2>(param);
     int nblocks = std::get<3>(param);
     int nthreads = std::get<4>(param);
@@ -481,7 +507,7 @@ TEST_P(BlockedPcaWeightedTest, VersusReference) {
 
     scran_pca::BlockedPcaOptions base_opt;
     base_opt.scale = scale;
-    base_opt.components_from_residuals = use_resids;
+    base_opt.center_scores_by_block = block_center;
     base_opt.num_threads = nthreads;
     base_opt.number = rank;
 
@@ -584,7 +610,7 @@ INSTANTIATE_TEST_SUITE_P(
     BlockedPcaWeightedTest,
     ::testing::Combine(
         ::testing::Values(false, true), // to scale or not to scale?
-        ::testing::Values(false, true), // to compute PCs from the residuals?
+        ::testing::Values(false, true), // to center scores by block?
         ::testing::Values(2, 5, 10), // number of PCs to obtain
         ::testing::Values(2, 3), // number of blocks
         ::testing::Values(1, 3) // number of threads

@@ -82,11 +82,12 @@ struct BlockedPcaOptions {
     scran_blocks::VariableWeightParameters variable_block_weight_parameters;
 
     /**
-     * Whether to compute the principal components from the residuals.
-     * If `false`, only the rotation vector is computed from the residuals and the original expression values are projected onto the new axes. 
-     * This avoids strong assumptions about the nature of the differences between blocks as discussed in `blocked_pca()`.
+     * Whether to to center the PC scores for each block at the origin.
+     * If `true`, the cells for each block are shifted so that their per-block centroid lies at the origin.
+     * This could change the relative positions of cells in different blocks.
+     * If `false`, the centroid of all cells is set to the origin, without affecting the relative positions of cells in different blocks.
      */
-    bool components_from_residuals = true;
+    bool center_scores_by_block = false;
 
     /**
      * Whether to realize `tatami::Matrix` objects into an appropriate in-memory format before PCA.
@@ -1062,7 +1063,7 @@ void blocked_pca_internal(
         projector(scaled_rotation);
 
         // Subtracting each block's mean from the PCs.
-        if (options.components_from_residuals) {
+        if (options.center_scores_by_block) {
             EigenMatrix_ centering = (output.center * scaled_rotation).adjoint();
             for (I<decltype(ncells)> c =0 ; c < ncells; ++c) {
                 output.components.col(c) -= centering.col(block[c]);
@@ -1079,7 +1080,7 @@ void blocked_pca_internal(
 
         subset_fun(block_details, output.components, output.variance_explained);
 
-        if (options.components_from_residuals) {
+        if (options.center_scores_by_block) {
             clean_up(mat.ncol(), output.components, output.variance_explained);
             if (options.transpose) {
                 output.components.adjointInPlace();
@@ -1110,30 +1111,32 @@ void blocked_pca_internal(
  *
  * As discussed in `simple_pca()`, we extract the top PCs from a single-cell dataset for downstream cell-based procedures like clustering.
  * In the presence of a blocking factor (e.g., batches, samples), we want to ensure that the PCA is not driven by uninteresting differences between blocks of cells.
- * To achieve this, `blocked_pca()` centers the expression of each gene in each blocking level and uses the residuals for PCA.
- * This means that the gene-gene covariance matrix will only contain variation within each batch, 
- * ensuring that the top rotation vectors/principal components capture biological heterogeneity instead of inter-block differences.
+ * To achieve this, `blocked_pca()` centers the expression of each gene within each blocking level and uses the residuals for PCA.
+ * This ensures that the gene-gene covariance matrix will only contain variation within each batch, 
+ * such that the top rotation vectors/principal components capture biological heterogeneity instead of inter-block differences.
  *
- * The `BlockedPcaOptions::components_from_residuals` option determines exactly how the PC scores are calculated:
- *
- * - If `true` (the default), the PC scores are computed from the matrix of residuals.
- *   This yields a low-dimensional space where inter-block differences have been removed,
- *   assuming that all blocks have the same subpopulation composition and the inter-block differences are consistent for all cell subpopulations.
- *   Under these assumptions, we could use these components for downstream analysis without any concern for block-wise effects.
- * - If `false`, the rotation vectors are first computed from the matrix of residuals.
- *   To obtain PC scores, each cell is then projected onto the associated subspace using its original expression values.
- *   This approach ensures that inter-block differences do not contribute to the PCA but does not attempt to explicitly remove them.
- * 
- * In complex datasets, the assumptions mentioned above for `true` do not hold,
- * and more sophisticated batch correction methods like [MNN correction](https://github.com/libscran/mnncorrect) are required.
- * Some of these methods accept a low-dimensional embedding of cells that can be created as described above with `BlockedPcaOptions::components_from_residuals = false`. 
- *
- * `blocked_pca()` will weight the contribution from blocks of cells so that each block contributes more or less equally to the PCA.
+ * In addition, `blocked_pca()` will weight each block of cells to control its relative contribution to the PCA.
+ * By default, `blocked_pca()` scales the expression values for each block so that each "sufficiently large" block contributes equally to the gene-gene covariance matrix and thus the rotation vectors.
  * This ensures that the definition of the axes of maximum variance are not dominated by the largest block, potentially masking interesting variation in the smaller blocks.
- * `blocked_pca()` scales the expression values for each block so that each "sufficiently large" block contributes equally to the gene-gene covariance matrix and thus the rotation vectors.
  * (See `BlockedPcaOptions::block_weight_policy` for the choice of weighting scheme.)
- * The vector of residuals for each cell - or the original expression values, if `BlockedPcaOptions::components_from_residuals = false` -
- * is then projected to the subspace defined by these rotation vectors to obtain that cell's PC scores.
+ *
+ * The PC scores themselves are computed by projecting each cell's expression profile onto the subspace defined by the rotation vectors,
+ * and then centering them according to `BlockedPcaOptions::center_scores_by_block`.
+ * The interpretation of these scores depends on the choice of centering mode:
+ *
+ * - If `false` (the default), the dataset is globally shifted so that the centroid across all cells lies at the origin.
+ *   This does not explicitly remove differences between blocks.
+ *   Any differences in expression that are not orthogonal to the rotation vectors will still manifest in the PC scores.
+ *   In this mode, blocking only reduces the impact of inter-block differences on the identification of the rotation vectors.
+ * - If `true`, the scores are centered within each block, i.e., each block of cells is centered at the origin.
+ *   Without weighting, this is equivalent to the PC scores that would be obtained from PCA on the residuals.
+ *   This represents a low-dimensional space where inter-block differences have been "corrected",
+ *   assuming that all blocks have the same subpopulation composition and the inter-block differences are consistent for all cell subpopulations.
+ *
+ * We default to `false` as the assumptions mentioned above for `true` are usually too strong.
+ * Per-block centering can distort the differences between blocks when these assumptions are violated, even in the absence of any differences between blocks.
+ * Global centering avoids any distortion while mitigating the impact of uninteresting inter-block differences on the scores.
+ * Any remaining differences can be corrected by processing the scores with more sophisticated batch correction methods like [MNN correction](https://github.com/libscran/mnncorrect). 
  *
  * Internally, `blocked_pca()` defers the residual calculation until the matrix multiplication steps within [IRLBA](https://github.com/LTLA/CppIrlba).
  * This yields the same results as the naive calculation of residuals but is much faster as it can take advantage of efficient sparse operations.
