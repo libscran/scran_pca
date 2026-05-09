@@ -1142,8 +1142,8 @@ void blocked_pca_internal(
  * This yields the same results as the naive calculation of residuals but is much faster as it can take advantage of efficient sparse operations.
  *
  * @tparam Value_ Type of the matrix data.
- * @tparam Index_ Integer type for the indices.
- * @tparam Block_ Integer type for the blocking factor.
+ * @tparam Index_ Integer type of the indices.
+ * @tparam Block_ Integer type of the blocking factor.
  * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
  * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
  *
@@ -1179,8 +1179,8 @@ void blocked_pca(
  * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
  * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
  * @tparam Value_ Type of the matrix data.
- * @tparam Index_ Integer type for the indices.
- * @tparam Block_ Integer type for the blocking factor.
+ * @tparam Index_ Integer type of the indices.
+ * @tparam Block_ Integer type of the blocking factor.
  *
  * @param[in] mat Input matrix.
  * Columns should contain cells while rows should contain genes.

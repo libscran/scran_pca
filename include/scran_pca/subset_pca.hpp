@@ -131,7 +131,7 @@ using SubsetPcaResults = SimplePcaResults<EigenMatrix_, EigenVector_>;
  * The goal is to allow callers to create a low-rank approximation of the entire input matrix, even if only a subset of the features are relevant to the PCA.
  *
  * @tparam Value_ Type of the matrix data.
- * @tparam Index_ Integer type for the indices.
+ * @tparam Index_ Integer type of the indices.
  * @tparam SubsetVector_ Container of the row indices.
  * Should support `[]`, `size()` and copy construction. 
  * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
@@ -236,7 +236,7 @@ void subset_pca(
  * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
  * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
  * @tparam Value_ Type of the matrix data.
- * @tparam Index_ Integer type for the indices.
+ * @tparam Index_ Integer type of the indices.
  * @tparam SubsetVector_ Container of the row indices.
  * Should support `[]`, `size()` and copy construction. 
  *
@@ -292,7 +292,7 @@ using SubsetPcaBlockedResults = BlockedPcaResults<EigenMatrix_, EigenVector_>;
  * The goal is to allow callers to create a low-rank approximation of the entire input matrix, even if only a subset of the features are relevant to the PCA.
  *
  * @tparam Value_ Type of the matrix data.
- * @tparam Index_ Integer type for the indices.
+ * @tparam Index_ Integer type of the indices.
  * @tparam SubsetVector_ Container of the row indices.
  * Should support `[]`, `size()` and copy construction. 
  * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
@@ -435,10 +435,10 @@ void subset_pca_blocked(
  * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
  * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
  * @tparam Value_ Type of the matrix data.
- * @tparam Index_ Integer type for the indices.
+ * @tparam Index_ Integer type of the indices.
  * @tparam SubsetVector_ Container of the row indices.
  * Should support `[]`, `size()` and copy construction. 
- * @tparam Block_ Integer type for the blocking factor.
+ * @tparam Block_ Integer type of the blocking factor.
  *
  * @param[in] mat Input matrix.
  * Columns should contain cells while rows should contain genes.

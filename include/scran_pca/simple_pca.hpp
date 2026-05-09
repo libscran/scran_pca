@@ -422,7 +422,7 @@ void simple_pca_internal(
  * As we are only interested in the top PCs, we can use approximate algorithms for faster computation, in particular [IRLBA](https://github.com/LTLA/CppIrlba).
  *
  * @tparam Value_ Type of the matrix data.
- * @tparam Index_ Integer type for the indices.
+ * @tparam Index_ Integer type of the indices.
  * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
  * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
  *
@@ -449,7 +449,7 @@ void simple_pca(const tatami::Matrix<Value_, Index_>& mat, const SimplePcaOption
  * @tparam EigenMatrix_ A floating-point column-major `Eigen::Matrix` class.
  * @tparam EigenVector_ A floating-point `Eigen::Vector` class.
  * @tparam Value_ Type of the matrix data.
- * @tparam Index_ Integer type for the indices.
+ * @tparam Index_ Integer type of the indices.
  *
  * @param[in] mat The input matrix.
  * Columns should contain cells while rows should contain genes.
