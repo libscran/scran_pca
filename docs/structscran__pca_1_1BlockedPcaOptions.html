@@ -121,8 +121,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a90ea56570afdc1ac9b6d62e26bbab18f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ee1dfa151e497faf4c2c436883c5579" id="r_a6ee1dfa151e497faf4c2c436883c5579"><td class="memItemLeft" align="right" valign="top"><a class="elRef" href="https://libscran.github.io/scran_blocks/structscran__blocks_1_1VariableWeightParameters.html">scran_blocks::VariableWeightParameters</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ee1dfa151e497faf4c2c436883c5579">variable_block_weight_parameters</a></td></tr>
 <tr class="separator:a6ee1dfa151e497faf4c2c436883c5579"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f74122547b03b8cd833d1787211c453" id="r_a5f74122547b03b8cd833d1787211c453"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f74122547b03b8cd833d1787211c453">components_from_residuals</a> = true</td></tr>
-<tr class="separator:a5f74122547b03b8cd833d1787211c453"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa672fa933bfc6d0bd3f1bf4b91d13386" id="r_aa672fa933bfc6d0bd3f1bf4b91d13386"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa672fa933bfc6d0bd3f1bf4b91d13386">center_scores_by_block</a> = false</td></tr>
+<tr class="separator:aa672fa933bfc6d0bd3f1bf4b91d13386"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1ef520bbfe708b6bb8ddf0cab8cccfe" id="r_ac1ef520bbfe708b6bb8ddf0cab8cccfe"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac1ef520bbfe708b6bb8ddf0cab8cccfe">realize_matrix</a> = true</td></tr>
 <tr class="separator:ac1ef520bbfe708b6bb8ddf0cab8cccfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af84d32f6a888a991a2dc7fba3139edce" id="r_af84d32f6a888a991a2dc7fba3139edce"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af84d32f6a888a991a2dc7fba3139edce">num_threads</a> = 1</td></tr>
@@ -159,8 +159,8 @@ template&lt;typename EigenVector_  = Eigen::VectorXd&gt; </div>
 
 </div>
 </div>
-<a id="a5f74122547b03b8cd833d1787211c453" name="a5f74122547b03b8cd833d1787211c453"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5f74122547b03b8cd833d1787211c453">&#9670;&#160;</a></span>components_from_residuals</h2>
+<a id="aa672fa933bfc6d0bd3f1bf4b91d13386" name="aa672fa933bfc6d0bd3f1bf4b91d13386"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa672fa933bfc6d0bd3f1bf4b91d13386">&#9670;&#160;</a></span>center_scores_by_block</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -168,11 +168,11 @@ template&lt;typename EigenVector_  = Eigen::VectorXd&gt; </div>
 template&lt;typename EigenVector_  = Eigen::VectorXd&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">scran_pca::BlockedPcaOptions</a>&lt; EigenVector_ &gt;::components_from_residuals = true</td>
+          <td class="memname">bool <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">scran_pca::BlockedPcaOptions</a>&lt; EigenVector_ &gt;::center_scores_by_block = false</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Whether to compute the principal components from the residuals. If <code>false</code>, only the rotation vector is computed from the residuals and the original expression values are projected onto the new axes. This avoids strong assumptions about the nature of the differences between blocks as discussed in <code><a class="el" href="namespacescran__pca.html#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code>. </p>
+<p>Whether to to center the PC scores for each block at the origin. If <code>true</code>, the cells for each block are shifted so that their per-block centroid lies at the origin. This could change the relative positions of cells in different blocks. If <code>false</code>, the centroid of all cells is set to the origin, without affecting the relative positions of cells in different blocks. </p>
 
 </div>
 </div>

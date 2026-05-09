@@ -74,9 +74,9 @@
     </member>
     <member kind="variable">
       <type>bool</type>
-      <name>components_from_residuals</name>
+      <name>center_scores_by_block</name>
       <anchorfile>structscran__pca_1_1BlockedPcaOptions.html</anchorfile>
-      <anchor>a5f74122547b03b8cd833d1787211c453</anchor>
+      <anchor>aa672fa933bfc6d0bd3f1bf4b91d13386</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
