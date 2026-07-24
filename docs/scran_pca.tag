@@ -311,15 +311,15 @@
       <type>void</type>
       <name>blocked_pca</name>
       <anchorfile>namespacescran__pca.html</anchorfile>
-      <anchor>a01f33f85f7508d2d1bcc083484ba095e</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const BlockedPcaOptions&lt; EigenVector_ &gt; &amp;options, BlockedPcaResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</arglist>
+      <anchor>a7742b16678e40263e63873a1153aa4eb</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const std::size_t num_blocks, const BlockedPcaOptions&lt; EigenVector_ &gt; &amp;options, BlockedPcaResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</arglist>
     </member>
     <member kind="function">
       <type>BlockedPcaResults&lt; EigenMatrix_, EigenVector_ &gt;</type>
       <name>blocked_pca</name>
       <anchorfile>namespacescran__pca.html</anchorfile>
-      <anchor>aef8d8fcc39408dad09e3aa0048470d56</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const BlockedPcaOptions&lt; EigenVector_ &gt; &amp;options)</arglist>
+      <anchor>a1fd84e4763415fa1b89aafcac3f73e48</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const std::size_t num_blocks, const BlockedPcaOptions&lt; EigenVector_ &gt; &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -339,15 +339,15 @@
       <type>void</type>
       <name>subset_pca_blocked</name>
       <anchorfile>namespacescran__pca.html</anchorfile>
-      <anchor>aff6bb974714400dc60ef955d4da1f2f7</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const Block_ *block, const SubsetPcaBlockedOptions&lt; EigenVector_ &gt; &amp;options, SubsetPcaBlockedResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</arglist>
+      <anchor>aa25315cafc495bab757c5959aaca21eb</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const Block_ *block, const std::size_t num_blocks, const SubsetPcaBlockedOptions&lt; EigenVector_ &gt; &amp;options, SubsetPcaBlockedResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</arglist>
     </member>
     <member kind="function">
       <type>SubsetPcaBlockedResults&lt; EigenMatrix_, EigenVector_ &gt;</type>
       <name>subset_pca_blocked</name>
       <anchorfile>namespacescran__pca.html</anchorfile>
-      <anchor>a16c4e80530a8a1f10692204c5086c440</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const Block_ *block, const SubsetPcaBlockedOptions&lt; EigenVector_ &gt; &amp;options)</arglist>
+      <anchor>a1ac9343b7fd60bff71673beb1a3ca469</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const Block_ *block, const std::size_t num_blocks, const SubsetPcaBlockedOptions&lt; EigenVector_ &gt; &amp;options)</arglist>
     </member>
   </compound>
   <compound kind="page">

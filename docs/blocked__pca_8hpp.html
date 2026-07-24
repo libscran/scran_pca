@@ -113,6 +113,8 @@ $(function(){ initResizable(false); });
 <code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;cstddef&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
+<code>#include &lt;optional&gt;</code><br />
+<code>#include &lt;cassert&gt;</code><br />
 <code>#include &quot;<a class="elRef" href="https://tatami-inc.github.io/tatami/tatami_8hpp.html">tatami/tatami.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="elRef" href="https://ltla.github.io/CppIrlba/irlba_8hpp.html">irlba/irlba.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="elRef" href="https://ltla.github.io/CppIrlba/parallel_8hpp.html">irlba/parallel.hpp</a>&quot;</code><br />
@@ -127,10 +129,10 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">scran_pca::BlockedPcaOptions&lt; EigenVector_ &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options for <code><a class="el" href="namespacescran__pca.html#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code>.  <a href="structscran__pca_1_1BlockedPcaOptions.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options for <code><a class="el" href="namespacescran__pca.html#a7742b16678e40263e63873a1153aa4eb">blocked_pca()</a></code>.  <a href="structscran__pca_1_1BlockedPcaOptions.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structscran__pca_1_1BlockedPcaResults.html">scran_pca::BlockedPcaResults&lt; EigenMatrix_, EigenVector_ &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Results of <code><a class="el" href="namespacescran__pca.html#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code>.  <a href="structscran__pca_1_1BlockedPcaResults.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Results of <code><a class="el" href="namespacescran__pca.html#a7742b16678e40263e63873a1153aa4eb">blocked_pca()</a></code>.  <a href="structscran__pca_1_1BlockedPcaResults.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -141,12 +143,12 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a01f33f85f7508d2d1bcc083484ba095e" id="r_a01f33f85f7508d2d1bcc083484ba095e"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , typename Block_ , typename EigenMatrix_ , class EigenVector_ &gt; </td></tr>
-<tr class="memitem:a01f33f85f7508d2d1bcc083484ba095e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacescran__pca.html#a01f33f85f7508d2d1bcc083484ba095e">scran_pca::blocked_pca</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions</a>&lt; EigenVector_ &gt; &amp;options, <a class="el" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults</a>&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</td></tr>
-<tr class="separator:a01f33f85f7508d2d1bcc083484ba095e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef8d8fcc39408dad09e3aa0048470d56" id="r_aef8d8fcc39408dad09e3aa0048470d56"><td class="memTemplParams" colspan="2">template&lt;typename EigenMatrix_  = Eigen::MatrixXd, class EigenVector_  = Eigen::VectorXd, typename Value_ , typename Index_ , typename Block_ &gt; </td></tr>
-<tr class="memitem:aef8d8fcc39408dad09e3aa0048470d56"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults</a>&lt; EigenMatrix_, EigenVector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacescran__pca.html#aef8d8fcc39408dad09e3aa0048470d56">scran_pca::blocked_pca</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions</a>&lt; EigenVector_ &gt; &amp;options)</td></tr>
-<tr class="separator:aef8d8fcc39408dad09e3aa0048470d56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7742b16678e40263e63873a1153aa4eb" id="r_a7742b16678e40263e63873a1153aa4eb"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , typename Block_ , typename EigenMatrix_ , class EigenVector_ &gt; </td></tr>
+<tr class="memitem:a7742b16678e40263e63873a1153aa4eb"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacescran__pca.html#a7742b16678e40263e63873a1153aa4eb">scran_pca::blocked_pca</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const std::size_t num_blocks, const <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions</a>&lt; EigenVector_ &gt; &amp;options, <a class="el" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults</a>&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</td></tr>
+<tr class="separator:a7742b16678e40263e63873a1153aa4eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fd84e4763415fa1b89aafcac3f73e48" id="r_a1fd84e4763415fa1b89aafcac3f73e48"><td class="memTemplParams" colspan="2">template&lt;typename EigenMatrix_  = Eigen::MatrixXd, class EigenVector_  = Eigen::VectorXd, typename Value_ , typename Index_ , typename Block_ &gt; </td></tr>
+<tr class="memitem:a1fd84e4763415fa1b89aafcac3f73e48"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults</a>&lt; EigenMatrix_, EigenVector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacescran__pca.html#a1fd84e4763415fa1b89aafcac3f73e48">scran_pca::blocked_pca</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const std::size_t num_blocks, const <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions</a>&lt; EigenVector_ &gt; &amp;options)</td></tr>
+<tr class="separator:a1fd84e4763415fa1b89aafcac3f73e48"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>PCA on residuals after regressing out a blocking factor. </p>

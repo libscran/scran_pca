@@ -107,10 +107,10 @@ $(function(){ initResizable(false); });
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options for <code><a class="el" href="#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code>.  <a href="structscran__pca_1_1BlockedPcaOptions.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options for <code><a class="el" href="#a7742b16678e40263e63873a1153aa4eb">blocked_pca()</a></code>.  <a href="structscran__pca_1_1BlockedPcaOptions.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Results of <code><a class="el" href="#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code>.  <a href="structscran__pca_1_1BlockedPcaResults.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Results of <code><a class="el" href="#a7742b16678e40263e63873a1153aa4eb">blocked_pca()</a></code>.  <a href="structscran__pca_1_1BlockedPcaResults.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structscran__pca_1_1SimplePcaOptions.html">SimplePcaOptions</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options for <code><a class="el" href="#a9eaf1d09c8c4fcdf821abd142d7ab8cd">simple_pca()</a></code>.  <a href="structscran__pca_1_1SimplePcaOptions.html#details">More...</a><br /></td></tr>
@@ -142,24 +142,24 @@ Functions</h2></td></tr>
 <tr class="memitem:a7d5fdd12c497c154dbce39b3c06cf54e" id="r_a7d5fdd12c497c154dbce39b3c06cf54e"><td class="memTemplParams" colspan="2">template&lt;typename EigenMatrix_  = Eigen::MatrixXd, class EigenVector_  = Eigen::VectorXd, typename Value_ , typename Index_ &gt; </td></tr>
 <tr class="memitem:a7d5fdd12c497c154dbce39b3c06cf54e"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structscran__pca_1_1SimplePcaResults.html">SimplePcaResults</a>&lt; EigenMatrix_, EigenVector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a7d5fdd12c497c154dbce39b3c06cf54e">simple_pca</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;mat, const <a class="el" href="structscran__pca_1_1SimplePcaOptions.html">SimplePcaOptions</a>&lt; EigenVector_ &gt; &amp;options)</td></tr>
 <tr class="separator:a7d5fdd12c497c154dbce39b3c06cf54e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01f33f85f7508d2d1bcc083484ba095e" id="r_a01f33f85f7508d2d1bcc083484ba095e"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , typename Block_ , typename EigenMatrix_ , class EigenVector_ &gt; </td></tr>
-<tr class="memitem:a01f33f85f7508d2d1bcc083484ba095e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions</a>&lt; EigenVector_ &gt; &amp;options, <a class="el" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults</a>&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</td></tr>
-<tr class="separator:a01f33f85f7508d2d1bcc083484ba095e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef8d8fcc39408dad09e3aa0048470d56" id="r_aef8d8fcc39408dad09e3aa0048470d56"><td class="memTemplParams" colspan="2">template&lt;typename EigenMatrix_  = Eigen::MatrixXd, class EigenVector_  = Eigen::VectorXd, typename Value_ , typename Index_ , typename Block_ &gt; </td></tr>
-<tr class="memitem:aef8d8fcc39408dad09e3aa0048470d56"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults</a>&lt; EigenMatrix_, EigenVector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aef8d8fcc39408dad09e3aa0048470d56">blocked_pca</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions</a>&lt; EigenVector_ &gt; &amp;options)</td></tr>
-<tr class="separator:aef8d8fcc39408dad09e3aa0048470d56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7742b16678e40263e63873a1153aa4eb" id="r_a7742b16678e40263e63873a1153aa4eb"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , typename Block_ , typename EigenMatrix_ , class EigenVector_ &gt; </td></tr>
+<tr class="memitem:a7742b16678e40263e63873a1153aa4eb"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a7742b16678e40263e63873a1153aa4eb">blocked_pca</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const std::size_t num_blocks, const <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions</a>&lt; EigenVector_ &gt; &amp;options, <a class="el" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults</a>&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</td></tr>
+<tr class="separator:a7742b16678e40263e63873a1153aa4eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fd84e4763415fa1b89aafcac3f73e48" id="r_a1fd84e4763415fa1b89aafcac3f73e48"><td class="memTemplParams" colspan="2">template&lt;typename EigenMatrix_  = Eigen::MatrixXd, class EigenVector_  = Eigen::VectorXd, typename Value_ , typename Index_ , typename Block_ &gt; </td></tr>
+<tr class="memitem:a1fd84e4763415fa1b89aafcac3f73e48"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults</a>&lt; EigenMatrix_, EigenVector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a1fd84e4763415fa1b89aafcac3f73e48">blocked_pca</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const std::size_t num_blocks, const <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions</a>&lt; EigenVector_ &gt; &amp;options)</td></tr>
+<tr class="separator:a1fd84e4763415fa1b89aafcac3f73e48"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8c0f28265747d9a8c80dedee1076253" id="r_ac8c0f28265747d9a8c80dedee1076253"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , typename SubsetVector_ , typename EigenMatrix_ , class EigenVector_ &gt; </td></tr>
 <tr class="memitem:ac8c0f28265747d9a8c80dedee1076253"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac8c0f28265747d9a8c80dedee1076253">subset_pca</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const <a class="el" href="#a30f6e8f0e067aa30d174ba6c4ff05c38">SubsetPcaOptions</a>&lt; EigenVector_ &gt; &amp;options, <a class="el" href="#a022b0488b926c139064cbff8ae948db2">SubsetPcaResults</a>&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</td></tr>
 <tr class="separator:ac8c0f28265747d9a8c80dedee1076253"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9863b52d1424211f123f49b12e99e968" id="r_a9863b52d1424211f123f49b12e99e968"><td class="memTemplParams" colspan="2">template&lt;typename EigenMatrix_  = Eigen::MatrixXd, class EigenVector_  = Eigen::VectorXd, typename Value_ , typename Index_ , class SubsetVector_ &gt; </td></tr>
 <tr class="memitem:a9863b52d1424211f123f49b12e99e968"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="#a022b0488b926c139064cbff8ae948db2">SubsetPcaResults</a>&lt; EigenMatrix_, EigenVector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9863b52d1424211f123f49b12e99e968">subset_pca</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const <a class="el" href="#a30f6e8f0e067aa30d174ba6c4ff05c38">SubsetPcaOptions</a>&lt; EigenVector_ &gt; &amp;options)</td></tr>
 <tr class="separator:a9863b52d1424211f123f49b12e99e968"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff6bb974714400dc60ef955d4da1f2f7" id="r_aff6bb974714400dc60ef955d4da1f2f7"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , class SubsetVector_ , typename Block_ , typename EigenMatrix_ , class EigenVector_ &gt; </td></tr>
-<tr class="memitem:aff6bb974714400dc60ef955d4da1f2f7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aff6bb974714400dc60ef955d4da1f2f7">subset_pca_blocked</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const Block_ *block, const <a class="el" href="#a5b01976867caaee9e326435554b5007d">SubsetPcaBlockedOptions</a>&lt; EigenVector_ &gt; &amp;options, <a class="el" href="#a07326f9ed36d9caa6328b1c918008a64">SubsetPcaBlockedResults</a>&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</td></tr>
-<tr class="separator:aff6bb974714400dc60ef955d4da1f2f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16c4e80530a8a1f10692204c5086c440" id="r_a16c4e80530a8a1f10692204c5086c440"><td class="memTemplParams" colspan="2">template&lt;typename EigenMatrix_  = Eigen::MatrixXd, class EigenVector_  = Eigen::VectorXd, typename Value_ , typename Index_ , class SubsetVector_ , typename Block_ &gt; </td></tr>
-<tr class="memitem:a16c4e80530a8a1f10692204c5086c440"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="#a07326f9ed36d9caa6328b1c918008a64">SubsetPcaBlockedResults</a>&lt; EigenMatrix_, EigenVector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a16c4e80530a8a1f10692204c5086c440">subset_pca_blocked</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const Block_ *block, const <a class="el" href="#a5b01976867caaee9e326435554b5007d">SubsetPcaBlockedOptions</a>&lt; EigenVector_ &gt; &amp;options)</td></tr>
-<tr class="separator:a16c4e80530a8a1f10692204c5086c440"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa25315cafc495bab757c5959aaca21eb" id="r_aa25315cafc495bab757c5959aaca21eb"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , class SubsetVector_ , typename Block_ , typename EigenMatrix_ , class EigenVector_ &gt; </td></tr>
+<tr class="memitem:aa25315cafc495bab757c5959aaca21eb"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aa25315cafc495bab757c5959aaca21eb">subset_pca_blocked</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const Block_ *block, const std::size_t num_blocks, const <a class="el" href="#a5b01976867caaee9e326435554b5007d">SubsetPcaBlockedOptions</a>&lt; EigenVector_ &gt; &amp;options, <a class="el" href="#a07326f9ed36d9caa6328b1c918008a64">SubsetPcaBlockedResults</a>&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</td></tr>
+<tr class="separator:aa25315cafc495bab757c5959aaca21eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ac9343b7fd60bff71673beb1a3ca469" id="r_a1ac9343b7fd60bff71673beb1a3ca469"><td class="memTemplParams" colspan="2">template&lt;typename EigenMatrix_  = Eigen::MatrixXd, class EigenVector_  = Eigen::VectorXd, typename Value_ , typename Index_ , class SubsetVector_ , typename Block_ &gt; </td></tr>
+<tr class="memitem:a1ac9343b7fd60bff71673beb1a3ca469"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="#a07326f9ed36d9caa6328b1c918008a64">SubsetPcaBlockedResults</a>&lt; EigenMatrix_, EigenVector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a1ac9343b7fd60bff71673beb1a3ca469">subset_pca_blocked</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;mat, const SubsetVector_ &amp;subset, const Block_ *block, const std::size_t num_blocks, const <a class="el" href="#a5b01976867caaee9e326435554b5007d">SubsetPcaBlockedOptions</a>&lt; EigenVector_ &gt; &amp;options)</td></tr>
+<tr class="separator:a1ac9343b7fd60bff71673beb1a3ca469"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Principal component analysis on single-cell data. </p>
@@ -177,7 +177,7 @@ template&lt;typename EigenVector_  = Eigen::VectorXd&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Options for <code><a class="el" href="#aff6bb974714400dc60ef955d4da1f2f7">subset_pca_blocked()</a></code>. These are identical to the options for <code><a class="el" href="#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code>.</p>
+<p>Options for <code><a class="el" href="#aa25315cafc495bab757c5959aaca21eb">subset_pca_blocked()</a></code>. These are identical to the options for <code><a class="el" href="#a7742b16678e40263e63873a1153aa4eb">blocked_pca()</a></code>.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">EigenVector_</td><td>A floating-point <code>Eigen::Vector</code> class. </td></tr>
@@ -200,8 +200,8 @@ template&lt;typename EigenMatrix_ , class EigenVector_ &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Results of <code><a class="el" href="#aff6bb974714400dc60ef955d4da1f2f7">subset_pca_blocked()</a></code>.</p>
-<p>These are mostly the same as the results for <code><a class="el" href="#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code>. The only difference is that the number of PCs is the smaller of <code><a class="el" href="structscran__pca_1_1BlockedPcaOptions.html#a05081d55f605a9140315cb29a6c787e2">BlockedPcaOptions::number</a></code> and <code>min(subset.size(), NC) - 1</code>, where <code>subset</code> is the subset vector and <code>NC</code> is the number of columns of the input matrix.</p>
+<p>Results of <code><a class="el" href="#aa25315cafc495bab757c5959aaca21eb">subset_pca_blocked()</a></code>.</p>
+<p>These are mostly the same as the results for <code><a class="el" href="#a7742b16678e40263e63873a1153aa4eb">blocked_pca()</a></code>. The only difference is that the number of PCs is the smaller of <code><a class="el" href="structscran__pca_1_1BlockedPcaOptions.html#a05081d55f605a9140315cb29a6c787e2">BlockedPcaOptions::number</a></code> and <code>min(subset.size(), NC) - 1</code>, where <code>subset</code> is the subset vector and <code>NC</code> is the number of columns of the input matrix.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">EigenMatrix_</td><td>A floating-point column-major <code>Eigen::Matrix</code> class. </td></tr>
@@ -261,8 +261,8 @@ template&lt;typename EigenMatrix_ , class EigenVector_ &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="aef8d8fcc39408dad09e3aa0048470d56" name="aef8d8fcc39408dad09e3aa0048470d56"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef8d8fcc39408dad09e3aa0048470d56">&#9670;&#160;</a></span>blocked_pca() <span class="overload">[1/2]</span></h2>
+<a id="a1fd84e4763415fa1b89aafcac3f73e48" name="a1fd84e4763415fa1b89aafcac3f73e48"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1fd84e4763415fa1b89aafcac3f73e48">&#9670;&#160;</a></span>blocked_pca() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -282,11 +282,16 @@ template&lt;typename EigenMatrix_  = Eigen::MatrixXd, class EigenVector_  = Eige
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>num_blocks</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions</a>&lt; EigenVector_ &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>options</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Overload of <code><a class="el" href="#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code> that allocates memory for the output.</p>
+<p>Overload of <code><a class="el" href="#a7742b16678e40263e63873a1153aa4eb">blocked_pca()</a></code> that allocates memory for the output.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">EigenMatrix_</td><td>A floating-point column-major <code>Eigen::Matrix</code> class. </td></tr>
@@ -309,8 +314,8 @@ template&lt;typename EigenMatrix_  = Eigen::MatrixXd, class EigenVector_  = Eige
 
 </div>
 </div>
-<a id="a01f33f85f7508d2d1bcc083484ba095e" name="a01f33f85f7508d2d1bcc083484ba095e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a01f33f85f7508d2d1bcc083484ba095e">&#9670;&#160;</a></span>blocked_pca() <span class="overload">[2/2]</span></h2>
+<a id="a7742b16678e40263e63873a1153aa4eb" name="a7742b16678e40263e63873a1153aa4eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7742b16678e40263e63873a1153aa4eb">&#9670;&#160;</a></span>blocked_pca() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -330,6 +335,11 @@ template&lt;typename Value_ , typename Index_ , typename Block_ , typename Eigen
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>num_blocks</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const <a class="el" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions</a>&lt; EigenVector_ &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>options</em></span>, </td>
         </tr>
         <tr>
@@ -340,15 +350,15 @@ template&lt;typename Value_ , typename Index_ , typename Block_ , typename Eigen
       </table>
 </div><div class="memdoc">
 <p>Principal components analysis on residuals, after regressing out a blocking factor across cells.</p>
-<p>As discussed in <code><a class="el" href="#a9eaf1d09c8c4fcdf821abd142d7ab8cd">simple_pca()</a></code>, we extract the top PCs from a single-cell dataset for downstream cell-based procedures like clustering. In the presence of a blocking factor (e.g., batches, samples), we want to ensure that the PCA is not driven by uninteresting differences between blocks of cells. To achieve this, <code><a class="el" href="#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code> centers the expression of each gene within each blocking level and uses the residuals for PCA. This ensures that the gene-gene covariance matrix will only contain variation within each batch, such that the top rotation vectors/principal components capture biological heterogeneity instead of inter-block differences.</p>
-<p>In addition, <code><a class="el" href="#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code> will weight each block of cells to control its relative contribution to the PCA. By default, <code><a class="el" href="#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code> scales the expression values for each block so that each "sufficiently large" block contributes equally to the gene-gene covariance matrix and thus the rotation vectors. This ensures that the definition of the axes of maximum variance are not dominated by the largest block, potentially masking interesting variation in the smaller blocks. (See <code><a class="el" href="structscran__pca_1_1BlockedPcaOptions.html#a90ea56570afdc1ac9b6d62e26bbab18f">BlockedPcaOptions::block_weight_policy</a></code> for the choice of weighting scheme.)</p>
+<p>As discussed in <code><a class="el" href="#a9eaf1d09c8c4fcdf821abd142d7ab8cd">simple_pca()</a></code>, we extract the top PCs from a single-cell dataset for downstream cell-based procedures like clustering. In the presence of a blocking factor (e.g., batches, samples), we want to ensure that the PCA is not driven by uninteresting differences between blocks of cells. To achieve this, <code><a class="el" href="#a7742b16678e40263e63873a1153aa4eb">blocked_pca()</a></code> centers the expression of each gene within each blocking level and uses the residuals for PCA. This ensures that the gene-gene covariance matrix will only contain variation within each batch, such that the top rotation vectors/principal components capture biological heterogeneity instead of inter-block differences.</p>
+<p>In addition, <code><a class="el" href="#a7742b16678e40263e63873a1153aa4eb">blocked_pca()</a></code> will weight each block of cells to control its relative contribution to the PCA. By default, <code><a class="el" href="#a7742b16678e40263e63873a1153aa4eb">blocked_pca()</a></code> scales the expression values for each block so that each "sufficiently large" block contributes equally to the gene-gene covariance matrix and thus the rotation vectors. This ensures that the definition of the axes of maximum variance are not dominated by the largest block, potentially masking interesting variation in the smaller blocks. (See <code><a class="el" href="structscran__pca_1_1BlockedPcaOptions.html#a90ea56570afdc1ac9b6d62e26bbab18f">BlockedPcaOptions::block_weight_policy</a></code> for the choice of weighting scheme.)</p>
 <p>The PC scores themselves are computed by projecting each cell's expression profile onto the subspace defined by the rotation vectors, and then centering them according to <code><a class="el" href="structscran__pca_1_1BlockedPcaOptions.html#aa672fa933bfc6d0bd3f1bf4b91d13386">BlockedPcaOptions::center_scores_by_block</a></code>. The interpretation of these scores depends on the choice of centering mode:</p>
 <ul>
 <li>If <code>false</code> (the default), the dataset is globally shifted so that the centroid across all cells lies at the origin. This does not explicitly remove differences between blocks. Any differences in expression that are not orthogonal to the rotation vectors will still manifest in the PC scores. In this mode, blocking only reduces the impact of inter-block differences on the identification of the rotation vectors.</li>
 <li>If <code>true</code>, the scores are centered within each block, i.e., each block of cells is centered at the origin. Without weighting, this is equivalent to the PC scores that would be obtained from PCA on the residuals. This represents a low-dimensional space where inter-block differences have been "corrected", assuming that all blocks have the same subpopulation composition and the inter-block differences are consistent for all cell subpopulations.</li>
 </ul>
 <p>We default to <code>false</code> as the assumptions mentioned above for <code>true</code> are usually too strong. Per-block centering can distort the differences between blocks when these assumptions are violated, even in the absence of any differences between blocks. Global centering avoids any distortion while mitigating the impact of uninteresting inter-block differences on the scores. Any remaining differences can be corrected by processing the scores with more sophisticated batch correction methods like <a href="https://github.com/libscran/mnncorrect">MNN correction</a>.</p>
-<p>Internally, <code><a class="el" href="#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code> defers the residual calculation until the matrix multiplication steps within <a href="https://github.com/LTLA/CppIrlba">IRLBA</a>. This yields the same results as the naive calculation of residuals but is much faster as it can take advantage of efficient sparse operations.</p>
+<p>Internally, <code><a class="el" href="#a7742b16678e40263e63873a1153aa4eb">blocked_pca()</a></code> defers the residual calculation until the matrix multiplication steps within <a href="https://github.com/LTLA/CppIrlba">IRLBA</a>. This yields the same results as the naive calculation of residuals but is much faster as it can take advantage of efficient sparse operations.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Type of the matrix data. </td></tr>
@@ -364,7 +374,7 @@ template&lt;typename Value_ , typename Index_ , typename Block_ , typename Eigen
     <tr><td class="paramdir">[in]</td><td class="paramname">mat</td><td>Input matrix. Columns should contain cells while rows should contain genes. Matrix entries are typically log-expression values. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">block</td><td>Pointer to an array of length equal to the number of cells, containing the block assignment for each cell. Each assignment should be an integer in \([0, N)\) where \(N\) is the number of blocks. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">options</td><td>Further options. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">output</td><td>On output, the results of the PCA on the residuals. This can be re-used across multiple calls to <code><a class="el" href="#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code>. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">output</td><td>On output, the results of the PCA on the residuals. This can be re-used across multiple calls to <code><a class="el" href="#a7742b16678e40263e63873a1153aa4eb">blocked_pca()</a></code>. </td></tr>
   </table>
   </dd>
 </dl>
@@ -562,8 +572,8 @@ template&lt;typename Value_ , typename Index_ , typename SubsetVector_ , typenam
 
 </div>
 </div>
-<a id="a16c4e80530a8a1f10692204c5086c440" name="a16c4e80530a8a1f10692204c5086c440"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a16c4e80530a8a1f10692204c5086c440">&#9670;&#160;</a></span>subset_pca_blocked() <span class="overload">[1/2]</span></h2>
+<a id="a1ac9343b7fd60bff71673beb1a3ca469" name="a1ac9343b7fd60bff71673beb1a3ca469"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ac9343b7fd60bff71673beb1a3ca469">&#9670;&#160;</a></span>subset_pca_blocked() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -588,11 +598,16 @@ template&lt;typename EigenMatrix_  = Eigen::MatrixXd, class EigenVector_  = Eige
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>num_blocks</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const <a class="el" href="#a5b01976867caaee9e326435554b5007d">SubsetPcaBlockedOptions</a>&lt; EigenVector_ &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>options</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Overload of <code><a class="el" href="#aff6bb974714400dc60ef955d4da1f2f7">subset_pca_blocked()</a></code> that allocates memory for the output.</p>
+<p>Overload of <code><a class="el" href="#aa25315cafc495bab757c5959aaca21eb">subset_pca_blocked()</a></code> that allocates memory for the output.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">EigenMatrix_</td><td>A floating-point column-major <code>Eigen::Matrix</code> class. </td></tr>
@@ -608,7 +623,8 @@ template&lt;typename EigenMatrix_  = Eigen::MatrixXd, class EigenVector_  = Eige
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">mat</td><td>Input matrix. Columns should contain cells while rows should contain genes. Matrix entries are typically log-expression values. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">subset</td><td>Vector of indices for rows to be used in the PCA. This should be sorted and unique. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">block</td><td>Pointer to an array of length equal to the number of cells, containing the block assignment for each cell. Each assignment should be an integer in \([0, N)\) where \(N\) is the number of blocks. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">block</td><td>Pointer to an array of length equal to the number of cells, containing the block assignment for each cell. Each assignment should be a non-negative integer that is less than <code>num_blocks</code>. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">num_blocks</td><td>Number of blocks in <code>block</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">options</td><td>Further options.</td></tr>
   </table>
   </dd>
@@ -617,8 +633,8 @@ template&lt;typename EigenMatrix_  = Eigen::MatrixXd, class EigenVector_  = Eige
 
 </div>
 </div>
-<a id="aff6bb974714400dc60ef955d4da1f2f7" name="aff6bb974714400dc60ef955d4da1f2f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aff6bb974714400dc60ef955d4da1f2f7">&#9670;&#160;</a></span>subset_pca_blocked() <span class="overload">[2/2]</span></h2>
+<a id="aa25315cafc495bab757c5959aaca21eb" name="aa25315cafc495bab757c5959aaca21eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa25315cafc495bab757c5959aaca21eb">&#9670;&#160;</a></span>subset_pca_blocked() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -643,6 +659,11 @@ template&lt;typename Value_ , typename Index_ , class SubsetVector_ , typename B
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>num_blocks</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const <a class="el" href="#a5b01976867caaee9e326435554b5007d">SubsetPcaBlockedOptions</a>&lt; EigenVector_ &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>options</em></span>, </td>
         </tr>
         <tr>
@@ -653,7 +674,7 @@ template&lt;typename Value_ , typename Index_ , class SubsetVector_ , typename B
       </table>
 </div><div class="memdoc">
 <p>Principal components analysis on a subset of features in the input matrix, with blocking.</p>
-<p>This function performs PCA on a subset of interesting features (e.g., from highly variable genes) while accounting for a blocking factor. The results are almost equivalent to subsetting the input matrix and then running <code><a class="el" href="#a01f33f85f7508d2d1bcc083484ba095e">blocked_pca()</a></code>. However, <code><a class="el" href="#aff6bb974714400dc60ef955d4da1f2f7">subset_pca_blocked()</a></code> will also populate the rotation matrix, centering matrix and scaling vector for features outside of the subset. For the rotation matrix, this is done by projecting the unused features into the low-dimensional space defined by the top PCs. The goal is to allow callers to create a low-rank approximation of the entire input matrix, even if only a subset of the features are relevant to the PCA.</p>
+<p>This function performs PCA on a subset of interesting features (e.g., from highly variable genes) while accounting for a blocking factor. The results are almost equivalent to subsetting the input matrix and then running <code><a class="el" href="#a7742b16678e40263e63873a1153aa4eb">blocked_pca()</a></code>. However, <code><a class="el" href="#aa25315cafc495bab757c5959aaca21eb">subset_pca_blocked()</a></code> will also populate the rotation matrix, centering matrix and scaling vector for features outside of the subset. For the rotation matrix, this is done by projecting the unused features into the low-dimensional space defined by the top PCs. The goal is to allow callers to create a low-rank approximation of the entire input matrix, even if only a subset of the features are relevant to the PCA.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Type of the matrix data. </td></tr>
@@ -668,9 +689,10 @@ template&lt;typename Value_ , typename Index_ , class SubsetVector_ , typename B
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">mat</td><td>The input matrix. Columns should contain cells while rows should contain genes. Matrix entries are typically log-expression values. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">subset</td><td>Vector of indices for rows to be used in the PCA. This should be sorted and unique. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">block</td><td>Pointer to an array of length equal to the number of cells, containing the block assignment for each cell. Each assignment should be an integer in \([0, N)\) where \(N\) is the number of blocks. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">block</td><td>Pointer to an array of length equal to the number of cells, containing the block assignment for each cell. Each assignment should be a non-negative integer that is less than <code>num_blocks</code>. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">num_blocks</td><td>Number of blocks in <code>block</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">options</td><td>Further options. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">output</td><td>On output, the results of the PCA on <code>mat</code>. This can be re-used across multiple calls to <code><a class="el" href="#aff6bb974714400dc60ef955d4da1f2f7">subset_pca_blocked()</a></code>. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">output</td><td>On output, the results of the PCA on <code>mat</code>. This can be re-used across multiple calls to <code><a class="el" href="#aa25315cafc495bab757c5959aaca21eb">subset_pca_blocked()</a></code>. </td></tr>
   </table>
   </dd>
 </dl>
