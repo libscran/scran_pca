@@ -234,6 +234,8 @@ void compute_blockwise_mean_and_variance_realized_sparse(
                 if (bsize) {
                     block_centers[b] /= bsize;
                 }
+                // We'll set the means to NaN at the end of the function.
+                // We don't do it here as NaNs would propagate in ResidualMatrix's multiply.
             }
 
             // Computing the RSS instead of the sample variance.
@@ -263,14 +265,15 @@ void compute_blockwise_mean_and_variance_realized_sparse(
             }
 
             // COMMENT ON DENOMINATOR:
-            // If we're not dealing with weights, we compute the actual sample
-            // variance for easy interpretation (and to match up with the
-            // per-PC calculations in clean_up).
+            // If we're not dealing with weights, we compute the actual sample variance for easy interpretation
+            // (and to match up with the per-PC calculations in clean_up).
             //
-            // If we're dealing with weights, the concept of the sample variance
-            // becomes somewhat weird, but we just use the same denominator for
-            // consistency in clean_up_projected. Magnitude doesn't matter when
-            // scaling for process_scale_vector anyway.
+            // If we're dealing with weights, the concept of the sample variance becomes somewhat weird.
+            // So, we just use the same denominator for consistency in clean_up_projected.
+            // Magnitude doesn't matter when scaling for process_scale_vector anyway.
+            //
+            // If there are not enough cells, we set the variance to zero so that no scaling is done in process_scale_vector().
+            // We'll set this to NaN at the end of the function.
             if (ncells > 1) {
                 variances[g] = rss / (ncells - 1);
             } else {
@@ -329,8 +332,7 @@ void compute_blockwise_mean_and_variance_realized_dense(
 
             typename EigenVector_::Scalar rss = 0; 
             for (std::size_t b = 0; b < num_blocks; ++b) {
-                const auto bsize = block_sizes[b];
-                if (bsize) {
+                if (block_sizes[b]) {
                     if (block_details.has_value()) {
                         rss += block_rss[b] * block_details->per_element_weight[b];
                     } else {
@@ -386,10 +388,8 @@ void compute_blockwise_mean_and_variance_tatami(
     opt.num_threads = nthreads;
     tatami_stats::group_rss(true, mat, block, num_blocks, block_sizes.data(), buffers, opt);
 
-    centers = tmp_mean.adjoint();
     assert(sanisizer::is_equal(variances.size(), ngenes));
     variances.setZero();
-
     for (std::size_t b = 0; b < num_blocks; ++b) {
         if (block_sizes[b]) {
             const auto& currss = tmp_rss[b];
@@ -402,8 +402,13 @@ void compute_blockwise_mean_and_variance_tatami(
                     variances.coeffRef(g) += currss[g];
                 }
             }
+        } else {
+            // Replace NaNs with zeros so ResidualMatrix's multiplications don't propagate NaNs.
+            std::fill_n(buffers.mean[b], ngenes, 0);
         }
     }
+
+    centers = tmp_mean.adjoint();
 
     // See COMMENT ON DENOMINATOR above.
     const auto ncells = mat.ncol();
@@ -1048,6 +1053,27 @@ void blocked_pca_internal(
 
     if (!options.scale) {
         output.scale = EigenVector_();
+    } else if (ncells <= 1) {
+        std::fill(output.scale.begin(), output.scale.end(), std::numeric_limits<typename EigenVector_::Scalar>::quiet_NaN());
+    }
+
+    // Set centers for empty groups to be NaN.
+    for (std::size_t bx = 0; bx < num_blocks; ++bx) {
+        if (block_sizes[bx] == 0) {
+            std::vector<std::size_t> empty_blocks; 
+            empty_blocks.reserve(num_blocks - bx);
+            for (std::size_t b = bx; b < num_blocks; ++b) {
+                if (block_sizes[b] == 0) {
+                    empty_blocks.push_back(b);
+                }
+            }
+            for (Index_ g = 0; g < ngenes; ++g) {
+                for (const auto eb : empty_blocks) {
+                    output.center.coeffRef(eb, g) = std::numeric_limits<typename EigenVector_::Scalar>::quiet_NaN();
+                }
+            }
+            break;
+        }
     }
 }
 /**
