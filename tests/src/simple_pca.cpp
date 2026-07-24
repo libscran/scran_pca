@@ -74,8 +74,8 @@ TEST_P(SimplePcaBasicTest, Test) {
         if (scale) {
             EXPECT_FLOAT_EQ(dense_row->nrow(), ref.total_variance);
         } else {
-            auto vars = tatami_stats::variances::by_row(dense_row.get());
-            auto total_var = std::accumulate(vars.begin(), vars.end(), 0.0);
+            auto vars = tatami_stats::variance(true, *dense_row, {});
+            auto total_var = std::accumulate(vars.variance.begin(), vars.variance.end(), 0.0);
             EXPECT_FLOAT_EQ(total_var, ref.total_variance);
         }
 

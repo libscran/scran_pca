@@ -173,11 +173,7 @@ void subset_pca(
             const auto num_inv = inv_mat.nrow();
             auto inv_center = sanisizer::create<EigenVector_>(num_inv);
             auto inv_scale = sanisizer::create<EigenVector_>(num_inv);
-            if (inv_mat.sparse()) {
-                compute_row_means_and_variances<true>(inv_mat, options.num_threads, inv_center, inv_scale);
-            } else {
-                compute_row_means_and_variances<false>(inv_mat, options.num_threads, inv_center, inv_scale);
-            }
+            compute_row_means_and_variances(inv_mat, options.num_threads, inv_center, inv_scale);
             process_scale_vector(options.scale, inv_scale);
 
             std::vector<typename EigenVector_::Scalar> product;
@@ -305,7 +301,8 @@ using SubsetPcaBlockedResults = BlockedPcaResults<EigenMatrix_, EigenVector_>;
  * This should be sorted and unique.
  * @param[in] block Pointer to an array of length equal to the number of cells, 
  * containing the block assignment for each cell. 
- * Each assignment should be an integer in \f$[0, N)\f$ where \f$N\f$ is the number of blocks.
+ * Each assignment should be a non-negative integer that is less than `num_blocks`.
+ * @param num_blocks Number of blocks in `block`.
  * @param options Further options.
  * @param[out] output On output, the results of the PCA on `mat`.
  * This can be re-used across multiple calls to `subset_pca_blocked()`. 
@@ -314,12 +311,16 @@ template<typename Value_, typename Index_, class SubsetVector_, typename Block_,
 void subset_pca_blocked(
     const tatami::Matrix<Value_, Index_>& mat,
     const SubsetVector_& subset,
-    const Block_* block, 
+    const Block_* block,
+    const std::size_t num_blocks,
     const SubsetPcaBlockedOptions<EigenVector_>& options,
     SubsetPcaBlockedResults<EigenMatrix_, EigenVector_>& output
 ) {
     const auto full_size = mat.nrow();
-    EigenMatrix_ final_center;
+    EigenMatrix_ final_center(
+        sanisizer::cast<I<decltype(std::declval<EigenMatrix_>().rows())> >(num_blocks),
+        sanisizer::cast<I<decltype(std::declval<EigenMatrix_>().cols())> >(full_size)
+    );
     auto final_scale = sanisizer::create<EigenVector_>(full_size);
     EigenMatrix_ final_rotation;
 
@@ -329,43 +330,33 @@ void subset_pca_blocked(
     blocked_pca_internal<Value_, Index_, Block_, EigenMatrix_, EigenVector_>(
         sub_mat,
         block,
+        num_blocks,
         options,
         output,
         [&](
-            const BlockingDetails<Index_, EigenVector_>& block_details,
+            const std::size_t num_blocks,
+            const std::vector<Index_>& block_sizes,
+            const std::optional<BlockingDetails<EigenVector_> >& block_details,
             const EigenMatrix_& rhs_vectors,
             const EigenVector_& sing_vals
         ) -> void {
-            final_center.resize(
-                sanisizer::cast<I<decltype(final_center.rows())> >(block_details.block_size.size()),
-                sanisizer::cast<I<decltype(final_center.cols())> >(full_size)
-            );
-            final_rotation.resize(
-                sanisizer::cast<I<decltype(final_rotation.rows())> >(full_size),
-                rhs_vectors.cols()
-            ); 
-
             auto inv_subset = invert_subset(mat.nrow(), subset);
             // Don't move inv_subset into the constructor, we'll need it later.
             tatami::DelayedSubsetSortedUnique<Value_, Index_, I<decltype(inv_subset)> > inv_mat(tatami::wrap_shared_ptr(&mat), inv_subset, true);
 
             const auto num_cells = inv_mat.ncol();
             const auto num_inv = inv_mat.nrow();
-            const auto num_blocks = block_details.block_size.size();
-            EigenMatrix_ inv_center(
-                sanisizer::cast<Eigen::Index>(num_blocks),
-                sanisizer::cast<Eigen::Index>(num_inv)
-            );
+            EigenMatrix_ inv_center;
             auto inv_scale = sanisizer::create<EigenVector_>(num_inv);
-            compute_blockwise_mean_and_variance_tatami(inv_mat, block, block_details, inv_center, inv_scale, options.num_threads);
+            compute_blockwise_mean_and_variance_tatami(inv_mat, block, num_blocks, block_sizes, block_details, inv_center, inv_scale, options.num_threads);
             process_scale_vector(options.scale, inv_scale);
 
             // Need to adjust the RHS singular vector matrix to mimic weighting of the input matrix.
             const EigenMatrix_* rhs_ptr = NULL;
             std::optional<EigenMatrix_> weighted_rhs;
-            if (block_details.weighted) {
+            if (block_details.has_value()) {
                 weighted_rhs = rhs_vectors;
-                weighted_rhs->array().colwise() *= block_details.expanded_weights.array();
+                weighted_rhs->array().colwise() *= block_details->expanded_weights.array();
                 rhs_ptr = &(*weighted_rhs);
             } else {
                 rhs_ptr = &rhs_vectors;
@@ -380,6 +371,11 @@ void subset_pca_blocked(
                 out_ptrs,
                 options.num_threads
             );
+
+            final_rotation.resize(
+                sanisizer::cast<I<decltype(final_rotation.rows())> >(full_size),
+                rhs_vectors.cols()
+            ); 
 
             const auto rank = rhs_vectors.cols();
             auto shift_buffer = sanisizer::create<EigenVector_>(num_blocks);
@@ -447,7 +443,8 @@ void subset_pca_blocked(
  * This should be sorted and unique.
  * @param[in] block Pointer to an array of length equal to the number of cells, 
  * containing the block assignment for each cell. 
- * Each assignment should be an integer in \f$[0, N)\f$ where \f$N\f$ is the number of blocks.
+ * Each assignment should be a non-negative integer that is less than `num_blocks`.
+ * @param num_blocks Number of blocks in `block`.
  * @param options Further options.
  *
  * @return Results of the blocked and subsetted PCA. 
@@ -457,10 +454,11 @@ SubsetPcaBlockedResults<EigenMatrix_, EigenVector_>  subset_pca_blocked(
     const tatami::Matrix<Value_, Index_>& mat,
     const SubsetVector_& subset,
     const Block_* block, 
+    const std::size_t num_blocks,
     const SubsetPcaBlockedOptions<EigenVector_>& options
 ) {
     SubsetPcaBlockedResults<EigenMatrix_, EigenVector_> output;
-    subset_pca_blocked(mat, subset, block, options, output);
+    subset_pca_blocked(mat, subset, block, num_blocks, options, output);
     return output;
 }
 

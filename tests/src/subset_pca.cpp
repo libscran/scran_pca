@@ -246,7 +246,7 @@ TEST_P(SubsetPcaBlockedTest, Basic) {
     // We tightened the tolerances so that the rotation matrix comparisons are more accurate,
     // as otherwise the rotation matrix is not quite equal to the matrix * components product.
     opt.irlba_options.convergence_tolerance = 1e-12; 
-    auto ref = scran_pca::blocked_pca(*dense_row, block.data(), opt);
+    auto ref = scran_pca::blocked_pca(*dense_row, block.data(), nblocks, opt);
 
     const auto NR = dense_row->nrow();
     std::vector<int> first_sub(NR);
@@ -270,7 +270,7 @@ TEST_P(SubsetPcaBlockedTest, Basic) {
             ptr = sparse_column;
         }
         tatami::DelayedBind<double, int> doubled(std::vector<std::shared_ptr<tatami::NumericMatrix> >{ ptr, ptr }, true);
-        auto subsetted = scran_pca::subset_pca_blocked(doubled, first_sub, block.data(), opt);
+        auto subsetted = scran_pca::subset_pca_blocked(doubled, first_sub, block.data(), nblocks, opt);
 
         expect_equal_pcs(ref.components, subsetted.components);
         expect_equal_vectors(ref.variance_explained, subsetted.variance_explained);
@@ -323,7 +323,7 @@ TEST_F(SubsetPcaErrorTest, Basic) {
     auto block = generate_blocks(dense_row->ncol(), 2);
     scran_tests::expect_error(
         [&]() -> void {
-            scran_pca::subset_pca_blocked(*dense_row, first_sub, block.data(), scran_pca::SubsetPcaBlockedOptions{});
+            scran_pca::subset_pca_blocked(*dense_row, first_sub, block.data(), 2, scran_pca::SubsetPcaBlockedOptions{});
         },
         "sorted"
     ); 
