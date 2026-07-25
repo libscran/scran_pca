@@ -1053,27 +1053,6 @@ void blocked_pca_internal(
 
     if (!options.scale) {
         output.scale = EigenVector_();
-    } else if (ncells <= 1) {
-        std::fill(output.scale.begin(), output.scale.end(), std::numeric_limits<typename EigenVector_::Scalar>::quiet_NaN());
-    }
-
-    // Set centers for empty groups to be NaN.
-    for (std::size_t bx = 0; bx < num_blocks; ++bx) {
-        if (block_sizes[bx] == 0) {
-            std::vector<std::size_t> empty_blocks; 
-            empty_blocks.reserve(num_blocks - bx);
-            for (std::size_t b = bx; b < num_blocks; ++b) {
-                if (block_sizes[b] == 0) {
-                    empty_blocks.push_back(b);
-                }
-            }
-            for (Index_ g = 0; g < ngenes; ++g) {
-                for (const auto eb : empty_blocks) {
-                    output.center.coeffRef(eb, g) = std::numeric_limits<typename EigenVector_::Scalar>::quiet_NaN();
-                }
-            }
-            break;
-        }
     }
 }
 /**

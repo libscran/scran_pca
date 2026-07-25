@@ -673,13 +673,6 @@ TEST_P(BlockedPcaEmptyBlockTest, Sanity) {
     auto original_block = generate_blocks(dense_row->ncol(), raw_nblocks);
     auto ref = scran_pca::blocked_pca(*dense_row, original_block.data(), raw_nblocks, opts);
 
-    const int ngenes = dense_row->nrow();
-    for (int g = 0; g < ngenes; ++g) {
-        for (int b = 0; b < raw_nblocks; ++b) {
-            EXPECT_FALSE(std::isnan(ref.center.coeff(b, g)));
-        }
-    }
-
     // Checking that we get the same results after injecting some empty blocks;
     // one at the start, some in the middle, and one at the end.
     auto block = original_block;
@@ -695,6 +688,7 @@ TEST_P(BlockedPcaEmptyBlockTest, Sanity) {
     expect_equal_vectors(ref.variance_explained, res1.variance_explained);
     EXPECT_FLOAT_EQ(ref.total_variance, res1.total_variance);
 
+    const int ngenes = dense_row->nrow();
     for (int b = 0; b < nblocks; ++b) {
         if (b && b % 2 == 1) {
             const int original = (b - 1) / 2;
@@ -704,7 +698,7 @@ TEST_P(BlockedPcaEmptyBlockTest, Sanity) {
             }
         }
         for (int g = 0; g < ngenes; ++g) {
-            EXPECT_TRUE(std::isnan(res1.center.coeffRef(b, g)));
+            EXPECT_EQ(res1.center.coeffRef(b, g), 0);
         }
     }
 
@@ -770,17 +764,32 @@ TEST_P(BlockedPcaNearEmptyTest, OneCell) {
     opts.scale = scale;
     opts.center_scores_by_block = center_block;
 
-    // Checking that all values make sense.
     std::vector<int> block(1);
     auto res1 = scran_pca::blocked_pca(*dense_row, block.data(), 1, opts);
+
+    // Checking that all values make sense.
     EXPECT_EQ(res1.components.cols(), 1);
     EXPECT_EQ(res1.components.rows(), 1);
     EXPECT_EQ(res1.components.coeff(0, 0), 0);
+    EXPECT_EQ(res1.rotation.cols(), 1);
+    EXPECT_EQ(res1.rotation.rows(), ngenes);
+    EXPECT_EQ(res1.center.cols(), ngenes);
+    EXPECT_EQ(res1.center.rows(), 1);
     for (int g = 0; g < ngenes; ++g) {
         EXPECT_EQ(res1.rotation.coeff(g, 0), (g == 0 ? 1 : 0));
         EXPECT_EQ(res1.center.coeff(0, g), vec[g]);
     }
+
+    EXPECT_EQ(res1.variance_explained.size(), 1);
+    EXPECT_EQ(res1.variance_explained[0], 0);
     EXPECT_EQ(res1.total_variance, 0);
+
+    if (scale) {
+        EXPECT_EQ(res1.scale.size(), ngenes);
+        for (int g = 0; g < ngenes; ++g) {
+            EXPECT_EQ(res1.scale[g], 1); // zero converted to 1.
+        }
+    }
 
     // Checking that we get more-or-less the same results with other matrix representations.
     auto res2 = scran_pca::blocked_pca(*dense_column, block.data(), 1, opts);
@@ -823,16 +832,28 @@ TEST_P(BlockedPcaNearEmptyTest, NoCells) {
     opts.scale = scale;
     opts.center_scores_by_block = center_block;
 
-    // Checking that all values make sense.
     std::vector<int> block;
     auto res1 = scran_pca::blocked_pca(*dense_row, block.data(), 0, opts);
+
+    // Checking that all values make sense.
     EXPECT_EQ(res1.components.cols(), 0);
     EXPECT_EQ(res1.components.rows(), 0);
     EXPECT_EQ(res1.rotation.cols(), 0);
     EXPECT_EQ(res1.rotation.rows(), ngenes);
+
     EXPECT_EQ(res1.center.cols(), ngenes);
     EXPECT_EQ(res1.center.rows(), 0);
+
+    EXPECT_EQ(res1.variance_explained.size(), 1);
+    EXPECT_EQ(res1.variance_explained[0], 0);
     EXPECT_EQ(res1.total_variance, 0);
+
+    if (scale) {
+        EXPECT_EQ(res1.scale.size(), ngenes);
+        for (int g = 0; g < ngenes; ++g) {
+            EXPECT_EQ(res1.scale[g], 1); // zero converted to 1.
+        }
+    }
 
     // Checking that we get more-or-less the same results with other matrix representations.
     auto res2 = scran_pca::blocked_pca(*dense_column, block.data(), 0, opts);
@@ -882,9 +903,16 @@ TEST_P(BlockedPcaNearEmptyTest, NoGenes) {
     EXPECT_EQ(res1.components.rows(), 0);
     EXPECT_EQ(res1.rotation.cols(), 0);
     EXPECT_EQ(res1.rotation.rows(), 0);
+
     EXPECT_EQ(res1.center.cols(), 0);
     EXPECT_EQ(res1.center.rows(), 1);
+
+    EXPECT_EQ(res1.variance_explained.size(), 0);
     EXPECT_EQ(res1.total_variance, 0);
+
+    if (scale) {
+        EXPECT_EQ(res1.scale.size(), 0);
+    }
 
     // Checking that we get more-or-less the same results with other matrix representations.
     auto res2 = scran_pca::blocked_pca(*dense_column, block.data(), 1, opts);
