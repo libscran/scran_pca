@@ -189,8 +189,15 @@ void subset_pca(
             const auto rank = rhs_vectors.cols();
             final_rotation.resize(sanisizer::cast<Eigen::Index>(full_size), rank);
             for (I<decltype(rank)> r = 0; r < rank; ++r) {
-                const auto curshift = rhs_vectors.col(r).sum();
                 const auto varexp = sing_vals.coeff(r);
+                if (varexp == 0) {
+                    for (I<decltype(num_inv)> i = 0; i < num_inv; ++i) {
+                        final_rotation.coeffRef(inv_subset[i], r) = 0;
+                    }
+                    continue;
+                }
+
+                const auto curshift = rhs_vectors.col(r).sum();
                 const auto optr = product_ptrs[r];
                 const auto compute = [&](I<decltype(num_inv)> i) -> typename EigenVector_::Scalar {
                     return (optr[i] - curshift * inv_center.coeff(i)) / varexp;
@@ -380,12 +387,19 @@ void subset_pca_blocked(
             const auto rank = rhs_vectors.cols();
             auto shift_buffer = sanisizer::create<EigenVector_>(num_blocks);
             for (I<decltype(rank)> r = 0; r < rank; ++r) {
+                const auto varexp = sing_vals.coeff(r);
+                if (varexp == 0) {
+                    for (I<decltype(num_inv)> i = 0; i < num_inv; ++i) {
+                        final_rotation.coeffRef(inv_subset[i], r) = 0;
+                    }
+                    continue;
+                }
+
                 std::fill(shift_buffer.begin(), shift_buffer.end(), 0);
                 for (I<decltype(num_cells)> i = 0; i < num_cells; ++i) {
                     shift_buffer.coeffRef(block[i]) += rhs_vectors.coeff(i, r);
                 }
 
-                const auto varexp = sing_vals.coeff(r);
                 const auto optr = out_ptrs[r];
                 const auto compute = [&](I<decltype(num_inv)> i) -> typename EigenVector_::Scalar {
                     typename EigenVector_::Scalar curshift = 0;

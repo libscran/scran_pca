@@ -616,8 +616,10 @@ void clean_up_projected(EigenMatrix_& projected, EigenVector_& D) {
 
     // Just dividing by the number of observations - 1 regardless of weighting.
     const typename EigenMatrix_::Scalar denom = projected.cols() - 1;
-    for (auto& d : D) {
-        d = d * d / denom;
+    if (denom) {
+        for (auto& d : D) {
+            d = d * d / denom;
+        }
     }
 }
 

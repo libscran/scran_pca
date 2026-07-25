@@ -262,6 +262,193 @@ INSTANTIATE_TEST_SUITE_P(
 
 /**************************************************************/
 
+class SubsetPcaEdgeTest : public ::testing::TestWithParam<bool> {};
+
+TEST_P(SubsetPcaEdgeTest, OneCell) {
+    const bool scale = GetParam();
+
+    const int ngenes = 100;
+    auto vec = scran_tests::simulate_vector(ngenes, [&]{
+        scran_tests::SimulateVectorParameters sparams;
+        sparams.lower = -10;
+        sparams.upper = 10;
+        sparams.seed = 3456;
+        return sparams;
+    }());
+    tatami::DenseRowMatrix<double, int> mat(ngenes, 1, vec);
+
+    scran_pca::SubsetPcaOptions opts;
+    opts.number = 5;
+    opts.scale = scale;
+
+    auto chosen = choose_rows(mat.nrow(), /* seed = */ scale);
+    auto res = scran_pca::subset_pca(mat, chosen, opts);
+
+    // Checking that all values make sense.
+    EXPECT_EQ(res.components.cols(), 1);
+    EXPECT_EQ(res.components.rows(), 1);
+    EXPECT_EQ(res.components.coeff(0, 0), 0);
+    EXPECT_EQ(res.rotation.cols(), 1);
+    EXPECT_EQ(res.rotation.rows(), ngenes);
+    EXPECT_EQ(res.center.size(), ngenes);
+
+    for (int g = 0; g < ngenes; ++g) {
+        EXPECT_EQ(res.rotation.coeff(g, 0), (g == 0 ? 1 : 0));
+        EXPECT_EQ(res.center.coeff(g), vec[g]);
+    }
+
+    EXPECT_EQ(res.variance_explained.size(), 1);
+    EXPECT_EQ(res.variance_explained[0], 0);
+    EXPECT_EQ(res.total_variance, 0);
+
+    if (scale) {
+        EXPECT_EQ(res.scale.size(), ngenes);
+        for (int g = 0; g < ngenes; ++g) {
+            EXPECT_EQ(res.scale[g], 1); // adjusted from zero to 1.
+        }
+    }
+}
+
+TEST_P(SubsetPcaEdgeTest, NoCells) {
+    const bool scale = GetParam();
+
+    const int ngenes = 100;
+    tatami::DenseRowMatrix<double, int> mat(ngenes, 0, std::vector<double>());
+    auto chosen = choose_rows(ngenes, /* seed = */ scale);
+
+    scran_pca::SubsetPcaOptions opts;
+    opts.number = 5;
+    opts.scale = scale;
+    auto res = scran_pca::subset_pca(mat, chosen, opts);
+
+    // Checking that all values make sense.
+    EXPECT_EQ(res.components.cols(), 0);
+    EXPECT_EQ(res.components.rows(), 0);
+    EXPECT_EQ(res.rotation.cols(), 0);
+    EXPECT_EQ(res.rotation.rows(), ngenes);
+    EXPECT_EQ(res.center.size(), ngenes);
+
+    for (int g = 0; g < ngenes; ++g) {
+        EXPECT_EQ(res.center[g], 0);
+    }
+
+    EXPECT_EQ(res.variance_explained.size(), 0);
+    EXPECT_EQ(res.total_variance, 0);
+
+    if (scale) {
+        EXPECT_EQ(res.scale.size(), ngenes);
+        for (int g = 0; g < ngenes; ++g) {
+            EXPECT_EQ(res.scale[g], 1); // adjusted from zero to 1.
+        }
+    }
+}
+
+TEST_P(SubsetPcaEdgeTest, NoGenes) {
+    const auto scale = GetParam();
+
+    const int ncells = 100;
+    tatami::DenseRowMatrix<double, int> mat(0, ncells, std::vector<double>());
+
+    scran_pca::SubsetPcaOptions opts;
+    opts.number = 5;
+    opts.scale = scale;
+
+    std::vector<int> chosen;
+    auto res = scran_pca::subset_pca(mat, chosen, opts);
+
+    // Checking that all values make sense.
+    EXPECT_EQ(res.components.cols(), ncells);
+    EXPECT_EQ(res.components.rows(), 0);
+    EXPECT_EQ(res.rotation.cols(), 0);
+    EXPECT_EQ(res.rotation.rows(), 0);
+    EXPECT_EQ(res.center.size(), 0);
+    EXPECT_EQ(res.variance_explained.size(), 0);
+    EXPECT_EQ(res.total_variance, 0);
+
+    if (scale) {
+        EXPECT_EQ(res.scale.size(), 0);
+    }
+}
+
+TEST_P(SubsetPcaEdgeTest, AllSelected) {
+    const bool scale = GetParam();
+
+    const int ngenes = 100;
+    const int ncells = 10;
+    auto vec = scran_tests::simulate_vector(ngenes * ncells, [&]{
+        scran_tests::SimulateVectorParameters sparams;
+        sparams.lower = -10;
+        sparams.upper = 10;
+        sparams.seed = 3456;
+        return sparams;
+    }());
+    tatami::DenseRowMatrix<double, int> mat(ngenes, ncells, std::move(vec));
+
+    scran_pca::SubsetPcaOptions opts;
+    opts.number = 5;
+    opts.scale = scale;
+
+    std::vector<int> chosen(ngenes);
+    std::iota(chosen.begin(), chosen.end(), 0);
+    auto res = scran_pca::subset_pca(mat, chosen, opts);
+    auto ref = scran_pca::simple_pca(mat, opts);
+
+    expect_equal_pcs(ref.components, res.components);
+    expect_equal_rotation(ref.rotation, res.rotation);
+    expect_equal_vectors(ref.variance_explained, res.variance_explained);
+    EXPECT_FLOAT_EQ(ref.total_variance, res.total_variance);
+    expect_equal_vectors(ref.center, res.center);
+    if (scale) {
+        expect_equal_vectors(ref.scale, res.scale);
+    }
+}
+
+TEST_P(SubsetPcaEdgeTest, NoneSelected) {
+    const bool scale = GetParam();
+
+    const int ngenes = 100;
+    const int ncells = 10;
+    auto vec = scran_tests::simulate_vector(ngenes * ncells, [&]{
+        scran_tests::SimulateVectorParameters sparams;
+        sparams.lower = -10;
+        sparams.upper = 10;
+        sparams.seed = 3456;
+        return sparams;
+    }());
+    tatami::DenseRowMatrix<double, int> mat(ngenes, ncells, std::move(vec));
+
+    scran_pca::SubsetPcaOptions opts;
+    opts.number = 5;
+    opts.scale = scale;
+
+    std::vector<int> chosen;
+    auto res = scran_pca::subset_pca(mat, chosen, opts);
+
+    EXPECT_EQ(res.components.cols(), ncells);
+    EXPECT_EQ(res.components.rows(), 0);
+    EXPECT_EQ(res.rotation.cols(), 0);
+    EXPECT_EQ(res.rotation.rows(), ngenes);
+    EXPECT_EQ(res.variance_explained.size(), 0);
+    EXPECT_EQ(res.total_variance, 0);
+
+    auto varout = tatami_stats::variance(true, mat, {});
+    scran_tests::compare_almost_equal_containers(varout.mean, res.center, {});
+
+    if (scale) {
+        for (int g = 0; g < ngenes; ++g) {
+            EXPECT_FLOAT_EQ(std::sqrt(varout.variance[g]), res.scale[g]);
+        }
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    SubsetPca,
+    SubsetPcaEdgeTest,
+    ::testing::Values(false, true) // to scale or not to scale?
+);
+
+/**************************************************************/
+
 class SubsetPcaBlockedTest : public ::testing::TestWithParam<std::tuple<bool, int, int, bool, int> > {
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_row, dense_column, sparse_row, sparse_column;
@@ -412,6 +599,209 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::Values(true, false), // weighted or not
         ::testing::Values(1, 3) // number of threads
     )
+);
+
+/**************************************************************/
+
+class SubsetPcaBlockedEdgeTest : public ::testing::TestWithParam<bool> {};
+
+TEST_P(SubsetPcaBlockedEdgeTest, OneCell) {
+    const bool scale = GetParam();
+
+    const int ngenes = 100;
+    auto vec = scran_tests::simulate_vector(ngenes, [&]{
+        scran_tests::SimulateVectorParameters sparams;
+        sparams.lower = -10;
+        sparams.upper = 10;
+        sparams.seed = 3456;
+        return sparams;
+    }());
+    tatami::DenseRowMatrix<double, int> mat(ngenes, 1, vec);
+
+    scran_pca::SubsetPcaBlockedOptions opts;
+    opts.number = 5;
+    opts.scale = scale;
+
+    auto chosen = choose_rows(mat.nrow(), /* seed = */ scale);
+    std::vector<int> block(1);
+    auto res = scran_pca::subset_pca_blocked(mat, chosen, block.data(), 1, opts);
+
+    // Checking that all values make sense.
+    EXPECT_EQ(res.components.cols(), 1);
+    EXPECT_EQ(res.components.rows(), 1);
+    EXPECT_EQ(res.components.coeff(0, 0), 0);
+    EXPECT_EQ(res.rotation.cols(), 1);
+    EXPECT_EQ(res.rotation.rows(), ngenes);
+    EXPECT_EQ(res.center.cols(), ngenes);
+    EXPECT_EQ(res.center.rows(), 1);
+
+    for (int g = 0; g < ngenes; ++g) {
+        EXPECT_EQ(res.rotation.coeff(g, 0), (g == 0 ? 1 : 0));
+        EXPECT_EQ(res.center.coeff(g, 0), vec[g]);
+    }
+
+    EXPECT_EQ(res.variance_explained.size(), 1);
+    EXPECT_EQ(res.variance_explained[0], 0);
+    EXPECT_EQ(res.total_variance, 0);
+
+    if (scale) {
+        EXPECT_EQ(res.scale.size(), ngenes);
+        for (int g = 0; g < ngenes; ++g) {
+            EXPECT_EQ(res.scale[g], 1); // adjusted from zero to 1.
+        }
+    }
+}
+
+TEST_P(SubsetPcaBlockedEdgeTest, NoCells) {
+    const bool scale = GetParam();
+
+    const int ngenes = 100;
+    tatami::DenseRowMatrix<double, int> mat(ngenes, 0, std::vector<double>());
+
+    scran_pca::SubsetPcaBlockedOptions opts;
+    opts.number = 5;
+    opts.scale = scale;
+
+    std::vector<int> block;
+    auto chosen = choose_rows(mat.nrow(), /* seed = */ scale);
+    auto res = scran_pca::subset_pca_blocked(mat, chosen, block.data(), 0, opts);
+
+    // Checking that all values make sense.
+    EXPECT_EQ(res.components.cols(), 0);
+    EXPECT_EQ(res.components.rows(), 0);
+    EXPECT_EQ(res.rotation.cols(), 0);
+    EXPECT_EQ(res.rotation.rows(), ngenes);
+    EXPECT_EQ(res.center.cols(), ngenes);
+    EXPECT_EQ(res.center.rows(), 0);
+    EXPECT_EQ(res.variance_explained.size(), 0);
+    EXPECT_EQ(res.total_variance, 0);
+
+    if (scale) {
+        EXPECT_EQ(res.scale.size(), ngenes);
+        for (int g = 0; g < ngenes; ++g) {
+            EXPECT_EQ(res.scale[g], 1); // adjusted from zero to 1.
+        }
+    }
+}
+
+TEST_P(SubsetPcaBlockedEdgeTest, NoGenes) {
+    const auto scale = GetParam();
+
+    const int ncells = 100;
+    tatami::DenseRowMatrix<double, int> mat(0, ncells, std::vector<double>());
+
+    scran_pca::SubsetPcaBlockedOptions opts;
+    opts.number = 5;
+    opts.scale = scale;
+
+    std::vector<int> chosen;
+    const int nblocks = 3;
+    auto block = generate_blocks(mat.ncol(), nblocks);
+    auto res = scran_pca::subset_pca_blocked(mat, chosen, block.data(), nblocks, opts);
+
+    // Checking that all values make sense.
+    EXPECT_EQ(res.components.cols(), ncells);
+    EXPECT_EQ(res.components.rows(), 0);
+    EXPECT_EQ(res.rotation.cols(), 0);
+    EXPECT_EQ(res.rotation.rows(), 0);
+    EXPECT_EQ(res.center.cols(), 0);
+    EXPECT_EQ(res.center.rows(), nblocks);
+    EXPECT_EQ(res.variance_explained.size(), 0);
+    EXPECT_EQ(res.total_variance, 0);
+
+    if (scale) {
+        EXPECT_EQ(res.scale.size(), 0);
+    }
+}
+
+TEST_P(SubsetPcaBlockedEdgeTest, AllSelected) {
+    const bool scale = GetParam();
+
+    const int ngenes = 100;
+    const int ncells = 10;
+    auto vec = scran_tests::simulate_vector(ngenes * ncells, [&]{
+        scran_tests::SimulateVectorParameters sparams;
+        sparams.lower = -10;
+        sparams.upper = 10;
+        sparams.seed = 3456;
+        return sparams;
+    }());
+    tatami::DenseRowMatrix<double, int> mat(ngenes, ncells, std::move(vec));
+
+    scran_pca::SubsetPcaBlockedOptions opts;
+    opts.number = 5;
+    opts.scale = scale;
+
+    std::vector<int> chosen(ngenes);
+    std::iota(chosen.begin(), chosen.end(), 0);
+    const int nblocks = 3;
+    auto block = generate_blocks(mat.ncol(), nblocks);
+    auto res = scran_pca::subset_pca_blocked(mat, chosen, block.data(), nblocks, opts);
+
+    scran_pca::BlockedPcaOptions bopts;
+    bopts.number = opts.number;
+    bopts.scale = scale;
+    auto ref = scran_pca::blocked_pca(mat, block.data(), nblocks, bopts);
+
+    expect_equal_pcs(ref.components, res.components);
+    expect_equal_rotation(ref.rotation, res.rotation);
+    expect_equal_vectors(ref.variance_explained, res.variance_explained);
+    EXPECT_FLOAT_EQ(ref.total_variance, res.total_variance);
+    expect_equal_matrices(ref.center, res.center);
+    if (scale) {
+        expect_equal_vectors(ref.scale, res.scale);
+    }
+}
+
+TEST_P(SubsetPcaBlockedEdgeTest, NoneSelected) {
+    const bool scale = GetParam();
+
+    const int ngenes = 100;
+    const int ncells = 10;
+    auto vec = scran_tests::simulate_vector(ngenes * ncells, [&]{
+        scran_tests::SimulateVectorParameters sparams;
+        sparams.lower = -10;
+        sparams.upper = 10;
+        sparams.seed = 3456;
+        return sparams;
+    }());
+    tatami::DenseRowMatrix<double, int> mat(ngenes, ncells, std::move(vec));
+
+    scran_pca::SubsetPcaBlockedOptions opts;
+    opts.number = 5;
+    opts.scale = scale;
+
+    std::vector<int> chosen;
+    const int nblocks = 3;
+    auto block = generate_blocks(mat.ncol(), nblocks);
+    auto res = scran_pca::subset_pca_blocked(mat, chosen, block.data(), nblocks, opts);
+
+    EXPECT_EQ(res.components.cols(), ncells);
+    EXPECT_EQ(res.components.rows(), 0);
+    EXPECT_EQ(res.rotation.cols(), 0);
+    EXPECT_EQ(res.rotation.rows(), ngenes);
+    EXPECT_EQ(res.variance_explained.size(), 0);
+    EXPECT_EQ(res.total_variance, 0);
+
+    EXPECT_EQ(res.center.rows(), nblocks);
+    EXPECT_EQ(res.center.cols(), ngenes);
+    for (int b = 0; b < nblocks; ++b) {
+        for (int g = 0; g < ngenes; ++g) {
+            EXPECT_NE(res.center.coeff(b, g), 0);
+        }
+    }
+
+    if (scale) {
+        for (int g = 0; g < ngenes; ++g) {
+            EXPECT_GT(res.scale.coeff(g), 0);
+        }
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    SubsetPca,
+    SubsetPcaBlockedEdgeTest,
+    ::testing::Values(false, true) // to scale or not to scale?
 );
 
 /**************************************************************/

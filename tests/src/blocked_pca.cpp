@@ -738,12 +738,13 @@ INSTANTIATE_TEST_SUITE_P(
 
 /******************************************/
 
-class BlockedPcaNearEmptyTest : public ::testing::TestWithParam<std::tuple<bool, bool> > {};
+class BlockedPcaNearEmptyTest : public ::testing::TestWithParam<std::tuple<bool, bool, bool> > {};
 
 TEST_P(BlockedPcaNearEmptyTest, OneCell) {
     const auto param = GetParam();
     const bool scale = std::get<0>(param);
     const bool center_block = std::get<1>(param);
+    const bool disable_weights = std::get<2>(param);
 
     const int ngenes = 100;
     auto vec = scran_tests::simulate_vector(ngenes, [&]{
@@ -763,6 +764,11 @@ TEST_P(BlockedPcaNearEmptyTest, OneCell) {
     opts.number = 5;
     opts.scale = scale;
     opts.center_scores_by_block = center_block;
+    if (disable_weights) {
+        opts.block_weight_policy = scran_blocks::WeightPolicy::NONE;
+    } else {
+        opts.block_weight_policy = scran_blocks::WeightPolicy::VARIABLE;
+    }
 
     std::vector<int> block(1);
     auto res1 = scran_pca::blocked_pca(*dense_row, block.data(), 1, opts);
@@ -820,6 +826,7 @@ TEST_P(BlockedPcaNearEmptyTest, NoCells) {
     const auto param = GetParam();
     const bool scale = std::get<0>(param);
     const bool center_block = std::get<1>(param);
+    const bool disable_weights = std::get<2>(param);
 
     const int ngenes = 100;
     auto dense_row = std::make_unique<tatami::DenseRowMatrix<double, int> >(ngenes, 0, std::vector<double>());
@@ -831,6 +838,11 @@ TEST_P(BlockedPcaNearEmptyTest, NoCells) {
     opts.number = 5;
     opts.scale = scale;
     opts.center_scores_by_block = center_block;
+    if (disable_weights) {
+        opts.block_weight_policy = scran_blocks::WeightPolicy::NONE;
+    } else {
+        opts.block_weight_policy = scran_blocks::WeightPolicy::VARIABLE;
+    }
 
     std::vector<int> block;
     auto res1 = scran_pca::blocked_pca(*dense_row, block.data(), 0, opts);
@@ -884,6 +896,7 @@ TEST_P(BlockedPcaNearEmptyTest, NoGenes) {
     const auto param = GetParam();
     const bool scale = std::get<0>(param);
     const bool center_block = std::get<1>(param);
+    const bool disable_weights = std::get<2>(param);
 
     const int ncells = 100;
     auto dense_row = std::make_unique<tatami::DenseRowMatrix<double, int> >(0, ncells, std::vector<double>());
@@ -895,6 +908,11 @@ TEST_P(BlockedPcaNearEmptyTest, NoGenes) {
     opts.number = 5;
     opts.scale = scale;
     opts.center_scores_by_block = center_block;
+    if (disable_weights) {
+        opts.block_weight_policy = scran_blocks::WeightPolicy::NONE;
+    } else {
+        opts.block_weight_policy = scran_blocks::WeightPolicy::VARIABLE;
+    }
 
     // Checking that all values make sense.
     std::vector<int> block(ncells);
@@ -944,6 +962,7 @@ INSTANTIATE_TEST_SUITE_P(
     BlockedPcaNearEmptyTest,
     ::testing::Combine(
         ::testing::Values(false, true), // to scale or not to scale?
-        ::testing::Values(false, true)  // to compute PCs from the residuals?
+        ::testing::Values(false, true), // to compute PCs from the residuals?
+        ::testing::Values(false, true)  // whether to disable weights?
     )
 );
