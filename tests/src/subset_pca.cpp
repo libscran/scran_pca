@@ -115,11 +115,23 @@ TEST(Expand, MatrixColumn) {
 
 /**************************************************************/
 
-class SubsetPcaTestCore {
+static std::vector<int> choose_rows(const int NR, unsigned long seed) {
+    std::vector<int> chosen;
+    std::mt19937_64 rng(seed);
+    std::uniform_real_distribution<> udist;
+    for (int r = 0; r < NR; ++r) {
+        if (udist(rng) <= 0.2) {
+            chosen.push_back(r);
+        }
+    }
+    return chosen;
+}
+
+class SubsetPcaBasicTest : public ::testing::TestWithParam<std::tuple<bool, int, int> > {
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_row, dense_column, sparse_row, sparse_column;
 
-    static void assemble() {
+    static void SetUpTestSuite() {
         if (dense_row) {
             return;
         }
@@ -139,18 +151,63 @@ protected:
         sparse_row = tatami::convert_to_compressed_sparse(dense_row.get(), true);
         sparse_column = tatami::convert_to_compressed_sparse(dense_row.get(), false);
     }
-};
 
-/**************************************************************/
-
-class SubsetPcaBasicTest : public ::testing::TestWithParam<std::tuple<bool, int, int> >, public SubsetPcaTestCore {
-protected:
-    static void SetUpTestSuite() {
-        assemble();
+    static void compare_results(
+        const scran_pca::SubsetPcaResults<Eigen::MatrixXd, Eigen::VectorXd>& ref,
+        const scran_pca::SubsetPcaResults<Eigen::MatrixXd, Eigen::VectorXd>& out,
+        bool scale
+    ) {
+        expect_equal_pcs(ref.components, out.components);
+        expect_equal_rotation(ref.rotation, out.rotation);
+        expect_equal_vectors(ref.variance_explained, out.variance_explained);
+        EXPECT_FLOAT_EQ(ref.total_variance, out.total_variance);
+        expect_equal_vectors(ref.center, out.center);
+        if (scale) {
+            expect_equal_vectors(ref.scale, out.scale);
+        }
     }
 };
 
 TEST_P(SubsetPcaBasicTest, Basic) {
+    auto param = GetParam();
+    bool scale = std::get<0>(param);
+    int rank = std::get<1>(param);
+    int threads = std::get<2>(param);
+
+    scran_pca::SubsetPcaOptions sub_opt;
+    sub_opt.scale = scale;
+    sub_opt.number = rank;
+    sub_opt.num_threads = threads;
+
+    auto chosen = choose_rows(dense_row->nrow(), scale + rank + threads);
+    auto subsetted = scran_pca::subset_pca(*dense_row, chosen, sub_opt);
+
+    // Checking that we get more-or-less the same results with different matrix representations.
+    auto res2 = scran_pca::subset_pca(*dense_column, chosen, sub_opt);
+    compare_results(subsetted, res2, scale);
+
+    auto res3 = scran_pca::subset_pca(*sparse_row, chosen, sub_opt);
+    compare_results(subsetted, res3, scale);
+
+    auto res4 = scran_pca::subset_pca(*sparse_column, chosen, sub_opt);
+    compare_results(subsetted, res4, scale);
+
+    // Checking that we get more-or-less the same results without matrix realization.
+    sub_opt.realize_matrix = false;
+    auto tres1 = scran_pca::subset_pca(*dense_row, chosen, sub_opt);
+    compare_results(subsetted, tres1, scale);
+
+    auto tres2 = scran_pca::subset_pca(*dense_column, chosen, sub_opt);
+    compare_results(subsetted, tres2, scale);
+
+    auto tres3 = scran_pca::subset_pca(*sparse_row, chosen, sub_opt);
+    compare_results(subsetted, tres3, scale);
+
+    auto tres4 = scran_pca::subset_pca(*sparse_column, chosen, sub_opt);
+    compare_results(subsetted, tres4, scale);
+}
+
+TEST_P(SubsetPcaBasicTest, VersusReference) {
     auto param = GetParam();
     bool scale = std::get<0>(param);
     int rank = std::get<1>(param);
@@ -175,33 +232,21 @@ TEST_P(SubsetPcaBasicTest, Basic) {
     sub_opt.num_threads = threads;
     sub_opt.irlba_options.convergence_tolerance = opt.irlba_options.convergence_tolerance;
 
-    for (int i = 0; i < 4; ++i) {
-        std::shared_ptr<tatami::NumericMatrix> ptr; 
-        if (i == 1) {
-            ptr = dense_row;
-        } else if (i == 2) {
-            ptr = dense_column;
-        } else if (i == 3) {
-            ptr = sparse_row;
-        } else {
-            ptr = sparse_column;
-        }
-        tatami::DelayedBind<double, int> doubled(std::vector<std::shared_ptr<tatami::NumericMatrix> >{ ptr, ptr }, true);
-        auto subsetted = scran_pca::subset_pca(doubled, first_sub, opt);
+    tatami::DelayedBind<double, int> doubled_dr(std::vector<std::shared_ptr<tatami::NumericMatrix> >{ dense_row, dense_row }, true);
+    auto subsetted = scran_pca::subset_pca(doubled_dr, first_sub, opt);
 
-        expect_equal_pcs(ref.components, subsetted.components);
-        expect_equal_vectors(ref.variance_explained, subsetted.variance_explained);
-        expect_equal_rotation(ref.rotation, subsetted.rotation.topRows(NR));
-        expect_equal_rotation(ref.rotation, subsetted.rotation.bottomRows(NR), 1e-6); // expect more-or-less the same rotation matrices at the top and bottom.
+    expect_equal_pcs(ref.components, subsetted.components);
+    expect_equal_vectors(ref.variance_explained, subsetted.variance_explained);
+    expect_equal_rotation(ref.rotation, subsetted.rotation.topRows(NR));
+    expect_equal_rotation(ref.rotation, subsetted.rotation.bottomRows(NR), 1e-6); // expect more-or-less the same rotation matrices at the top and bottom.
 
-        expect_equal_vectors(ref.center, subsetted.center.head(NR));
-        expect_equal_vectors(ref.center, subsetted.center.tail(NR));
-        if (scale) {
-            expect_equal_vectors(ref.scale, subsetted.scale.head(NR));
-            expect_equal_vectors(ref.scale, subsetted.scale.tail(NR));
-        } else {
-            EXPECT_EQ(subsetted.scale.size(), 0);
-        }
+    expect_equal_vectors(ref.center, subsetted.center.head(NR));
+    expect_equal_vectors(ref.center, subsetted.center.tail(NR));
+    if (scale) {
+        expect_equal_vectors(ref.scale, subsetted.scale.head(NR));
+        expect_equal_vectors(ref.scale, subsetted.scale.tail(NR));
+    } else {
+        EXPECT_EQ(subsetted.scale.size(), 0);
     }
 }
 
@@ -217,14 +262,95 @@ INSTANTIATE_TEST_SUITE_P(
 
 /**************************************************************/
 
-class SubsetPcaBlockedTest : public ::testing::TestWithParam<std::tuple<bool, int, int, bool, int> >, public SubsetPcaTestCore {
+class SubsetPcaBlockedTest : public ::testing::TestWithParam<std::tuple<bool, int, int, bool, int> > {
 protected:
+    inline static std::shared_ptr<tatami::NumericMatrix> dense_row, dense_column, sparse_row, sparse_column;
+
     static void SetUpTestSuite() {
-        assemble();
+        if (dense_row) {
+            return;
+        }
+
+        size_t nr = 174, nc = 166;
+        auto vec = scran_tests::simulate_vector(nr * nc, [&]() {
+            scran_tests::SimulateVectorParameters sparams;
+            sparams.density = 0.1;
+            sparams.lower = -10;
+            sparams.upper = 10;
+            sparams.seed = 2026;
+            return sparams;
+        }());
+
+        dense_row.reset(new tatami::DenseRowMatrix<double, int>(nr, nc, std::move(vec)));
+        dense_column = tatami::convert_to_dense(dense_row.get(), false);
+        sparse_row = tatami::convert_to_compressed_sparse(dense_row.get(), true);
+        sparse_column = tatami::convert_to_compressed_sparse(dense_row.get(), false);
+    }
+
+    static void compare_results(
+        const scran_pca::SubsetPcaBlockedResults<Eigen::MatrixXd, Eigen::VectorXd>& ref,
+        const scran_pca::SubsetPcaBlockedResults<Eigen::MatrixXd, Eigen::VectorXd>& out,
+        bool scale
+    ) {
+        expect_equal_pcs(ref.components, out.components);
+        expect_equal_rotation(ref.rotation, out.rotation);
+        expect_equal_vectors(ref.variance_explained, out.variance_explained);
+        EXPECT_FLOAT_EQ(ref.total_variance, out.total_variance);
+        expect_equal_matrices(ref.center, out.center);
+        if (scale) {
+            expect_equal_vectors(ref.scale, out.scale);
+        }
     }
 };
 
 TEST_P(SubsetPcaBlockedTest, Basic) {
+    auto param = GetParam();
+    bool scale = std::get<0>(param);
+    int rank = std::get<1>(param);
+    int nblocks = std::get<2>(param);
+    bool weighted = std::get<3>(param);
+    int threads = std::get<4>(param);
+    auto block = generate_blocks(dense_row->ncol(), nblocks);
+
+    scran_pca::SubsetPcaBlockedOptions sub_opt;
+    sub_opt.scale = scale;
+    sub_opt.number = rank;
+    sub_opt.num_threads = threads;
+    if (weighted) {
+        sub_opt.block_weight_policy = scran_blocks::WeightPolicy::VARIABLE;
+    } else {
+        sub_opt.block_weight_policy = scran_blocks::WeightPolicy::NONE;
+    }
+
+    auto chosen = choose_rows(dense_row->nrow(), scale + rank + threads);
+    auto subsetted = scran_pca::subset_pca_blocked(*dense_row, chosen, block.data(), nblocks, sub_opt);
+
+    // Checking that we get more-or-less the same results with other representations. 
+    auto res2 = scran_pca::subset_pca_blocked(*dense_column, chosen, block.data(), nblocks, sub_opt);
+    compare_results(subsetted, res2, scale);
+
+    auto res3 = scran_pca::subset_pca_blocked(*sparse_row, chosen, block.data(), nblocks, sub_opt);
+    compare_results(subsetted, res3, scale);
+
+    auto res4 = scran_pca::subset_pca_blocked(*sparse_column, chosen, block.data(), nblocks, sub_opt);
+    compare_results(subsetted, res4, scale);
+
+    // Checking that we get more-or-less the same results without matrix realization.
+    sub_opt.realize_matrix = false;
+    auto tres1 = scran_pca::subset_pca_blocked(*dense_row, chosen, block.data(), nblocks, sub_opt);
+    compare_results(subsetted, tres1, scale);
+
+    auto tres2 = scran_pca::subset_pca_blocked(*dense_column, chosen, block.data(), nblocks, sub_opt);
+    compare_results(subsetted, tres2, scale);
+
+    auto tres3 = scran_pca::subset_pca_blocked(*sparse_row, chosen, block.data(), nblocks, sub_opt);
+    compare_results(subsetted, tres3, scale);
+
+    auto tres4 = scran_pca::subset_pca_blocked(*sparse_column, chosen, block.data(), nblocks, sub_opt);
+    compare_results(subsetted, tres4, scale);
+}
+
+TEST_P(SubsetPcaBlockedTest, VersusReference) {
     auto param = GetParam();
     bool scale = std::get<0>(param);
     int rank = std::get<1>(param);
@@ -258,33 +384,21 @@ TEST_P(SubsetPcaBlockedTest, Basic) {
     sub_opt.num_threads = threads;
     sub_opt.irlba_options.convergence_tolerance = opt.irlba_options.convergence_tolerance;
 
-    for (int i = 0; i < 4; ++i) {
-        std::shared_ptr<tatami::NumericMatrix> ptr; 
-        if (i == 1) {
-            ptr = dense_row;
-        } else if (i == 2) {
-            ptr = dense_column;
-        } else if (i == 3) {
-            ptr = sparse_row;
-        } else {
-            ptr = sparse_column;
-        }
-        tatami::DelayedBind<double, int> doubled(std::vector<std::shared_ptr<tatami::NumericMatrix> >{ ptr, ptr }, true);
-        auto subsetted = scran_pca::subset_pca_blocked(doubled, first_sub, block.data(), nblocks, opt);
+    tatami::DelayedBind<double, int> doubled_dr(std::vector<std::shared_ptr<tatami::NumericMatrix> >{ dense_row, dense_row }, true);
+    auto subsetted = scran_pca::subset_pca_blocked(doubled_dr, first_sub, block.data(), nblocks, opt);
 
-        expect_equal_pcs(ref.components, subsetted.components);
-        expect_equal_vectors(ref.variance_explained, subsetted.variance_explained);
-        expect_equal_rotation(ref.rotation, subsetted.rotation.topRows(NR));
-        expect_equal_rotation(ref.rotation, subsetted.rotation.bottomRows(NR), 1e-6); // expect more-or-less the same rotation matrices at the top and bottom.
+    expect_equal_pcs(ref.components, subsetted.components);
+    expect_equal_vectors(ref.variance_explained, subsetted.variance_explained);
+    expect_equal_rotation(ref.rotation, subsetted.rotation.topRows(NR));
+    expect_equal_rotation(ref.rotation, subsetted.rotation.bottomRows(NR), 1e-6); // expect more-or-less the same rotation matrices at the top and bottom.
 
-        expect_equal_matrices(ref.center, subsetted.center.leftCols(NR));
-        expect_equal_matrices(ref.center, subsetted.center.rightCols(NR));
-        if (scale) {
-            expect_equal_vectors(ref.scale, subsetted.scale.head(NR));
-            expect_equal_vectors(ref.scale, subsetted.scale.tail(NR));
-        } else {
-            EXPECT_EQ(subsetted.scale.size(), 0);
-        }
+    expect_equal_matrices(ref.center, subsetted.center.leftCols(NR));
+    expect_equal_matrices(ref.center, subsetted.center.rightCols(NR));
+    if (scale) {
+        expect_equal_vectors(ref.scale, subsetted.scale.head(NR));
+        expect_equal_vectors(ref.scale, subsetted.scale.tail(NR));
+    } else {
+        EXPECT_EQ(subsetted.scale.size(), 0);
     }
 }
 
@@ -302,28 +416,23 @@ INSTANTIATE_TEST_SUITE_P(
 
 /**************************************************************/
 
-class SubsetPcaErrorTest : public ::testing::Test, public SubsetPcaTestCore {
-protected:
-    static void SetUpTestSuite() {
-        assemble();
-    }
-};
+TEST(SubsetPca, Errors) {
+    tatami::DenseRowMatrix<double, int> mat(100, 10, std::vector<double>(1000));
 
-TEST_F(SubsetPcaErrorTest, Basic) {
     std::vector<int> first_sub(2);
     first_sub[0] = 1;
 
     scran_tests::expect_error(
         [&]() -> void {
-            scran_pca::subset_pca(*dense_row, first_sub, scran_pca::SubsetPcaOptions{});
+            scran_pca::subset_pca(mat, first_sub, scran_pca::SubsetPcaOptions{});
         },
         "sorted"
     ); 
 
-    auto block = generate_blocks(dense_row->ncol(), 2);
+    auto block = generate_blocks(mat.ncol(), 2);
     scran_tests::expect_error(
         [&]() -> void {
-            scran_pca::subset_pca_blocked(*dense_row, first_sub, block.data(), 2, scran_pca::SubsetPcaBlockedOptions{});
+            scran_pca::subset_pca_blocked(mat, first_sub, block.data(), 2, scran_pca::SubsetPcaBlockedOptions{});
         },
         "sorted"
     ); 

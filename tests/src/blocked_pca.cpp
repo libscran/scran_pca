@@ -115,11 +115,54 @@ TEST(ResidualWrapperTest, CustomSparse) {
 
 /******************************************/
 
-class BlockedPcaTestCore {
-protected:
-    inline static std::shared_ptr<tatami::NumericMatrix> dense_row;
+template<typename Block_>
+static void are_blocks_centered(const Eigen::MatrixXd& scores, const std::vector<Block_>& block, const int nblocks, double tol = 1e-8) {
+    std::vector<Eigen::VectorXd> centers;
+    centers.reserve(nblocks);
+    const auto ndim = scores.rows();
+    for (int b = 0; b < nblocks; ++b) {
+        centers.emplace_back(ndim);
+        centers.back().setZero();
+    }
 
-    static void assemble() {
+    const int ncells = block.size();
+    for (int c = 0; c < ncells; ++c) {
+        centers[block[c]] += scores.col(c);
+    }
+
+    for (int b = 0; b < nblocks; ++b) {
+        for (auto m : centers[b]) {
+            EXPECT_LT(std::abs(m / ncells), tol);
+        }
+    }
+}
+
+static void compare_results(
+    const scran_pca::BlockedPcaResults<Eigen::MatrixXd, Eigen::VectorXd>& ref,
+    const scran_pca::BlockedPcaResults<Eigen::MatrixXd, Eigen::VectorXd>& out,
+    bool scale
+) {
+    expect_equal_pcs(ref.components, out.components);
+    expect_equal_rotation(ref.rotation, out.rotation);
+    expect_equal_vectors(ref.variance_explained, out.variance_explained);
+    EXPECT_FLOAT_EQ(ref.total_variance, out.total_variance);
+    expect_equal_matrices(ref.center, out.center);
+    if (scale) {
+        expect_equal_vectors(ref.scale, out.scale);
+    }
+}
+
+/******************************************/
+
+class BlockedPcaBasicTest : public ::testing::TestWithParam<std::tuple<bool, bool, int, int, int> > {
+protected:
+    inline static std::shared_ptr<tatami::NumericMatrix> dense_row, dense_column, sparse_row, sparse_column;
+
+    static void SetUpTestSuite() {
+        if (dense_row) {
+            return;
+        }
+
         size_t nr = 121, nc = 155;
         auto vec = scran_tests::simulate_vector(nr * nc, [&]{
             scran_tests::SimulateVectorParameters sparams;
@@ -129,41 +172,8 @@ protected:
             sparams.seed = 123456;
             return sparams;
         }());
+
         dense_row.reset(new tatami::DenseRowMatrix<double, int>(nr, nc, std::move(vec)));
-        return;
-    }
-
-    template<typename Block_>
-    static void are_blocks_centered(const Eigen::MatrixXd& scores, const std::vector<Block_>& block, const int nblocks, double tol = 1e-8) {
-        std::vector<Eigen::VectorXd> centers;
-        centers.reserve(nblocks);
-        const auto ndim = scores.rows();
-        for (int b = 0; b < nblocks; ++b) {
-            centers.emplace_back(ndim);
-            centers.back().setZero();
-        }
-
-        const int ncells = block.size();
-        for (int c = 0; c < ncells; ++c) {
-            centers[block[c]] += scores.col(c);
-        }
-
-        for (int b = 0; b < nblocks; ++b) {
-            for (auto m : centers[b]) {
-                EXPECT_LT(std::abs(m / ncells), tol);
-            }
-        }
-    }
-};
-
-/******************************************/
-
-class BlockedPcaBasicTest : public ::testing::TestWithParam<std::tuple<bool, bool, int, int, int> >, public BlockedPcaTestCore {
-protected:
-    inline static std::shared_ptr<tatami::NumericMatrix> dense_column, sparse_row, sparse_column;
-
-    static void SetUpTestSuite() {
-        assemble();
         dense_column = tatami::convert_to_dense(dense_row.get(), false);
         sparse_row = tatami::convert_to_compressed_sparse(dense_row.get(), true);
         sparse_column = tatami::convert_to_compressed_sparse(dense_row.get(), false);
@@ -217,50 +227,32 @@ TEST_P(BlockedPcaBasicTest, BasicConsistency) {
     } else {
         opts.num_threads = nthreads;
         auto res1 = scran_pca::blocked_pca(*dense_row, block.data(), nblocks, opts);
-
-        // Results should be EXACTLY the same with parallelization.
-        EXPECT_EQ(ref.components, res1.components);
-        EXPECT_EQ(ref.variance_explained, res1.variance_explained);
-        EXPECT_EQ(ref.total_variance, res1.total_variance);
+        compare_results(ref, res1, scale);
     }
 
-    // Checking that we get more-or-less the same results. 
+    // Checking that we get more-or-less the same results with other representations. 
     auto res2 = scran_pca::blocked_pca(*dense_column, block.data(), nblocks, opts);
-    expect_equal_pcs(ref.components, res2.components);
-    expect_equal_vectors(ref.variance_explained, res2.variance_explained);
-    EXPECT_FLOAT_EQ(ref.total_variance, res2.total_variance);
+    compare_results(ref, res2, scale);
 
     auto res3 = scran_pca::blocked_pca(*sparse_row, block.data(), nblocks, opts);
-    expect_equal_pcs(ref.components, res3.components);
-    expect_equal_vectors(ref.variance_explained, res3.variance_explained);
-    EXPECT_FLOAT_EQ(ref.total_variance, res3.total_variance);
+    compare_results(ref, res3, scale);
 
     auto res4 = scran_pca::blocked_pca(*sparse_column, block.data(), nblocks, opts);
-    expect_equal_pcs(ref.components, res4.components);
-    expect_equal_vectors(ref.variance_explained, res4.variance_explained);
-    EXPECT_FLOAT_EQ(ref.total_variance, res4.total_variance);
+    compare_results(ref, res4, scale);
 
-    // Checking that we get more-or-less the same results. 
+    // Checking that we get more-or-less the same results without matrix realization.
     opts.realize_matrix = false;
     auto tres1 = scran_pca::blocked_pca(*dense_row, block.data(), nblocks, opts);
-    expect_equal_pcs(ref.components, tres1.components);
-    expect_equal_vectors(ref.variance_explained, tres1.variance_explained);
-    EXPECT_FLOAT_EQ(ref.total_variance, tres1.total_variance);
+    compare_results(ref, tres1, scale);
 
     auto tres2 = scran_pca::blocked_pca(*dense_column, block.data(), nblocks, opts);
-    expect_equal_pcs(ref.components, tres2.components);
-    expect_equal_vectors(ref.variance_explained, tres2.variance_explained);
-    EXPECT_FLOAT_EQ(ref.total_variance, tres2.total_variance);
+    compare_results(ref, tres2, scale);
 
     auto tres3 = scran_pca::blocked_pca(*sparse_row, block.data(), nblocks, opts);
-    expect_equal_pcs(ref.components, tres3.components);
-    expect_equal_vectors(ref.variance_explained, tres3.variance_explained);
-    EXPECT_FLOAT_EQ(ref.total_variance, tres3.total_variance);
+    compare_results(ref, tres3, scale);
 
     auto tres4 = scran_pca::blocked_pca(*sparse_column, block.data(), nblocks, opts);
-    expect_equal_pcs(ref.components, tres4.components);
-    expect_equal_vectors(ref.variance_explained, tres4.variance_explained);
-    EXPECT_FLOAT_EQ(ref.total_variance, tres4.total_variance);
+    compare_results(ref, tres4, scale);
 }
 
 TEST_P(BlockedPcaBasicTest, WeightedConsistency) {
@@ -311,50 +303,32 @@ TEST_P(BlockedPcaBasicTest, WeightedConsistency) {
     } else {
         opts.num_threads = nthreads;
         auto res1 = scran_pca::blocked_pca(*dense_row, block.data(), nblocks, opts);
-
-        // Results should be EXACTLY the same with parallelization.
-        EXPECT_EQ(ref.components, res1.components);
-        EXPECT_EQ(ref.variance_explained, res1.variance_explained);
-        EXPECT_EQ(ref.total_variance, res1.total_variance);
+        compare_results(ref, res1, scale);
     }
 
-    // Checking that we get more-or-less the same results. 
+    // Checking that we get more-or-less the same results with other matrix representations.
     auto res2 = scran_pca::blocked_pca(*dense_column, block.data(), nblocks, opts);
-    expect_equal_pcs(ref.components, res2.components);
-    expect_equal_vectors(ref.variance_explained, res2.variance_explained);
-    EXPECT_FLOAT_EQ(ref.total_variance, res2.total_variance);
+    compare_results(ref, res2, scale);
 
     auto res3 = scran_pca::blocked_pca(*sparse_row, block.data(), nblocks, opts);
-    expect_equal_pcs(ref.components, res3.components);
-    expect_equal_vectors(ref.variance_explained, res3.variance_explained);
-    EXPECT_FLOAT_EQ(ref.total_variance, res3.total_variance);
+    compare_results(ref, res3, scale);
 
     auto res4 = scran_pca::blocked_pca(*sparse_column, block.data(), nblocks, opts);
-    expect_equal_pcs(ref.components, res4.components);
-    expect_equal_vectors(ref.variance_explained, res4.variance_explained);
-    EXPECT_FLOAT_EQ(ref.total_variance, res4.total_variance);
+    compare_results(ref, res4, scale);
 
-    // Checking that we get more-or-less the same results. 
+    // Checking that we get more-or-less the same results without matrix realization.
     opts.realize_matrix = false;
     auto tres1 = scran_pca::blocked_pca(*dense_row, block.data(), nblocks, opts);
-    expect_equal_pcs(ref.components, tres1.components);
-    expect_equal_vectors(ref.variance_explained, tres1.variance_explained);
-    EXPECT_FLOAT_EQ(ref.total_variance, tres1.total_variance);
+    compare_results(ref, tres1, scale);
 
     auto tres2 = scran_pca::blocked_pca(*dense_column, block.data(), nblocks, opts);
-    expect_equal_pcs(ref.components, tres2.components);
-    expect_equal_vectors(ref.variance_explained, tres2.variance_explained);
-    EXPECT_FLOAT_EQ(ref.total_variance, tres2.total_variance);
+    compare_results(ref, tres2, scale);
 
     auto tres3 = scran_pca::blocked_pca(*sparse_row, block.data(), nblocks, opts);
-    expect_equal_pcs(ref.components, tres3.components);
-    expect_equal_vectors(ref.variance_explained, tres3.variance_explained);
-    EXPECT_FLOAT_EQ(ref.total_variance, tres3.total_variance);
+    compare_results(ref, tres3, scale);
 
     auto tres4 = scran_pca::blocked_pca(*sparse_column, block.data(), nblocks, opts);
-    expect_equal_pcs(ref.components, tres4.components);
-    expect_equal_vectors(ref.variance_explained, tres4.variance_explained);
-    EXPECT_FLOAT_EQ(ref.total_variance, tres4.total_variance);
+    compare_results(ref, tres4, scale);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -371,10 +345,29 @@ INSTANTIATE_TEST_SUITE_P(
 
 /******************************************/
 
-class BlockedPcaMoreTest : public ::testing::TestWithParam<std::tuple<bool, bool, int, int> >, public BlockedPcaTestCore {
+class BlockedPcaMoreTest : public ::testing::TestWithParam<std::tuple<bool, bool, int, int> > {
 protected:
+    inline static std::shared_ptr<tatami::NumericMatrix> dense_row, dense_column, sparse_row, sparse_column;
+
     static void SetUpTestSuite() {
-        assemble();
+        if (dense_row) {
+            return;
+        }
+
+        size_t nr = 121, nc = 151;
+        auto vec = scran_tests::simulate_vector(nr * nc, [&]{
+            scran_tests::SimulateVectorParameters sparams;
+            sparams.density = 0.1; 
+            sparams.lower = -10;
+            sparams.upper = 10;
+            sparams.seed = 123456;
+            return sparams;
+        }());
+
+        dense_row.reset(new tatami::DenseRowMatrix<double, int>(nr, nc, std::move(vec)));
+        dense_column = tatami::convert_to_dense(dense_row.get(), false);
+        sparse_row = tatami::convert_to_compressed_sparse(dense_row.get(), true);
+        sparse_column = tatami::convert_to_compressed_sparse(dense_row.get(), false);
     }
 };
 
@@ -386,12 +379,12 @@ TEST_P(BlockedPcaMoreTest, VersusSimple) {
     int nblocks = std::get<3>(param);
     auto block = generate_blocks(dense_row->ncol(), nblocks);
 
-    scran_pca::BlockedPcaOptions opt;
-    opt.scale = scale;
-    opt.center_scores_by_block = block_center;
-    opt.block_weight_policy = scran_blocks::WeightPolicy::NONE;
-    opt.number = rank;
-    auto res1 = scran_pca::blocked_pca(*dense_row, block.data(), nblocks, opt);
+    scran_pca::BlockedPcaOptions opts;
+    opts.scale = scale;
+    opts.center_scores_by_block = block_center;
+    opts.block_weight_policy = scran_blocks::WeightPolicy::NONE;
+    opts.number = rank;
+    auto res1 = scran_pca::blocked_pca(*dense_row, block.data(), nblocks, opts);
 
     scran_pca::SimplePcaOptions refopt;
     refopt.scale = scale;
@@ -405,6 +398,7 @@ TEST_P(BlockedPcaMoreTest, VersusSimple) {
         expect_equal_pcs(res1.components, res2.components);
         expect_equal_vectors(res1.variance_explained, res2.variance_explained);
         EXPECT_FLOAT_EQ(res1.total_variance, res2.total_variance);
+
     } else {
         // Manually regressing things out.
         size_t nr = dense_row->nrow(), nc = dense_row->ncol();
@@ -465,6 +459,30 @@ TEST_P(BlockedPcaMoreTest, VersusSimple) {
             expect_equal_pcs(res1.components, expected);
         }
     }
+
+    // Checking that we get more-or-less the same results with the other matrix representations.
+    auto res2 = scran_pca::blocked_pca(*dense_column, block.data(), nblocks, opts);
+    compare_results(res1, res2, scale);
+
+    auto res3 = scran_pca::blocked_pca(*sparse_row, block.data(), nblocks, opts);
+    compare_results(res1, res3, scale);
+
+    auto res4 = scran_pca::blocked_pca(*sparse_column, block.data(), nblocks, opts);
+    compare_results(res1, res4, scale);
+
+    // Checking that we get more-or-less the same results without matrix realization. 
+    opts.realize_matrix = false;
+    auto tres1 = scran_pca::blocked_pca(*dense_row, block.data(), nblocks, opts);
+    compare_results(res1, tres1, scale);
+
+    auto tres2 = scran_pca::blocked_pca(*dense_column, block.data(), nblocks, opts);
+    compare_results(res1, tres2, scale);
+
+    auto tres3 = scran_pca::blocked_pca(*sparse_row, block.data(), nblocks, opts);
+    compare_results(res1, tres3, scale);
+
+    auto tres4 = scran_pca::blocked_pca(*sparse_column, block.data(), nblocks, opts);
+    compare_results(res1, tres4, scale);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -524,8 +542,7 @@ TEST_P(BlockedPcaWeightedTest, VersusReference) {
     ref.variance_explained.array() /= ref.total_variance;
 
     {
-        // Checking that we get more-or-less the same results with equiweighting
-        // when all blocks are of the same size.
+        // Checking that we get more-or-less the same results with equiweighting when all blocks are of the same size.
         auto opt = base_opt;
         opt.block_weight_policy = scran_blocks::WeightPolicy::EQUAL;
 
@@ -547,8 +564,7 @@ TEST_P(BlockedPcaWeightedTest, VersusReference) {
     }
     auto expanded = tatami::make_DelayedBind(components, false);
 
-    // With a large size cap, each block is weighted by its size,
-    // which is equivalent to the total absence of re-weighting.
+    // With a large size cap, each block is weighted by its size, which is equivalent to the total absence of re-weighting.
     {
         auto opt = base_opt;
         opt.block_weight_policy = scran_blocks::WeightPolicy::VARIABLE;
@@ -567,9 +583,8 @@ TEST_P(BlockedPcaWeightedTest, VersusReference) {
         expect_equal_vectors(ref2.variance_explained, res2.variance_explained);
     }
 
-    // We turn down the size cap so that every batch is equally weighted,
-    // despite the imbalance. This should give us the same coordinates as
-    // when the PCA was performed with batches of equal size. 
+    // We turn down the size cap so that every batch is equally weighted, despite their size imbalance.
+    // This should give us the same coordinates as when the PCA was performed with batches of equal size. 
     {
         auto opt = base_opt;
         opt.block_weight_policy = scran_blocks::WeightPolicy::VARIABLE;
@@ -619,12 +634,26 @@ INSTANTIATE_TEST_SUITE_P(
 
 /******************************************/
 
-class BlockedPcaEmptyBlockTest : public ::testing::TestWithParam<std::tuple<bool, bool> >, public BlockedPcaTestCore {
+class BlockedPcaEmptyBlockTest : public ::testing::TestWithParam<std::tuple<bool, bool> > {
 protected:
-    inline static std::shared_ptr<tatami::NumericMatrix> dense_column, sparse_row, sparse_column;
+    inline static std::shared_ptr<tatami::NumericMatrix> dense_row, dense_column, sparse_row, sparse_column;
 
     static void SetUpTestSuite() {
-        assemble();
+        if (dense_row) {
+            return;
+        }
+
+        size_t nr = 123, nc = 140;
+        auto vec = scran_tests::simulate_vector(nr * nc, [&]{
+            scran_tests::SimulateVectorParameters sparams;
+            sparams.density = 0.1; 
+            sparams.lower = -10;
+            sparams.upper = 10;
+            sparams.seed = 123456;
+            return sparams;
+        }());
+
+        dense_row.reset(new tatami::DenseRowMatrix<double, int>(nr, nc, std::move(vec)));
         dense_column = tatami::convert_to_dense(dense_row.get(), false);
         sparse_row = tatami::convert_to_compressed_sparse(dense_row.get(), true);
         sparse_column = tatami::convert_to_compressed_sparse(dense_row.get(), false);
@@ -679,57 +708,29 @@ TEST_P(BlockedPcaEmptyBlockTest, Sanity) {
         }
     }
 
-    // Checking that we get more-or-less the same results. 
+    // Checking that we get more-or-less the same results with other matrix representations.
     auto res2 = scran_pca::blocked_pca(*dense_column, block.data(), nblocks, opts);
-    expect_equal_pcs(res1.components, res2.components);
-    expect_equal_vectors(res1.variance_explained, res2.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, res2.total_variance);
+    compare_results(res1, res2, scale);
 
     auto res3 = scran_pca::blocked_pca(*sparse_row, block.data(), nblocks, opts);
-    expect_equal_pcs(res1.components, res3.components);
-    expect_equal_vectors(res1.variance_explained, res3.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, res3.total_variance);
+    compare_results(res1, res3, scale);
 
     auto res4 = scran_pca::blocked_pca(*sparse_column, block.data(), nblocks, opts);
-    expect_equal_pcs(res1.components, res4.components);
-    expect_equal_vectors(res1.variance_explained, res4.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, res4.total_variance);
+    compare_results(res1, res4, scale);
 
-    // Checking that we get more-or-less the same results. 
+    // Checking that we get more-or-less the same results without matrix realization. 
     opts.realize_matrix = false;
     auto tres1 = scran_pca::blocked_pca(*dense_row, block.data(), nblocks, opts);
-    expect_equal_pcs(res1.components, tres1.components);
-    expect_equal_vectors(res1.variance_explained, tres1.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, tres1.total_variance);
+    compare_results(res1, tres1, scale);
 
     auto tres2 = scran_pca::blocked_pca(*dense_column, block.data(), nblocks, opts);
-    expect_equal_pcs(res1.components, tres2.components);
-    expect_equal_vectors(res1.variance_explained, tres2.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, tres2.total_variance);
+    compare_results(res1, tres2, scale);
 
     auto tres3 = scran_pca::blocked_pca(*sparse_row, block.data(), nblocks, opts);
-    expect_equal_pcs(res1.components, tres3.components);
-    expect_equal_vectors(res1.variance_explained, tres3.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, tres3.total_variance);
+    compare_results(res1, tres3, scale);
 
     auto tres4 = scran_pca::blocked_pca(*sparse_column, block.data(), nblocks, opts);
-    expect_equal_pcs(res1.components, tres4.components);
-    expect_equal_vectors(res1.variance_explained, tres4.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, tres4.total_variance);
-
-    if (scale) {
-        for (int g = 0; g < ngenes; ++g) {
-            EXPECT_FALSE(std::isnan(ref.scale.coeff(g)));
-        }
-        expect_equal_vectors(ref.scale, res1.scale);
-        expect_equal_vectors(ref.scale, res2.scale);
-        expect_equal_vectors(ref.scale, res3.scale);
-        expect_equal_vectors(ref.scale, res4.scale);
-        expect_equal_vectors(ref.scale, tres1.scale);
-        expect_equal_vectors(ref.scale, tres2.scale);
-        expect_equal_vectors(ref.scale, tres3.scale);
-        expect_equal_vectors(ref.scale, tres4.scale);
-    }
+    compare_results(res1, tres4, scale);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -781,69 +782,29 @@ TEST_P(BlockedPcaNearEmptyTest, OneCell) {
     }
     EXPECT_EQ(res1.total_variance, 0);
 
+    // Checking that we get more-or-less the same results with other matrix representations.
     auto res2 = scran_pca::blocked_pca(*dense_column, block.data(), 1, opts);
-    expect_equal_pcs(res1.components, res2.components);
-    expect_equal_rotation(res1.rotation, res2.rotation);
-    expect_equal_vectors(res1.variance_explained, res2.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, res2.total_variance);
-    expect_equal_matrices(res1.center, res2.center);
+    compare_results(res1, res2, scale);
 
     auto res3 = scran_pca::blocked_pca(*sparse_row, block.data(), 1, opts);
-    expect_equal_pcs(res1.components, res3.components);
-    expect_equal_rotation(res1.rotation, res3.rotation);
-    expect_equal_vectors(res1.variance_explained, res3.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, res3.total_variance);
-    expect_equal_matrices(res1.center, res3.center);
+    compare_results(res1, res3, scale);
 
     auto res4 = scran_pca::blocked_pca(*sparse_column, block.data(), 1, opts);
-    expect_equal_pcs(res1.components, res4.components);
-    expect_equal_rotation(res1.rotation, res4.rotation);
-    expect_equal_vectors(res1.variance_explained, res4.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, res4.total_variance);
-    expect_equal_matrices(res1.center, res4.center);
+    compare_results(res1, res4, scale);
 
-    // Checking that we get more-or-less the same results. 
+    // Checking that we get more-or-less the same results without matrix realization. 
     opts.realize_matrix = false;
     auto tres1 = scran_pca::blocked_pca(*dense_row, block.data(), 1, opts);
-    expect_equal_pcs(res1.components, tres1.components);
-    expect_equal_rotation(res1.rotation, tres1.rotation);
-    expect_equal_vectors(res1.variance_explained, tres1.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, tres1.total_variance);
-    expect_equal_matrices(res1.center, tres1.center);
+    compare_results(res1, tres1, scale);
 
     auto tres2 = scran_pca::blocked_pca(*dense_column, block.data(), 1, opts);
-    expect_equal_pcs(res1.components, tres2.components);
-    expect_equal_rotation(res1.rotation, tres2.rotation);
-    expect_equal_vectors(res1.variance_explained, tres2.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, tres2.total_variance);
-    expect_equal_matrices(res1.center, tres2.center);
+    compare_results(res1, tres2, scale);
 
     auto tres3 = scran_pca::blocked_pca(*sparse_row, block.data(), 1, opts);
-    expect_equal_pcs(res1.components, tres3.components);
-    expect_equal_rotation(res1.rotation, tres3.rotation);
-    expect_equal_vectors(res1.variance_explained, tres3.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, tres3.total_variance);
-    expect_equal_matrices(res1.center, tres3.center);
+    compare_results(res1, tres3, scale);
 
     auto tres4 = scran_pca::blocked_pca(*sparse_column, block.data(), 1, opts);
-    expect_equal_pcs(res1.components, tres4.components);
-    expect_equal_rotation(res1.rotation, tres4.rotation);
-    expect_equal_vectors(res1.variance_explained, tres4.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, tres4.total_variance);
-    expect_equal_matrices(res1.center, tres4.center);
-
-    if (scale) {
-        for (int g = 0; g < ngenes; ++g) {
-            EXPECT_TRUE(std::isnan(res1.scale.coeff(g)));
-            EXPECT_TRUE(std::isnan(res2.scale.coeff(g)));
-            EXPECT_TRUE(std::isnan(res3.scale.coeff(g)));
-            EXPECT_TRUE(std::isnan(res4.scale.coeff(g)));
-            EXPECT_TRUE(std::isnan(tres1.scale.coeff(g)));
-            EXPECT_TRUE(std::isnan(tres2.scale.coeff(g)));
-            EXPECT_TRUE(std::isnan(tres3.scale.coeff(g)));
-            EXPECT_TRUE(std::isnan(tres4.scale.coeff(g)));
-        }
-    }
+    compare_results(res1, tres4, scale);
 }
 
 TEST_P(BlockedPcaNearEmptyTest, NoCells) {
@@ -873,69 +834,29 @@ TEST_P(BlockedPcaNearEmptyTest, NoCells) {
     EXPECT_EQ(res1.center.rows(), 0);
     EXPECT_EQ(res1.total_variance, 0);
 
+    // Checking that we get more-or-less the same results with other matrix representations.
     auto res2 = scran_pca::blocked_pca(*dense_column, block.data(), 0, opts);
-    expect_equal_pcs(res1.components, res2.components);
-    expect_equal_rotation(res1.rotation, res2.rotation);
-    expect_equal_vectors(res1.variance_explained, res2.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, res2.total_variance);
-    expect_equal_matrices(res1.center, res2.center);
+    compare_results(res1, res2, scale);
 
     auto res3 = scran_pca::blocked_pca(*sparse_row, block.data(), 0, opts);
-    expect_equal_pcs(res1.components, res3.components);
-    expect_equal_rotation(res1.rotation, res3.rotation);
-    expect_equal_vectors(res1.variance_explained, res3.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, res3.total_variance);
-    expect_equal_matrices(res1.center, res3.center);
+    compare_results(res1, res3, scale);
 
     auto res4 = scran_pca::blocked_pca(*sparse_column, block.data(), 0, opts);
-    expect_equal_pcs(res1.components, res4.components);
-    expect_equal_rotation(res1.rotation, res4.rotation);
-    expect_equal_vectors(res1.variance_explained, res4.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, res4.total_variance);
-    expect_equal_matrices(res1.center, res4.center);
+    compare_results(res1, res4, scale);
 
-    // Checking that we get more-or-less the same results. 
+    // Checking that we get more-or-less the same results without matrix realization. 
     opts.realize_matrix = false;
     auto tres1 = scran_pca::blocked_pca(*dense_row, block.data(), 0, opts);
-    expect_equal_pcs(res1.components, tres1.components);
-    expect_equal_rotation(res1.rotation, tres1.rotation);
-    expect_equal_vectors(res1.variance_explained, tres1.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, tres1.total_variance);
-    expect_equal_matrices(res1.center, tres1.center);
+    compare_results(res1, tres1, scale);
 
     auto tres2 = scran_pca::blocked_pca(*dense_column, block.data(), 0, opts);
-    expect_equal_pcs(res1.components, tres2.components);
-    expect_equal_rotation(res1.rotation, tres2.rotation);
-    expect_equal_vectors(res1.variance_explained, tres2.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, tres2.total_variance);
-    expect_equal_matrices(res1.center, tres2.center);
+    compare_results(res1, tres2, scale);
 
     auto tres3 = scran_pca::blocked_pca(*sparse_row, block.data(), 0, opts);
-    expect_equal_pcs(res1.components, tres3.components);
-    expect_equal_rotation(res1.rotation, tres3.rotation);
-    expect_equal_vectors(res1.variance_explained, tres3.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, tres3.total_variance);
-    expect_equal_matrices(res1.center, tres3.center);
+    compare_results(res1, tres3, scale);
 
     auto tres4 = scran_pca::blocked_pca(*sparse_column, block.data(), 0, opts);
-    expect_equal_pcs(res1.components, tres4.components);
-    expect_equal_rotation(res1.rotation, tres4.rotation);
-    expect_equal_vectors(res1.variance_explained, tres4.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, tres4.total_variance);
-    expect_equal_matrices(res1.center, tres4.center);
-
-    if (scale) {
-        for (int g = 0; g < ngenes; ++g) {
-            EXPECT_TRUE(std::isnan(res1.scale.coeff(g)));
-            EXPECT_TRUE(std::isnan(res2.scale.coeff(g)));
-            EXPECT_TRUE(std::isnan(res3.scale.coeff(g)));
-            EXPECT_TRUE(std::isnan(res4.scale.coeff(g)));
-            EXPECT_TRUE(std::isnan(tres1.scale.coeff(g)));
-            EXPECT_TRUE(std::isnan(tres2.scale.coeff(g)));
-            EXPECT_TRUE(std::isnan(tres3.scale.coeff(g)));
-            EXPECT_TRUE(std::isnan(tres4.scale.coeff(g)));
-        }
-    }
+    compare_results(res1, tres4, scale);
 }
 
 TEST_P(BlockedPcaNearEmptyTest, NoGenes) {
@@ -965,67 +886,29 @@ TEST_P(BlockedPcaNearEmptyTest, NoGenes) {
     EXPECT_EQ(res1.center.rows(), 1);
     EXPECT_EQ(res1.total_variance, 0);
 
+    // Checking that we get more-or-less the same results with other matrix representations.
     auto res2 = scran_pca::blocked_pca(*dense_column, block.data(), 1, opts);
-    expect_equal_pcs(res1.components, res2.components);
-    expect_equal_rotation(res1.rotation, res2.rotation);
-    expect_equal_vectors(res1.variance_explained, res2.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, res2.total_variance);
-    expect_equal_matrices(res1.center, res2.center);
+    compare_results(res1, res2, scale);
 
     auto res3 = scran_pca::blocked_pca(*sparse_row, block.data(), 1, opts);
-    expect_equal_pcs(res1.components, res3.components);
-    expect_equal_rotation(res1.rotation, res3.rotation);
-    expect_equal_vectors(res1.variance_explained, res3.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, res3.total_variance);
-    expect_equal_matrices(res1.center, res3.center);
+    compare_results(res1, res3, scale);
 
     auto res4 = scran_pca::blocked_pca(*sparse_column, block.data(), 1, opts);
-    expect_equal_pcs(res1.components, res4.components);
-    expect_equal_rotation(res1.rotation, res4.rotation);
-    expect_equal_vectors(res1.variance_explained, res4.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, res4.total_variance);
-    expect_equal_matrices(res1.center, res4.center);
+    compare_results(res1, res4, scale);
 
-    // Checking that we get more-or-less the same results. 
+    // Checking that we get more-or-less the same results without matrix realization. 
     opts.realize_matrix = false;
     auto tres1 = scran_pca::blocked_pca(*dense_row, block.data(), 1, opts);
-    expect_equal_pcs(res1.components, tres1.components);
-    expect_equal_rotation(res1.rotation, tres1.rotation);
-    expect_equal_vectors(res1.variance_explained, tres1.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, tres1.total_variance);
-    expect_equal_matrices(res1.center, tres1.center);
+    compare_results(res1, tres1, scale);
 
     auto tres2 = scran_pca::blocked_pca(*dense_column, block.data(), 1, opts);
-    expect_equal_pcs(res1.components, tres2.components);
-    expect_equal_rotation(res1.rotation, tres2.rotation);
-    expect_equal_vectors(res1.variance_explained, tres2.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, tres2.total_variance);
-    expect_equal_matrices(res1.center, tres2.center);
+    compare_results(res1, tres2, scale);
 
     auto tres3 = scran_pca::blocked_pca(*sparse_row, block.data(), 1, opts);
-    expect_equal_pcs(res1.components, tres3.components);
-    expect_equal_rotation(res1.rotation, tres3.rotation);
-    expect_equal_vectors(res1.variance_explained, tres3.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, tres3.total_variance);
-    expect_equal_matrices(res1.center, tres3.center);
+    compare_results(res1, tres3, scale);
 
     auto tres4 = scran_pca::blocked_pca(*sparse_column, block.data(), 1, opts);
-    expect_equal_pcs(res1.components, tres4.components);
-    expect_equal_rotation(res1.rotation, tres4.rotation);
-    expect_equal_vectors(res1.variance_explained, tres4.variance_explained);
-    EXPECT_FLOAT_EQ(res1.total_variance, tres4.total_variance);
-    expect_equal_matrices(res1.center, tres4.center);
-
-    if (scale) {
-        EXPECT_EQ(res1.scale.size(), 0);
-        EXPECT_EQ(res2.scale.size(), 0);
-        EXPECT_EQ(res3.scale.size(), 0);
-        EXPECT_EQ(res4.scale.size(), 0);
-        EXPECT_EQ(tres1.scale.size(), 0);
-        EXPECT_EQ(tres2.scale.size(), 0);
-        EXPECT_EQ(tres3.scale.size(), 0);
-        EXPECT_EQ(tres4.scale.size(), 0);
-    }
+    compare_results(res1, tres4, scale);
 }
 
 INSTANTIATE_TEST_SUITE_P(
