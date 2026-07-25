@@ -38,10 +38,13 @@ auto process_scale_vector(const bool scale, EigenVector_& scale_v) {
 
 template<typename NumObs_, class EigenMatrix_, class EigenVector_>
 void clean_up(const NumObs_ num_obs, EigenMatrix_& U, EigenVector_& D) {
-    typename EigenVector_::Scalar denom = num_obs - 1;
     U.array().rowwise() *= D.adjoint().array();
-    for (auto& d : D) {
-        d = d * d / denom;
+
+    if (num_obs > 1) { // if there aren't enough cells, D should be all-zero.
+        typename EigenVector_::Scalar denom = num_obs - 1;
+        for (auto& d : D) {
+            d = d * d / denom;
+        }
     }
 }
 

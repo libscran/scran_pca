@@ -87,12 +87,21 @@ struct SimplePcaOptions {
  */
 template<typename Value_, typename Index_, class EigenVector_>
 void compute_row_means_and_variances(const tatami::Matrix<Value_, Index_>& mat, const int num_threads, EigenVector_& center_v, EigenVector_& scale_v) {
-    tatami_stats::VarianceOptions vopt;
+    tatami_stats::RssOptions vopt;
     vopt.num_threads = num_threads;
-    tatami_stats::VarianceBuffers<typename EigenVector_::Scalar> buffers;
+
+    tatami_stats::RssBuffers<typename EigenVector_::Scalar> buffers;
     buffers.mean = center_v.data();
-    buffers.variance = scale_v.data();
-    tatami_stats::variance(true, mat, buffers, vopt);
+    buffers.rss = scale_v.data();
+    tatami_stats::rss(true, mat, buffers, vopt);
+
+    const auto ncells = mat.ncol();
+    if (ncells > 1) {
+        scale_v /= ncells - 1;
+    } else if (!ncells) {
+        // rss() emits NaNs if there are no cells, we replace them with zeros to avoid downstream problems.
+        std::fill(center_v.begin(), center_v.end(), 0);
+    }
 }
 
 template<class EigenVector_, class EigenMatrix_>
@@ -170,9 +179,17 @@ std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_sparse_matri
                 const Index_ num_nonzero = next_offset - offset;
                 const auto results = quickstats::rss(ncells, num_nonzero, values.data() + offset, work);
                 center_v.coeffRef(g) = results.mean;
-                scale_v.coeffRef(g) = quickstats::rss_to_variance(ncells, results.rss);
+                scale_v.coeffRef(g) = results.rss;
             }
         }, ngenes, options.num_threads);
+
+        if (ncells > 1) { 
+            // if there are fewer than 2 cells, scale_v will naturally be set to zero.
+            scale_v /= ncells - 1;
+        } else if (!ncells) {
+            // override quickstats::rss()'s setting of the mean to NaN if there are no cells.
+            std::fill(center_v.begin(), center_v.end(), 0);
+        }
 
         total_var = process_scale_vector(options.scale, scale_v);
 
@@ -222,18 +239,14 @@ std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > prepare_dense_matrix
         );
 
         center_v.array() = emat->array().colwise().sum();
-        if (ncells) {
+        if (ncells) { // if there are no cells, center_v will naturally be set to zero.
             center_v /= ncells;
-        } else {
-            std::fill(center_v.begin(), center_v.end(), std::numeric_limits<typename EigenVector_::Scalar>::quiet_NaN());
         }
         emat->array().rowwise() -= center_v.adjoint().array(); // applying it to avoid wasting time with deferred operations inside IRLBA.
 
         scale_v.array() = emat->array().colwise().squaredNorm();
-        if (ncells > 1) {
+        if (ncells > 1) { // if there are fewer than 2 cells, scale_v will naturally be set to zero.
             scale_v /= ncells - 1;
-        } else {
-            std::fill(scale_v.begin(), scale_v.end(), std::numeric_limits<typename EigenVector_::Scalar>::quiet_NaN());
         }
 
         total_var = process_scale_vector(options.scale, scale_v);

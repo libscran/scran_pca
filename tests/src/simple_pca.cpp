@@ -247,3 +247,196 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::Values(2, 5, 10) // number of PCs to obtain
     )
 );
+
+/******************************************/
+
+class SimplePcaNearEmptyTest : public ::testing::TestWithParam<bool> {};
+
+TEST_P(SimplePcaNearEmptyTest, OneCell) {
+    const bool scale = GetParam();
+
+    const int ngenes = 100;
+    auto vec = scran_tests::simulate_vector(ngenes, [&]{
+        scran_tests::SimulateVectorParameters sparams;
+        sparams.density = 0.3; 
+        sparams.lower = -10;
+        sparams.upper = 10;
+        sparams.seed = 3456;
+        return sparams;
+    }());
+    auto dense_row = std::make_unique<tatami::DenseRowMatrix<double, int> >(ngenes, 1, vec);
+    auto dense_column = tatami::convert_to_dense<double, int>(*dense_row, false, {});
+    auto sparse_row = tatami::convert_to_compressed_sparse<double, int>(*dense_row, true, {});
+    auto sparse_column = tatami::convert_to_compressed_sparse<double, int>(*dense_row, false, {});
+
+    scran_pca::SimplePcaOptions opts;
+    opts.number = 5;
+    opts.scale = scale;
+    auto res1 = scran_pca::simple_pca(*dense_row, opts);
+
+    // Checking that all values make sense.
+    EXPECT_EQ(res1.components.cols(), 1);
+    EXPECT_EQ(res1.components.rows(), 1);
+    EXPECT_EQ(res1.components.coeff(0, 0), 0);
+    EXPECT_EQ(res1.rotation.cols(), 1);
+    EXPECT_EQ(res1.rotation.rows(), ngenes);
+    EXPECT_EQ(res1.center.size(), ngenes);
+
+    for (int g = 0; g < ngenes; ++g) {
+        EXPECT_EQ(res1.rotation.coeff(g, 0), (g == 0 ? 1 : 0));
+        EXPECT_EQ(res1.center.coeff(g), vec[g]);
+    }
+
+    EXPECT_EQ(res1.variance_explained.size(), 1);
+    EXPECT_EQ(res1.variance_explained[0], 0);
+    EXPECT_EQ(res1.total_variance, 0);
+
+    if (scale) {
+        EXPECT_EQ(res1.scale.size(), ngenes);
+        for (int g = 0; g < ngenes; ++g) {
+            EXPECT_EQ(res1.scale[g], 1); // adjusted from zero to 1.
+        }
+    }
+
+    // Checking that we get more-or-less the same results with other matrix representations.
+    auto res2 = scran_pca::simple_pca(*dense_column, opts);
+    compare_results(res1, res2, scale);
+
+    auto res3 = scran_pca::simple_pca(*sparse_row, opts);
+    compare_results(res1, res3, scale);
+
+    auto res4 = scran_pca::simple_pca(*sparse_column, opts);
+    compare_results(res1, res4, scale);
+
+    // Checking that we get more-or-less the same results without matrix realization. 
+    opts.realize_matrix = false;
+    auto tres1 = scran_pca::simple_pca(*dense_row, opts);
+    compare_results(res1, tres1, scale);
+
+    auto tres2 = scran_pca::simple_pca(*dense_column, opts);
+    compare_results(res1, tres2, scale);
+
+    auto tres3 = scran_pca::simple_pca(*sparse_row, opts);
+    compare_results(res1, tres3, scale);
+
+    auto tres4 = scran_pca::simple_pca(*sparse_column, opts);
+    compare_results(res1, tres4, scale);
+}
+
+TEST_P(SimplePcaNearEmptyTest, NoCells) {
+    const bool scale = GetParam();
+
+    const int ngenes = 100;
+    auto dense_row = std::make_unique<tatami::DenseRowMatrix<double, int> >(ngenes, 0, std::vector<double>());
+    auto dense_column = tatami::convert_to_dense<double, int>(*dense_row, false, {});
+    auto sparse_row = tatami::convert_to_compressed_sparse<double, int>(*dense_row, true, {});
+    auto sparse_column = tatami::convert_to_compressed_sparse<double, int>(*dense_row, false, {});
+
+    scran_pca::SimplePcaOptions opts;
+    opts.number = 5;
+    opts.scale = scale;
+    auto res1 = scran_pca::simple_pca(*dense_row, opts);
+
+    // Checking that all values make sense.
+    EXPECT_EQ(res1.components.cols(), 0);
+    EXPECT_EQ(res1.components.rows(), 0);
+    EXPECT_EQ(res1.rotation.cols(), 0);
+    EXPECT_EQ(res1.rotation.rows(), ngenes);
+    EXPECT_EQ(res1.center.size(), ngenes);
+
+    for (int g = 0; g < ngenes; ++g) {
+        EXPECT_EQ(res1.center[g], 0);
+    }
+
+    EXPECT_EQ(res1.variance_explained.size(), 0);
+    EXPECT_EQ(res1.total_variance, 0);
+
+    if (scale) {
+        EXPECT_EQ(res1.scale.size(), ngenes);
+        for (int g = 0; g < ngenes; ++g) {
+            EXPECT_EQ(res1.scale[g], 1); // adjusted from zero to 1.
+        }
+    }
+
+    // Checking that we get more-or-less the same results with other matrix representations.
+    auto res2 = scran_pca::simple_pca(*dense_column, opts);
+    compare_results(res1, res2, scale);
+
+    auto res3 = scran_pca::simple_pca(*sparse_row, opts);
+    compare_results(res1, res3, scale);
+
+    auto res4 = scran_pca::simple_pca(*sparse_column, opts);
+    compare_results(res1, res4, scale);
+
+    // Checking that we get more-or-less the same results without matrix realization. 
+    opts.realize_matrix = false;
+    auto tres1 = scran_pca::simple_pca(*dense_row, opts);
+    compare_results(res1, tres1, scale);
+
+    auto tres2 = scran_pca::simple_pca(*dense_column, opts);
+    compare_results(res1, tres2, scale);
+
+    auto tres3 = scran_pca::simple_pca(*sparse_row, opts);
+    compare_results(res1, tres3, scale);
+
+    auto tres4 = scran_pca::simple_pca(*sparse_column, opts);
+    compare_results(res1, tres4, scale);
+}
+
+TEST_P(SimplePcaNearEmptyTest, NoGenes) {
+    const auto scale = GetParam();
+
+    const int ncells = 100;
+    auto dense_row = std::make_unique<tatami::DenseRowMatrix<double, int> >(0, ncells, std::vector<double>());
+    auto dense_column = tatami::convert_to_dense<double, int>(*dense_row, false, {});
+    auto sparse_row = tatami::convert_to_compressed_sparse<double, int>(*dense_row, true, {});
+    auto sparse_column = tatami::convert_to_compressed_sparse<double, int>(*dense_row, false, {});
+
+    scran_pca::SimplePcaOptions opts;
+    opts.number = 5;
+    opts.scale = scale;
+    auto res1 = scran_pca::simple_pca(*dense_row, opts);
+
+    // Checking that all values make sense.
+    EXPECT_EQ(res1.components.cols(), ncells);
+    EXPECT_EQ(res1.components.rows(), 0);
+    EXPECT_EQ(res1.rotation.cols(), 0);
+    EXPECT_EQ(res1.rotation.rows(), 0);
+    EXPECT_EQ(res1.center.size(), 0);
+    EXPECT_EQ(res1.variance_explained.size(), 0);
+    EXPECT_EQ(res1.total_variance, 0);
+
+    if (scale) {
+        EXPECT_EQ(res1.scale.size(), 0);
+    }
+
+    // Checking that we get more-or-less the same results with other matrix representations.
+    auto res2 = scran_pca::simple_pca(*dense_column, opts);
+    compare_results(res1, res2, scale);
+
+    auto res3 = scran_pca::simple_pca(*sparse_row, opts);
+    compare_results(res1, res3, scale);
+
+    auto res4 = scran_pca::simple_pca(*sparse_column, opts);
+    compare_results(res1, res4, scale);
+
+    // Checking that we get more-or-less the same results without matrix realization. 
+    opts.realize_matrix = false;
+    auto tres1 = scran_pca::simple_pca(*dense_row, opts);
+    compare_results(res1, tres1, scale);
+
+    auto tres2 = scran_pca::simple_pca(*dense_column, opts);
+    compare_results(res1, tres2, scale);
+
+    auto tres3 = scran_pca::simple_pca(*sparse_row, opts);
+    compare_results(res1, tres3, scale);
+
+    auto tres4 = scran_pca::simple_pca(*sparse_column, opts);
+    compare_results(res1, tres4, scale);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    SimplePca,
+    SimplePcaNearEmptyTest,
+    ::testing::Values(false, true) // to scale or not to scale?
+);
