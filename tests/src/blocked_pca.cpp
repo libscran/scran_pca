@@ -856,8 +856,7 @@ TEST_P(BlockedPcaEdgeTest, NoCells) {
     EXPECT_EQ(res1.center.cols(), ngenes);
     EXPECT_EQ(res1.center.rows(), 0);
 
-    EXPECT_EQ(res1.variance_explained.size(), 1);
-    EXPECT_EQ(res1.variance_explained[0], 0);
+    EXPECT_EQ(res1.variance_explained.size(), 0);
     EXPECT_EQ(res1.total_variance, 0);
 
     if (scale) {
