@@ -738,9 +738,9 @@ INSTANTIATE_TEST_SUITE_P(
 
 /******************************************/
 
-class BlockedPcaNearEmptyTest : public ::testing::TestWithParam<std::tuple<bool, bool, bool> > {};
+class BlockedPcaEdgeTest : public ::testing::TestWithParam<std::tuple<bool, bool, bool> > {};
 
-TEST_P(BlockedPcaNearEmptyTest, OneCell) {
+TEST_P(BlockedPcaEdgeTest, OneCell) {
     const auto param = GetParam();
     const bool scale = std::get<0>(param);
     const bool center_block = std::get<1>(param);
@@ -822,7 +822,7 @@ TEST_P(BlockedPcaNearEmptyTest, OneCell) {
     compare_results(res1, tres4, scale);
 }
 
-TEST_P(BlockedPcaNearEmptyTest, NoCells) {
+TEST_P(BlockedPcaEdgeTest, NoCells) {
     const auto param = GetParam();
     const bool scale = std::get<0>(param);
     const bool center_block = std::get<1>(param);
@@ -892,7 +892,7 @@ TEST_P(BlockedPcaNearEmptyTest, NoCells) {
     compare_results(res1, tres4, scale);
 }
 
-TEST_P(BlockedPcaNearEmptyTest, NoGenes) {
+TEST_P(BlockedPcaEdgeTest, NoGenes) {
     const auto param = GetParam();
     const bool scale = std::get<0>(param);
     const bool center_block = std::get<1>(param);
@@ -959,7 +959,7 @@ TEST_P(BlockedPcaNearEmptyTest, NoGenes) {
 
 INSTANTIATE_TEST_SUITE_P(
     BlockedPca,
-    BlockedPcaNearEmptyTest,
+    BlockedPcaEdgeTest,
     ::testing::Combine(
         ::testing::Values(false, true), // to scale or not to scale?
         ::testing::Values(false, true), // to compute PCs from the residuals?

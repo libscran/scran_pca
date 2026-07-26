@@ -250,9 +250,9 @@ INSTANTIATE_TEST_SUITE_P(
 
 /******************************************/
 
-class SimplePcaNearEmptyTest : public ::testing::TestWithParam<bool> {};
+class SimplePcaEdgeTest : public ::testing::TestWithParam<bool> {};
 
-TEST_P(SimplePcaNearEmptyTest, OneCell) {
+TEST_P(SimplePcaEdgeTest, OneCell) {
     const bool scale = GetParam();
 
     const int ngenes = 100;
@@ -323,7 +323,7 @@ TEST_P(SimplePcaNearEmptyTest, OneCell) {
     compare_results(res1, tres4, scale);
 }
 
-TEST_P(SimplePcaNearEmptyTest, NoCells) {
+TEST_P(SimplePcaEdgeTest, NoCells) {
     const bool scale = GetParam();
 
     const int ngenes = 100;
@@ -383,7 +383,7 @@ TEST_P(SimplePcaNearEmptyTest, NoCells) {
     compare_results(res1, tres4, scale);
 }
 
-TEST_P(SimplePcaNearEmptyTest, NoGenes) {
+TEST_P(SimplePcaEdgeTest, NoGenes) {
     const auto scale = GetParam();
 
     const int ncells = 100;
@@ -437,6 +437,6 @@ TEST_P(SimplePcaNearEmptyTest, NoGenes) {
 
 INSTANTIATE_TEST_SUITE_P(
     SimplePca,
-    SimplePcaNearEmptyTest,
+    SimplePcaEdgeTest,
     ::testing::Values(false, true) // to scale or not to scale?
 );
