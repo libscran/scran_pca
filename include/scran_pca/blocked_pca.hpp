@@ -513,96 +513,40 @@ void project_matrix_transposed_tatami(
     const auto rank = scaled_rotation.cols();
     const auto ngenes = mat.nrow();
     const auto ncells = mat.ncol();
-    typedef typename EigenMatrix_::Scalar Scalar;
 
     // Store as transposed for more cache efficiency.
+    // This is a column-major rank x ncells matrix, which makes it a row-major ncells x rank matrix.
     components.resize(
         sanisizer::cast<I<decltype(components.rows())> >(rank),
         sanisizer::cast<I<decltype(components.cols())> >(ncells)
     );
 
-    if (mat.prefer_rows()) {
-        tatami::parallelize([&](const int, const Index_ start, const Index_ length) -> void {
-            static_assert(!EigenMatrix_::IsRowMajor);
-            const auto vptr = scaled_rotation.data();
-            auto vbuffer = tatami::create_container_of_Index_size<std::vector<Value_> >(length);
+    tatami::DelayedTranspose<Value_, Index_> tmat(tatami::wrap_shared_ptr(&mat));
+    static_assert(!EigenMatrix_::IsRowMajor);
+    auto get_right = [&](I<decltype(rank)> r) -> auto {
+        return scaled_rotation.data() + sanisizer::product_unsafe<std::size_t>(r, ngenes);
+    };
 
-            std::vector<std::vector<Scalar> > local_buffers; // create separate buffers to avoid false sharing.
-            local_buffers.reserve(rank);
-            for (I<decltype(rank)> r = 0; r < rank; ++r) {
-                local_buffers.emplace_back(tatami::cast_Index_to_container_size<I<decltype(local_buffers.front())> >(length));
-            }
-
-            if (mat.is_sparse()) {
-                auto ibuffer = tatami::create_container_of_Index_size<std::vector<Index_> >(length);
-                auto ext = tatami::consecutive_extractor<true>(mat, true, static_cast<Index_>(0), ngenes, start, length);
-                for (Index_ g = 0; g < ngenes; ++g) {
-                    const auto range = ext->fetch(vbuffer.data(), ibuffer.data());
-                    for (I<decltype(rank)> r = 0; r < rank; ++r) {
-                        const auto mult = vptr[sanisizer::nd_offset<std::size_t>(g, ngenes, r)];
-                        auto& local_buffer = local_buffers[r];
-                        for (Index_ i = 0; i < range.number; ++i) {
-                            local_buffer[range.index[i] - start] += range.value[i] * mult;
-                        }
-                    }
-                }
-
-            } else {
-                auto ext = tatami::consecutive_extractor<false>(mat, true, static_cast<Index_>(0), ngenes, start, length);
-                for (Index_ g = 0; g < ngenes; ++g) {
-                    const auto ptr = ext->fetch(vbuffer.data());
-                    for (I<decltype(rank)> r = 0; r < rank; ++r) {
-                        const auto mult = vptr[sanisizer::nd_offset<std::size_t>(g, ngenes, r)];
-                        auto& local_buffer = local_buffers[r];
-                        for (Index_ i = 0; i < length; ++i) {
-                            local_buffer[i] += ptr[i] * mult;
-                        }
-                    }
-                }
-            }
-
-            for (I<decltype(rank)> r = 0; r < rank; ++r) {
-                for (Index_ c = 0; c < length; ++c) {
-                    components.coeffRef(r, c + start) = local_buffers[r][c];
-                }
-            }
-
-        }, ncells, nthreads);
-
+    if (tmat.is_sparse()) {
+        if (tmat.prefer_rows()) {
+            tatami_mult::MultiplySparseRowWithDenseColumnMatrixToRowOutputOptions options;
+            options.num_threads = nthreads;
+            tatami_mult::multiply_sparse_row_with_dense_column_matrix_to_row_output(tmat, rank, get_right, components.data(), options);
+        } else {
+            tatami_mult::MultiplySparseColumnWithDenseColumnMatrixToRowOutputOptions options;
+            options.num_threads = nthreads;
+            tatami_mult::multiply_sparse_column_with_dense_column_matrix_to_row_output(tmat, rank, get_right, components.data(), options);
+        }
     } else {
-        tatami::parallelize([&](const int, const Index_ start, const Index_ length) -> void {
-            static_assert(!EigenMatrix_::IsRowMajor);
-            auto vbuffer = tatami::create_container_of_Index_size<std::vector<Value_> >(ngenes);
-
-            if (mat.is_sparse()) {
-                std::vector<Index_> ibuffer(ngenes);
-                auto ext = tatami::consecutive_extractor<true>(mat, false, start, length);
-
-                for (Index_ c = start, end = start + length; c < end; ++c) {
-                    const auto range = ext->fetch(vbuffer.data(), ibuffer.data());
-                    static_assert(!EigenMatrix_::IsRowMajor);
-                    for (I<decltype(rank)> r = 0; r < rank; ++r) {
-                        auto& output = components.coeffRef(r, c);
-                        output = 0;
-                        const auto rotptr = scaled_rotation.data() + sanisizer::product_unsafe<std::size_t>(r, ngenes);
-                        for (Index_ i = 0; i < range.number; ++i) {
-                            output += rotptr[range.index[i]] * range.value[i];
-                        }
-                    }
-                }
-
-            } else {
-                auto ext = tatami::consecutive_extractor<false>(mat, false, start, length);
-                for (Index_ c = start, end = start + length; c < end; ++c) {
-                    const auto ptr = ext->fetch(vbuffer.data()); 
-                    static_assert(!EigenMatrix_::IsRowMajor);
-                    for (I<decltype(rank)> r = 0; r < rank; ++r) {
-                        const auto rotptr = scaled_rotation.data() + sanisizer::product_unsafe<std::size_t>(r, ngenes);
-                        components.coeffRef(r, c) = std::inner_product(rotptr, rotptr + ngenes, ptr, static_cast<Scalar>(0));
-                    }
-                }
-            }
-        }, ncells, nthreads);
+        if (tmat.prefer_rows()) {
+            tatami_mult::MultiplyDenseRowWithDenseColumnMatrixToRowOutputOptions options;
+            options.num_threads = nthreads;
+            tatami_mult::multiply_dense_row_with_dense_column_matrix_to_row_output(tmat, rank, get_right, components.data(), options);
+        } else {
+            tatami_mult::MultiplyDenseColumnWithDenseColumnMatrixToRowOutputOptions options;
+            options.num_threads = nthreads;
+            tatami_mult::multiply_dense_column_with_dense_column_matrix_to_row_output(tmat, rank, get_right, components.data(), options);
+        }
     }
 }
 

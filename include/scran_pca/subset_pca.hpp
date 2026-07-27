@@ -40,30 +40,42 @@ std::vector<Index_> invert_subset(const Index_ total, const SubsetVector_& subse
     return output;
 }
 
-template<typename Value_, typename Index_, typename EigenMatrix_, typename Scalar_>
-void multiply_by_right_singular_vectors(
-    const tatami::Matrix<Value_, Index_>& mat,
-    const EigenMatrix_& rhs_vectors,
-    std::vector<Scalar_>& output,
-    std::vector<Scalar_*>& out_ptrs,
-    int num_threads
-) {
+template<typename Value_, typename Index_, typename EigenMatrix_>
+std::vector<typename EigenMatrix_::Scalar> multiply_by_right_singular_vectors(const tatami::Matrix<Value_, Index_>& mat, const EigenMatrix_& rhs_vectors, int num_threads) {
     const auto num_features = mat.nrow();
     const auto num_cells = mat.ncol();
     const auto rank = rhs_vectors.cols();
-    static_assert(!EigenMatrix_::IsRowMajor);
 
-    output.resize(sanisizer::product<I<decltype(output.size())> >(num_features, rank));
-    sanisizer::resize(out_ptrs, rank);
-    auto rhs_ptrs = sanisizer::create<std::vector<const typename EigenMatrix_::Scalar*> >(rank);
-    for (I<decltype(rank)> r = 0; r < rank; ++r) {
-        rhs_ptrs[r] = rhs_vectors.data() + sanisizer::product_unsafe<std::size_t>(r, num_cells);
-        out_ptrs[r] = output.data() + sanisizer::product_unsafe<std::size_t>(r, num_features);
+    typedef typename EigenMatrix_::Scalar Scalar;
+    std::vector<Scalar> output(sanisizer::product<typename std::vector<Scalar>::size_type>(num_features, rank));
+    static_assert(!EigenMatrix_::IsRowMajor);
+    auto get_right = [&](I<decltype(rank)> r) -> auto {
+        return rhs_vectors.data() + sanisizer::product_unsafe<std::size_t>(r, num_cells);
+    };
+
+    if (mat.sparse()) {
+        if (mat.prefer_rows()) {
+            tatami_mult::MultiplySparseRowWithDenseColumnMatrixToColumnOutputOptions options;
+            options.num_threads = num_threads;
+            tatami_mult::multiply_sparse_row_with_dense_column_matrix_to_column_output(mat, rank, get_right, output.data(), options);
+        } else {
+            tatami_mult::MultiplySparseColumnWithDenseColumnMatrixToColumnOutputOptions options;
+            options.num_threads = num_threads;
+            tatami_mult::multiply_sparse_column_with_dense_column_matrix_to_column_output(mat, rank, get_right, output.data(), options);
+        }
+    } else {
+        if (mat.prefer_rows()) {
+            tatami_mult::MultiplyDenseRowWithDenseColumnMatrixToColumnOutputOptions options;
+            options.num_threads = num_threads;
+            tatami_mult::multiply_dense_row_with_dense_column_matrix_to_column_output(mat, rank, get_right, output.data(), options);
+        } else {
+            tatami_mult::MultiplyDenseColumnWithDenseColumnMatrixToColumnOutputOptions options;
+            options.num_threads = num_threads;
+            tatami_mult::multiply_dense_column_with_dense_column_matrix_to_column_output(mat, rank, get_right, output.data(), options);
+        }
     }
 
-    tatami_mult::Options opt;
-    opt.num_threads = num_threads;
-    tatami_mult::multiply(mat, rhs_ptrs, out_ptrs, opt);
+    return output;
 }
 
 template<class SubsetVector_, class EigenVector_>
@@ -176,16 +188,7 @@ void subset_pca(
             compute_row_means_and_variances(inv_mat, options.num_threads, inv_center, inv_scale);
             process_scale_vector(options.scale, inv_scale);
 
-            std::vector<typename EigenVector_::Scalar> product;
-            std::vector<typename EigenVector_::Scalar*> product_ptrs;
-            multiply_by_right_singular_vectors(
-                inv_mat,
-                rhs_vectors,
-                product,
-                product_ptrs,
-                options.num_threads
-            );
-
+            const auto product = multiply_by_right_singular_vectors(inv_mat, rhs_vectors, options.num_threads);
             const auto rank = rhs_vectors.cols();
             final_rotation.resize(sanisizer::cast<Eigen::Index>(full_size), rank);
             for (I<decltype(rank)> r = 0; r < rank; ++r) {
@@ -198,7 +201,7 @@ void subset_pca(
                 }
 
                 const auto curshift = rhs_vectors.col(r).sum();
-                const auto optr = product_ptrs[r];
+                const auto optr = product.data() + sanisizer::product_unsafe<std::size_t>(r, num_inv);
                 const auto compute = [&](I<decltype(num_inv)> i) -> typename EigenVector_::Scalar {
                     return (optr[i] - curshift * inv_center.coeff(i)) / varexp;
                 };
@@ -369,16 +372,7 @@ void subset_pca_blocked(
                 rhs_ptr = &rhs_vectors;
             }
 
-            std::vector<typename EigenVector_::Scalar> product;
-            std::vector<typename EigenVector_::Scalar*> out_ptrs;
-            multiply_by_right_singular_vectors(
-                inv_mat,
-                *rhs_ptr,
-                product,
-                out_ptrs,
-                options.num_threads
-            );
-
+            const auto product = multiply_by_right_singular_vectors(inv_mat, *rhs_ptr, options.num_threads);
             final_rotation.resize(
                 sanisizer::cast<I<decltype(final_rotation.rows())> >(full_size),
                 rhs_vectors.cols()
@@ -400,7 +394,7 @@ void subset_pca_blocked(
                     shift_buffer.coeffRef(block[i]) += rhs_vectors.coeff(i, r);
                 }
 
-                const auto optr = out_ptrs[r];
+                const auto optr = product.data() + sanisizer::product_unsafe<std::size_t>(r, num_inv);
                 const auto compute = [&](I<decltype(num_inv)> i) -> typename EigenVector_::Scalar {
                     typename EigenVector_::Scalar curshift = 0;
                     for (I<decltype(num_blocks)> b = 0; b < num_blocks; ++b) {
