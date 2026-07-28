@@ -5,6 +5,7 @@
 #include <type_traits>
 #include <algorithm>
 #include <memory>
+#include <optional>
 
 #include "tatami/tatami.hpp"
 #include "tatami_stats/tatami_stats.hpp"
@@ -322,7 +323,7 @@ struct SimplePcaResults {
      * For genes with zero variance, the scaling factor is set to 1 to avoid non-finite values upon scaling.
      * For input matrices with fewer than 2 cells, the scaling factor is set to 1 for all genes. 
      */
-    EigenVector_ scale;
+    std::optional<EigenVector_> scale;
 
     /**
      * Metrics for IRLBA, including whether the algorithm converged and the number of iterations/multiplications required. 
@@ -342,11 +343,12 @@ void simple_pca_internal(
 ) {
     irlba::EigenThreadScope t(options.num_threads);
 
+    auto scale = tatami::create_container_of_Index_size<EigenVector_>(mat.nrow());
     std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > ptr;
     if (mat.sparse()) {
-        ptr = prepare_sparse_matrix_for_irlba<EigenMatrix_>(mat, options, output.center, output.scale, output.total_variance);
+        ptr = prepare_sparse_matrix_for_irlba<EigenMatrix_>(mat, options, output.center, scale, output.total_variance);
     } else {
-        ptr = prepare_dense_matrix_for_irlba<EigenMatrix_>(mat, options, output.center, output.scale, output.total_variance);
+        ptr = prepare_dense_matrix_for_irlba<EigenMatrix_>(mat, options, output.center, scale, output.total_variance);
     }
 
     output.metrics = irlba::compute(*ptr, options.number, output.components, output.rotation, output.variance_explained, options.irlba_options);
@@ -358,8 +360,8 @@ void simple_pca_internal(
         output.components.adjointInPlace();
     }
 
-    if (!options.scale) {
-        output.scale = EigenVector_();
+    if (options.scale) {
+        output.scale = std::move(scale);
     }
 }
 /**

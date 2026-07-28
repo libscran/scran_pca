@@ -162,8 +162,10 @@ protected:
         expect_equal_vectors(ref.variance_explained, out.variance_explained);
         EXPECT_FLOAT_EQ(ref.total_variance, out.total_variance);
         expect_equal_vectors(ref.center, out.center);
+
+        EXPECT_EQ(ref.scale.has_value(), out.scale.has_value());
         if (scale) {
-            expect_equal_vectors(ref.scale, out.scale);
+            expect_equal_vectors(*(ref.scale), *(out.scale));
         }
     }
 };
@@ -243,10 +245,10 @@ TEST_P(SubsetPcaBasicTest, VersusReference) {
     expect_equal_vectors(ref.center, subsetted.center.head(NR));
     expect_equal_vectors(ref.center, subsetted.center.tail(NR));
     if (scale) {
-        expect_equal_vectors(ref.scale, subsetted.scale.head(NR));
-        expect_equal_vectors(ref.scale, subsetted.scale.tail(NR));
+        expect_equal_vectors(*(ref.scale), subsetted.scale->head(NR));
+        expect_equal_vectors(*(ref.scale), subsetted.scale->tail(NR));
     } else {
-        EXPECT_EQ(subsetted.scale.size(), 0);
+        EXPECT_FALSE(subsetted.scale.has_value());
     }
 }
 
@@ -302,10 +304,12 @@ TEST_P(SubsetPcaEdgeTest, OneCell) {
     EXPECT_EQ(res.total_variance, 0);
 
     if (scale) {
-        EXPECT_EQ(res.scale.size(), ngenes);
+        EXPECT_EQ(res.scale->size(), ngenes);
         for (int g = 0; g < ngenes; ++g) {
-            EXPECT_EQ(res.scale[g], 1); // adjusted from zero to 1.
+            EXPECT_EQ((*(res.scale))[g], 1); // adjusted from zero to 1.
         }
+    } else {
+        EXPECT_FALSE(res.scale.has_value());
     }
 }
 
@@ -336,10 +340,12 @@ TEST_P(SubsetPcaEdgeTest, NoCells) {
     EXPECT_EQ(res.total_variance, 0);
 
     if (scale) {
-        EXPECT_EQ(res.scale.size(), ngenes);
+        EXPECT_EQ(res.scale->size(), ngenes);
         for (int g = 0; g < ngenes; ++g) {
-            EXPECT_EQ(res.scale[g], 1); // adjusted from zero to 1.
+            EXPECT_EQ((*(res.scale))[g], 1); // adjusted from zero to 1.
         }
+    } else {
+        EXPECT_FALSE(res.scale.has_value());
     }
 }
 
@@ -366,7 +372,9 @@ TEST_P(SubsetPcaEdgeTest, NoGenes) {
     EXPECT_EQ(res.total_variance, 0);
 
     if (scale) {
-        EXPECT_EQ(res.scale.size(), 0);
+        EXPECT_EQ(res.scale->size(), 0);
+    } else {
+        EXPECT_FALSE(res.scale.has_value());
     }
 }
 
@@ -399,7 +407,9 @@ TEST_P(SubsetPcaEdgeTest, AllSelected) {
     EXPECT_FLOAT_EQ(ref.total_variance, res.total_variance);
     expect_equal_vectors(ref.center, res.center);
     if (scale) {
-        expect_equal_vectors(ref.scale, res.scale);
+        expect_equal_vectors((*(ref.scale)), (*(res.scale)));
+    } else {
+        EXPECT_FALSE(res.scale.has_value());
     }
 }
 
@@ -436,8 +446,10 @@ TEST_P(SubsetPcaEdgeTest, NoneSelected) {
 
     if (scale) {
         for (int g = 0; g < ngenes; ++g) {
-            EXPECT_FLOAT_EQ(std::sqrt(varout.variance[g]), res.scale[g]);
+            EXPECT_FLOAT_EQ(std::sqrt(varout.variance[g]), (*(res.scale))[g]);
         }
+    } else {
+        EXPECT_FALSE(res.scale.has_value());
     }
 }
 
@@ -484,8 +496,10 @@ protected:
         expect_equal_vectors(ref.variance_explained, out.variance_explained);
         EXPECT_FLOAT_EQ(ref.total_variance, out.total_variance);
         expect_equal_matrices(ref.center, out.center);
+
+        EXPECT_EQ(ref.scale.has_value(), out.scale.has_value());
         if (scale) {
-            expect_equal_vectors(ref.scale, out.scale);
+            expect_equal_vectors((*(ref.scale)), (*(out.scale)));
         }
     }
 };
@@ -582,10 +596,10 @@ TEST_P(SubsetPcaBlockedTest, VersusReference) {
     expect_equal_matrices(ref.center, subsetted.center.leftCols(NR));
     expect_equal_matrices(ref.center, subsetted.center.rightCols(NR));
     if (scale) {
-        expect_equal_vectors(ref.scale, subsetted.scale.head(NR));
-        expect_equal_vectors(ref.scale, subsetted.scale.tail(NR));
+        expect_equal_vectors(*(ref.scale), subsetted.scale->head(NR));
+        expect_equal_vectors(*(ref.scale), subsetted.scale->tail(NR));
     } else {
-        EXPECT_EQ(subsetted.scale.size(), 0);
+        EXPECT_FALSE(subsetted.scale.has_value());
     }
 }
 
@@ -645,9 +659,9 @@ TEST_P(SubsetPcaBlockedEdgeTest, OneCell) {
     EXPECT_EQ(res.total_variance, 0);
 
     if (scale) {
-        EXPECT_EQ(res.scale.size(), ngenes);
+        EXPECT_EQ(res.scale->size(), ngenes);
         for (int g = 0; g < ngenes; ++g) {
-            EXPECT_EQ(res.scale[g], 1); // adjusted from zero to 1.
+            EXPECT_EQ((*(res.scale))[g], 1); // adjusted from zero to 1.
         }
     }
 }
@@ -677,10 +691,12 @@ TEST_P(SubsetPcaBlockedEdgeTest, NoCells) {
     EXPECT_EQ(res.total_variance, 0);
 
     if (scale) {
-        EXPECT_EQ(res.scale.size(), ngenes);
+        EXPECT_EQ(res.scale->size(), ngenes);
         for (int g = 0; g < ngenes; ++g) {
-            EXPECT_EQ(res.scale[g], 1); // adjusted from zero to 1.
+            EXPECT_EQ((*(res.scale))[g], 1); // adjusted from zero to 1.
         }
+    } else {
+        EXPECT_FALSE(res.scale.has_value());
     }
 }
 
@@ -710,7 +726,9 @@ TEST_P(SubsetPcaBlockedEdgeTest, NoGenes) {
     EXPECT_EQ(res.total_variance, 0);
 
     if (scale) {
-        EXPECT_EQ(res.scale.size(), 0);
+        EXPECT_EQ(res.scale->size(), 0);
+    } else {
+        EXPECT_FALSE(res.scale.has_value());
     }
 }
 
@@ -748,8 +766,9 @@ TEST_P(SubsetPcaBlockedEdgeTest, AllSelected) {
     expect_equal_vectors(ref.variance_explained, res.variance_explained);
     EXPECT_FLOAT_EQ(ref.total_variance, res.total_variance);
     expect_equal_matrices(ref.center, res.center);
+    EXPECT_EQ(ref.scale.has_value(), res.scale.has_value());
     if (scale) {
-        expect_equal_vectors(ref.scale, res.scale);
+        expect_equal_vectors((*(ref.scale)), (*(res.scale)));
     }
 }
 
@@ -792,9 +811,12 @@ TEST_P(SubsetPcaBlockedEdgeTest, NoneSelected) {
     }
 
     if (scale) {
+        EXPECT_EQ(res.scale->size(), ngenes);
         for (int g = 0; g < ngenes; ++g) {
-            EXPECT_GT(res.scale.coeff(g), 0);
+            EXPECT_GT(res.scale->coeff(g), 0);
         }
+    } else {
+        EXPECT_FALSE(res.scale.has_value());
     }
 }
 

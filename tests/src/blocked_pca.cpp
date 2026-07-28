@@ -147,8 +147,9 @@ static void compare_results(
     expect_equal_vectors(ref.variance_explained, out.variance_explained);
     EXPECT_FLOAT_EQ(ref.total_variance, out.total_variance);
     expect_equal_matrices(ref.center, out.center);
+    EXPECT_EQ(ref.scale.has_value(), out.scale.has_value());
     if (scale) {
-        expect_equal_vectors(ref.scale, out.scale);
+        expect_equal_vectors(*(ref.scale), *(out.scale));
     }
 }
 
@@ -205,12 +206,13 @@ TEST_P(BlockedPcaBasicTest, BasicConsistency) {
             are_blocks_centered(ref.components, block, nblocks);
         }
         EXPECT_EQ(ref.variance_explained.size(), rank);
-        EXPECT_TRUE(ref.total_variance >= std::accumulate(ref.variance_explained.begin(), ref.variance_explained.end(), 0.0));
+        EXPECT_GE(ref.total_variance, std::accumulate(ref.variance_explained.begin(), ref.variance_explained.end(), 0.0));
 
         // Total variance makes sense. Remember, this doesn't consider the
         // loss of d.f. from calculation of the block means.
         if (scale) {
             EXPECT_FLOAT_EQ(dense_row->nrow(), ref.total_variance);
+            EXPECT_EQ(dense_row->nrow(), ref.scale->size());
         } else {
             auto collected = fragment_matrices_by_block(dense_row, block, nblocks);
 
@@ -222,6 +224,7 @@ TEST_P(BlockedPcaBasicTest, BasicConsistency) {
             }
 
             EXPECT_FLOAT_EQ(total_var / (dense_row->ncol() - 1), ref.total_variance);
+            EXPECT_FALSE(ref.scale.has_value());
         }
 
     } else {
@@ -285,6 +288,7 @@ TEST_P(BlockedPcaBasicTest, WeightedConsistency) {
 
         if (scale) {
             EXPECT_FLOAT_EQ(dense_row->nrow(), ref.total_variance);
+            EXPECT_EQ(dense_row->nrow(), ref.scale->size());
         } else {
             auto collected = fragment_matrices_by_block(dense_row, block, nblocks);
 
@@ -298,6 +302,7 @@ TEST_P(BlockedPcaBasicTest, WeightedConsistency) {
             }
 
             EXPECT_FLOAT_EQ(total_var / (dense_row->ncol() - 1), ref.total_variance);
+            EXPECT_FALSE(ref.scale.has_value());
         }
 
     } else {
@@ -450,7 +455,7 @@ TEST_P(BlockedPcaMoreTest, VersusSimple) {
 
             Eigen::MatrixXd rotation = res2.rotation;
             if (scale) {
-                rotation.array().colwise() /= res2.scale.array();
+                rotation.array().colwise() /= res2.scale->array();
             }
 
             Eigen::MatrixXd expected = (payload * rotation).adjoint();
@@ -791,10 +796,12 @@ TEST_P(BlockedPcaEdgeTest, OneCell) {
     EXPECT_EQ(res1.total_variance, 0);
 
     if (scale) {
-        EXPECT_EQ(res1.scale.size(), ngenes);
+        EXPECT_EQ(res1.scale->size(), ngenes);
         for (int g = 0; g < ngenes; ++g) {
-            EXPECT_EQ(res1.scale[g], 1); // zero converted to 1.
+            EXPECT_EQ((*(res1.scale))[g], 1); // zero converted to 1.
         }
+    } else {
+        EXPECT_FALSE(res1.scale.has_value());
     }
 
     // Checking that we get more-or-less the same results with other matrix representations.
@@ -860,10 +867,12 @@ TEST_P(BlockedPcaEdgeTest, NoCells) {
     EXPECT_EQ(res1.total_variance, 0);
 
     if (scale) {
-        EXPECT_EQ(res1.scale.size(), ngenes);
+        EXPECT_EQ(res1.scale->size(), ngenes);
         for (int g = 0; g < ngenes; ++g) {
-            EXPECT_EQ(res1.scale[g], 1); // zero converted to 1.
+            EXPECT_EQ((*(res1.scale))[g], 1); // zero converted to 1.
         }
+    } else {
+        EXPECT_FALSE(res1.scale.has_value());
     }
 
     // Checking that we get more-or-less the same results with other matrix representations.
@@ -928,7 +937,9 @@ TEST_P(BlockedPcaEdgeTest, NoGenes) {
     EXPECT_EQ(res1.total_variance, 0);
 
     if (scale) {
-        EXPECT_EQ(res1.scale.size(), 0);
+        EXPECT_EQ(res1.scale->size(), 0);
+    } else {
+        EXPECT_FALSE(res1.scale.has_value());
     }
 
     // Checking that we get more-or-less the same results with other matrix representations.

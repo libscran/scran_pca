@@ -228,8 +228,8 @@ void subset_pca(
     output.center.swap(final_center);
 
     if (options.scale) {
-        expand_into_vector(subset, output.scale, final_scale);
-        output.scale.swap(final_scale);
+        expand_into_vector(subset, *(output.scale), final_scale);
+        output.scale->swap(final_scale);
     }
 
     expand_into_matrix_rows(subset, output.rotation, final_rotation);
@@ -425,8 +425,8 @@ void subset_pca_blocked(
     output.center.swap(final_center);
 
     if (options.scale) {
-        expand_into_vector(subset, output.scale, final_scale);
-        output.scale.swap(final_scale);
+        expand_into_vector(subset, (*output.scale), final_scale);
+        output.scale->swap(final_scale);
     }
 
     expand_into_matrix_rows(subset, output.rotation, final_rotation);

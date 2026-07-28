@@ -760,7 +760,7 @@ struct BlockedPcaResults {
      * For genes with zero variance in all blocks, the scaling factor is set to 1 to avoid non-finite values upon scaling.
      * For input matrices with fewer than 2 cells, the scaling factor is set to 1 for all genes. 
      */
-    EigenVector_ scale;
+    std::optional<EigenVector_> scale;
 
     /**
      * Metrics for IRLBA, including whether the algorithm converged and the number of iterations/multiplications required.
@@ -789,7 +789,7 @@ void blocked_pca_internal(
         sanisizer::cast<I<decltype(output.center.rows())> >(num_blocks),
         sanisizer::cast<I<decltype(output.center.cols())> >(ngenes)
     );
-    tatami::resize_container_to_Index_size(output.scale, ngenes);
+    auto scale = tatami::create_container_of_Index_size<EigenVector_>(ngenes);
 
     auto block_sizes = sanisizer::create<std::vector<Index_> >(num_blocks);
     for (Index_ c = 0; c < ncells; ++c) {
@@ -812,7 +812,7 @@ void blocked_pca_internal(
             block_sizes,
             block_details,
             output.center,
-            output.scale,
+            scale,
             options.num_threads
         );
         ptr.reset(new irlba_tatami::Transposed<EigenVector_, EigenMatrix_, Value_, Index_, decltype(&mat)>(&mat, options.num_threads));
@@ -860,7 +860,7 @@ void blocked_pca_internal(
             block_sizes,
             block_details,
             output.center,
-            output.scale,
+            scale,
             options.num_threads
         );
 
@@ -895,7 +895,7 @@ void blocked_pca_internal(
             block_sizes,
             block_details,
             output.center,
-            output.scale,
+            scale,
             options.num_threads
         );
 
@@ -908,7 +908,7 @@ void blocked_pca_internal(
         };
     }
 
-    output.total_variance = process_scale_vector(options.scale, output.scale);
+    output.total_variance = process_scale_vector(options.scale, scale);
 
     std::unique_ptr<irlba::Matrix<EigenVector_, EigenMatrix_> > alt;
     alt.reset(
@@ -932,10 +932,10 @@ void blocked_pca_internal(
                 EigenVector_,
                 EigenMatrix_,
                 I<decltype(ptr)>,
-                I<decltype(&(output.scale))>
+                I<decltype(&(scale))>
             >(
                 std::move(ptr),
-                &(output.scale),
+                &(scale),
                 /* column = */ true,
                 /* divide = */ true
             )
@@ -963,7 +963,7 @@ void blocked_pca_internal(
         subset_fun(num_blocks, block_sizes, block_details, output.components, output.variance_explained);
 
         EigenMatrix_ tmp;
-        const auto& scaled_rotation = scale_rotation_matrix(output.rotation, options.scale, output.scale, tmp);
+        const auto& scaled_rotation = scale_rotation_matrix(output.rotation, options.scale, scale, tmp);
         projector(scaled_rotation);
 
         // Subtracting each block's mean from the PCs.
@@ -991,7 +991,7 @@ void blocked_pca_internal(
 
         } else {
             EigenMatrix_ tmp;
-            const auto& scaled_rotation = scale_rotation_matrix(output.rotation, options.scale, output.scale, tmp);
+            const auto& scaled_rotation = scale_rotation_matrix(output.rotation, options.scale, scale, tmp);
             projector(scaled_rotation);
 
             clean_up_projected(output.components, output.variance_explained);
@@ -1001,8 +1001,8 @@ void blocked_pca_internal(
         }
     }
 
-    if (!options.scale) {
-        output.scale = EigenVector_();
+    if (options.scale) {
+        output.scale = std::move(scale);
     }
 }
 /**

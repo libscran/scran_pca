@@ -17,8 +17,9 @@ static void compare_results(
     expect_equal_vectors(ref.variance_explained, out.variance_explained);
     EXPECT_FLOAT_EQ(ref.total_variance, out.total_variance);
     expect_equal_vectors(ref.center, out.center);
+    EXPECT_EQ(ref.scale.has_value(), out.scale.has_value());
     if (scale) {
-        expect_equal_vectors(ref.scale, out.scale);
+        expect_equal_vectors(*(ref.scale), *(out.scale));
     }
 }
 
@@ -81,10 +82,12 @@ TEST_P(SimplePcaBasicTest, Test) {
 
         if (scale) {
             EXPECT_FLOAT_EQ(dense_row->nrow(), ref.total_variance);
+            EXPECT_EQ(dense_row->nrow(), ref.scale->size());
         } else {
             auto vars = tatami_stats::variance(true, *dense_row, {});
             auto total_var = std::accumulate(vars.variance.begin(), vars.variance.end(), 0.0);
             EXPECT_FLOAT_EQ(total_var, ref.total_variance);
+            EXPECT_FALSE(ref.scale.has_value());
         }
 
         auto sums = tatami_stats::sum(true, *dense_row, {});
@@ -92,14 +95,7 @@ TEST_P(SimplePcaBasicTest, Test) {
             ss /= NC;
         }
         scran_tests::compare_almost_equal_containers(sums, ref.center, {});
-
-        EXPECT_TRUE(ref.total_variance >= std::accumulate(ref.variance_explained.begin(), ref.variance_explained.end(), 0.0));
-
-        if (scale) {
-            EXPECT_EQ(ref.scale.size(), dense_row->nrow());
-        } else {
-            EXPECT_EQ(ref.scale.size(), 0);
-        }
+        EXPECT_GE(ref.total_variance, std::accumulate(ref.variance_explained.begin(), ref.variance_explained.end(), 0.0));
 
     } else {
         opt.num_threads = threads;
@@ -209,8 +205,10 @@ TEST_P(SimplePcaMoreTest, ZeroVariance) {
     EXPECT_EQ(res1.center[nr - 1], 0);
 
     if (scale) {
-        expect_equal_vectors(ref.scale, res1.scale.head(nr - 1));
-        EXPECT_EQ(res1.scale[nr - 1], 1);
+        expect_equal_vectors(*(ref.scale), res1.scale->head(nr - 1));
+        EXPECT_EQ((*(res1.scale))[nr - 1], 1);
+    } else {
+        EXPECT_FALSE(res1.scale.has_value());
     }
 
     // Checking that we get more-or-less the same results. 
@@ -292,10 +290,12 @@ TEST_P(SimplePcaEdgeTest, OneCell) {
     EXPECT_EQ(res1.total_variance, 0);
 
     if (scale) {
-        EXPECT_EQ(res1.scale.size(), ngenes);
+        EXPECT_EQ(res1.scale->size(), ngenes);
         for (int g = 0; g < ngenes; ++g) {
-            EXPECT_EQ(res1.scale[g], 1); // adjusted from zero to 1.
+            EXPECT_EQ((*(res1.scale))[g], 1); // adjusted from zero to 1.
         }
+    } else {
+        EXPECT_FALSE(res1.scale.has_value());
     }
 
     // Checking that we get more-or-less the same results with other matrix representations.
@@ -352,10 +352,12 @@ TEST_P(SimplePcaEdgeTest, NoCells) {
     EXPECT_EQ(res1.total_variance, 0);
 
     if (scale) {
-        EXPECT_EQ(res1.scale.size(), ngenes);
+        EXPECT_EQ(res1.scale->size(), ngenes);
         for (int g = 0; g < ngenes; ++g) {
-            EXPECT_EQ(res1.scale[g], 1); // adjusted from zero to 1.
+            EXPECT_EQ((*(res1.scale))[g], 1); // adjusted from zero to 1.
         }
+    } else {
+        EXPECT_FALSE(res1.scale.has_value());
     }
 
     // Checking that we get more-or-less the same results with other matrix representations.
@@ -407,7 +409,9 @@ TEST_P(SimplePcaEdgeTest, NoGenes) {
     EXPECT_EQ(res1.total_variance, 0);
 
     if (scale) {
-        EXPECT_EQ(res1.scale.size(), 0);
+        EXPECT_EQ(res1.scale->size(), 0);
+    } else {
+        EXPECT_FALSE(res1.scale.has_value());
     }
 
     // Checking that we get more-or-less the same results with other matrix representations.
