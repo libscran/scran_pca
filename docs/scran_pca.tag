@@ -142,10 +142,10 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>EigenVector_</type>
+      <type>std::optional&lt; EigenVector_ &gt;</type>
       <name>scale</name>
       <anchorfile>structscran__pca_1_1BlockedPcaResults.html</anchorfile>
-      <anchor>a910c7e46f4cc53f12b9b15eea7170659</anchor>
+      <anchor>a421e893adb69b9ab917a27448a35e605</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -244,10 +244,10 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>EigenVector_</type>
+      <type>std::optional&lt; EigenVector_ &gt;</type>
       <name>scale</name>
       <anchorfile>structscran__pca_1_1SimplePcaResults.html</anchorfile>
-      <anchor>ad9f61059704fb822342fbb776cb66617</anchor>
+      <anchor>a3b655bf274cb89d18f0a7e24322d3fe7</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">

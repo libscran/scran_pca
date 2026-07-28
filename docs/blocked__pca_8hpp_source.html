@@ -751,291 +751,291 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span> </div>
 <div class="line"><a id="l00746" name="l00746"></a><span class="lineno"><a class="line" href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">  746</a></span>    EigenMatrix_ <a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">rotation</a>;</div>
 <div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span> </div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno"><a class="line" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">  753</a></span>    EigenMatrix_ <a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>;</div>
-<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span> </div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno"><a class="line" href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">  759</a></span>    EigenVector_ <a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scale</a>;</div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span> </div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno"><a class="line" href="structscran__pca_1_1BlockedPcaResults.html#a4350c3ad11efb406ff5e2d2ac0c9b041">  764</a></span>    <a class="code hl_structRef" href="https://ltla.github.io/CppIrlba/structirlba_1_1Metrics.html">irlba::Metrics</a> <a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a4350c3ad11efb406ff5e2d2ac0c9b041">metrics</a>;</div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>};</div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno"><a class="line" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">  754</a></span>    EigenMatrix_ <a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>;</div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span> </div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno"><a class="line" href="structscran__pca_1_1BlockedPcaResults.html#a421e893adb69b9ab917a27448a35e605">  763</a></span>    std::optional&lt;EigenVector_&gt; <a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a421e893adb69b9ab917a27448a35e605">scale</a>;</div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span> </div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno"><a class="line" href="structscran__pca_1_1BlockedPcaResults.html#a4350c3ad11efb406ff5e2d2ac0c9b041">  768</a></span>    <a class="code hl_structRef" href="https://ltla.github.io/CppIrlba/structirlba_1_1Metrics.html">irlba::Metrics</a> <a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a4350c3ad11efb406ff5e2d2ac0c9b041">metrics</a>;</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>};</div>
 </div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span> </div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Block_, <span class="keyword">typename</span> EigenMatrix_, <span class="keyword">class</span> EigenVector_, <span class="keyword">class</span> SubsetFunction_&gt;</div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span><span class="keywordtype">void</span> blocked_pca_internal(</div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Value_, Index_&gt;</a>&amp; mat,</div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>    <span class="keyword">const</span> Block_* block,</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>    <span class="keyword">const</span> std::size_t num_blocks,</div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions&lt;EigenVector_&gt;</a>&amp; options,</div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>    <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults&lt;EigenMatrix_, EigenVector_&gt;</a>&amp; output,</div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>    SubsetFunction_ subset_fun</div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>) {</div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>    <a class="code hl_classRef" href="https://ltla.github.io/CppIrlba/classirlba_1_1EigenThreadScope.html">irlba::EigenThreadScope</a> t(options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a>);</div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>    std::unique_ptr&lt;irlba::Matrix&lt;EigenVector_, EigenMatrix_&gt; &gt; ptr;</div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>    std::function&lt;void(<span class="keyword">const</span> EigenMatrix_&amp;)&gt; projector;</div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span> </div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>    <span class="keyword">const</span> Index_ ngenes = mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>(), ncells = mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>(); </div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>    output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>.resize(</div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>        sanisizer::cast&lt;I&lt;<span class="keyword">decltype</span>(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>.rows())&gt; &gt;(num_blocks),</div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>        sanisizer::cast&lt;I&lt;<span class="keyword">decltype</span>(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>.cols())&gt; &gt;(ngenes)</div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>    );</div>
-<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>    <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a61b43d2b751c7fcca6815f3be929d4d3">tatami::resize_container_to_Index_size</a>(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scale</a>, ngenes);</div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span> </div>
-<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>    <span class="keyword">auto</span> block_sizes = sanisizer::create&lt;std::vector&lt;Index_&gt; &gt;(num_blocks);</div>
-<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>    <span class="keywordflow">for</span> (Index_ c = 0; c &lt; ncells; ++c) {</div>
-<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>        block_sizes[block[c]] += 1;</div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>    }</div>
-<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>    <span class="keyword">auto</span> block_details = compute_blocking_details&lt;EigenVector_&gt;(  </div>
-<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>        mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>(),</div>
-<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>        block,</div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>        num_blocks,</div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>        block_sizes,</div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>        options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a90ea56570afdc1ac9b6d62e26bbab18f">block_weight_policy</a>,</div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>        options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a6ee1dfa151e497faf4c2c436883c5579">variable_block_weight_parameters</a></div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>    );</div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span> </div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>    <span class="keywordflow">if</span> (!options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#ac1ef520bbfe708b6bb8ddf0cab8cccfe">realize_matrix</a>) {</div>
-<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>        compute_blockwise_mean_and_variance_tatami(</div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>            mat,</div>
-<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>            block,</div>
-<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>            num_blocks,</div>
-<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>            block_sizes,</div>
-<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>            block_details,</div>
-<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>            output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>,</div>
-<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>            output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scale</a>,</div>
-<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>            options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a></div>
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>        );</div>
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>        ptr.reset(<span class="keyword">new</span> irlba_tatami::Transposed&lt;EigenVector_, EigenMatrix_, Value_, Index_, <span class="keyword">decltype</span>(&amp;mat)&gt;(&amp;mat, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a>));</div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>        projector = [&amp;](<span class="keyword">const</span> EigenMatrix_&amp; scaled_rotation) -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>            project_matrix_transposed_tatami(mat, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, scaled_rotation, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a>);</div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>        };</div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span> </div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#af84772cc4e911a87948d45a1edcabbd0">sparse</a>()) {</div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>        <span class="comment">// &#39;extracted&#39; contains row-major contents... but we implicitly transpose it to CSC with genes in columns.</span></div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>        <span class="keyword">auto</span> extracted = <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a7e0ab534fd3195a57abcb47272d41ded">tatami::retrieve_compressed_sparse_contents&lt;Value_, Index_&gt;</a>(</div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>            mat,</div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>            <span class="comment">/* row = */</span> <span class="keyword">true</span>,</div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>            [&amp;]{</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>                <a class="code hl_structRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1RetrieveCompressedSparseContentsOptions.html">tatami::RetrieveCompressedSparseContentsOptions</a> opt;</div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>                opt.<a class="code hl_variableRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1RetrieveCompressedSparseContentsOptions.html#a6e8d3d669e760e0b640f085b519a49f3">two_pass</a> = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>                opt.<a class="code hl_variableRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1RetrieveCompressedSparseContentsOptions.html#a63e19a4a990891427f82f3a433fa2044">num_threads</a> = options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a>;</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>                <span class="keywordflow">return</span> opt;</div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>            }()</div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>        );</div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span> </div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>        <span class="comment">// Storing sparse_ptr in the unique pointer should not invalidate the former,</span></div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>        <span class="comment">// based on a reading of the C++ specification w.r.t. reset();</span></div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>        <span class="comment">// so we can continue to use it for projection.</span></div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>        <span class="keyword">const</span> <span class="keyword">auto</span> sparse_ptr = <span class="keyword">new</span> <a class="code hl_classRef" href="https://ltla.github.io/CppIrlba/classirlba_1_1ParallelSparseMatrix.html">irlba::ParallelSparseMatrix</a>&lt;</div>
-<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>            EigenVector_,</div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>            EigenMatrix_,</div>
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>            I&lt;<span class="keyword">decltype</span>(extracted.value)&gt;,</div>
-<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>            I&lt;<span class="keyword">decltype</span>(extracted.index)&gt;,</div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>            I&lt;<span class="keyword">decltype</span>(extracted.pointers)&gt;</div>
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>        &gt;(</div>
-<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>            ncells,</div>
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>            ngenes,</div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>            std::move(extracted.value),</div>
-<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>            std::move(extracted.index),</div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>            std::move(extracted.pointers),</div>
-<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>            <span class="keyword">true</span>,</div>
-<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>            options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a></div>
-<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>        );</div>
-<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>        ptr.reset(sparse_ptr);</div>
-<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span> </div>
-<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>        compute_blockwise_mean_and_variance_realized_sparse(</div>
-<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>            *sparse_ptr,</div>
-<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>            block,</div>
-<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>            num_blocks,</div>
-<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>            block_sizes,</div>
-<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>            block_details,</div>
-<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>            output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>,</div>
-<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>            output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scale</a>,</div>
-<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>            options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a></div>
-<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>        );</div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span> </div>
-<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>        <span class="comment">// Make sure to copy sparse_ptr because it doesn&#39;t exist outside of this scope.</span></div>
-<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>        projector = [&amp;,sparse_ptr](<span class="keyword">const</span> EigenMatrix_&amp; scaled_rotation) -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>            project_matrix_realized_sparse&lt;EigenVector_&gt;(*sparse_ptr, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, scaled_rotation, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a>);</div>
-<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>        };</div>
-<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span> </div>
-<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>        <span class="comment">// Perform an implicit transposition by performing a row-major extraction into a column-major transposed matrix.</span></div>
-<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>        <span class="keyword">auto</span> tmp_ptr = std::make_unique&lt;EigenMatrix_&gt;(</div>
-<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>            sanisizer::cast&lt;I&lt;<span class="keyword">decltype</span>(std::declval&lt;EigenMatrix_&gt;().rows())&gt; &gt;(ncells),</div>
-<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>            sanisizer::cast&lt;I&lt;<span class="keyword">decltype</span>(std::declval&lt;EigenMatrix_&gt;().cols())&gt; &gt;(ngenes)</div>
-<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span>        ); </div>
-<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>        <span class="keyword">static_assert</span>(!EigenMatrix_::IsRowMajor);</div>
-<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span> </div>
-<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span>        <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">tatami::convert_to_dense</a>(</div>
-<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>            mat,</div>
-<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>            <span class="comment">/* row_major = */</span> <span class="keyword">true</span>,</div>
-<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>            tmp_ptr-&gt;data(),</div>
-<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>            [&amp;]{</div>
-<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>                tatami::ConvertToDenseOptions opt;</div>
-<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>                opt.num_threads = options.num_threads;</div>
-<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span>                return opt;</div>
-<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>            }()</div>
-<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span>        );</div>
-<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span> </div>
-<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>        compute_blockwise_mean_and_variance_realized_dense(</div>
-<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span>            *tmp_ptr,</div>
-<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span>            block,</div>
-<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>            num_blocks,</div>
-<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>            block_sizes,</div>
-<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>            block_details,</div>
-<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span>            output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>,</div>
-<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>            output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scale</a>,</div>
-<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span>            options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a></div>
-<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span>        );</div>
-<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span> </div>
-<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span>        <span class="keyword">const</span> <span class="keyword">auto</span> dense_ptr = tmp_ptr.get(); <span class="comment">// do this before the move.</span></div>
-<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span>        ptr.reset(<span class="keyword">new</span> <a class="code hl_classRef" href="https://ltla.github.io/CppIrlba/classirlba_1_1SimpleMatrix.html">irlba::SimpleMatrix</a>&lt;EigenVector_, EigenMatrix_, <span class="keyword">decltype</span>(tmp_ptr)&gt;(std::move(tmp_ptr)));</div>
-<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span> </div>
-<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span>        <span class="comment">// Make sure to copy dense_ptr because it doesn&#39;t exist outside of this scope.</span></div>
-<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>        projector = [&amp;,dense_ptr](<span class="keyword">const</span> EigenMatrix_&amp; scaled_rotation) -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span>            output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>.noalias() = (*dense_ptr * scaled_rotation).adjoint();</div>
-<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span>        };</div>
-<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span>    }</div>
-<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span> </div>
-<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span>    output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a00ac5c254aa7ae41c0a92ada12739a1b">total_variance</a> = process_scale_vector(options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a9a6ae44f80e309c57d337e9f0885a647">scale</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scale</a>);</div>
-<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span> </div>
-<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>    std::unique_ptr&lt;irlba::Matrix&lt;EigenVector_, EigenMatrix_&gt; &gt; alt;</div>
-<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span>    alt.reset(</div>
-<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>        <span class="keyword">new</span> ResidualMatrix&lt;</div>
-<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span>            EigenVector_,</div>
-<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>            EigenMatrix_,</div>
-<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>            I&lt;<span class="keyword">decltype</span>(ptr)&gt;,</div>
-<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span>            Block_,</div>
-<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span>            I&lt;<span class="keyword">decltype</span>(&amp;(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>))&gt;</div>
-<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span>        &gt;(</div>
-<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span>            std::move(ptr),</div>
-<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span>            block,</div>
-<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span>            &amp;(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>)</div>
-<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span>        )</div>
-<div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span>    );</div>
-<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span>    ptr.swap(alt);</div>
-<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span> </div>
-<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span>    <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a9a6ae44f80e309c57d337e9f0885a647">scale</a>) {</div>
-<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span>        alt.reset(</div>
-<div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span>            <span class="keyword">new</span> <a class="code hl_classRef" href="https://ltla.github.io/CppIrlba/classirlba_1_1ScaledMatrix.html">irlba::ScaledMatrix</a>&lt;</div>
-<div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span>                EigenVector_,</div>
-<div class="line"><a id="l00929" name="l00929"></a><span class="lineno">  929</span>                EigenMatrix_,</div>
-<div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span>                I&lt;<span class="keyword">decltype</span>(ptr)&gt;,</div>
-<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>                I&lt;<span class="keyword">decltype</span>(&amp;(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scale</a>))&gt;</div>
-<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>            &gt;(</div>
-<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span>                std::move(ptr),</div>
-<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span>                &amp;(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scale</a>),</div>
-<div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span>                <span class="comment">/* column = */</span> <span class="keyword">true</span>,</div>
-<div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span>                <span class="comment">/* divide = */</span> <span class="keyword">true</span></div>
-<div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span>            )</div>
-<div class="line"><a id="l00938" name="l00938"></a><span class="lineno">  938</span>        );</div>
-<div class="line"><a id="l00939" name="l00939"></a><span class="lineno">  939</span>        ptr.swap(alt);</div>
-<div class="line"><a id="l00940" name="l00940"></a><span class="lineno">  940</span>    }</div>
-<div class="line"><a id="l00941" name="l00941"></a><span class="lineno">  941</span> </div>
-<div class="line"><a id="l00942" name="l00942"></a><span class="lineno">  942</span>    <span class="keywordflow">if</span> (block_details.has_value()) {</div>
-<div class="line"><a id="l00943" name="l00943"></a><span class="lineno">  943</span>        alt.reset(</div>
-<div class="line"><a id="l00944" name="l00944"></a><span class="lineno">  944</span>            <span class="keyword">new</span> <a class="code hl_classRef" href="https://ltla.github.io/CppIrlba/classirlba_1_1ScaledMatrix.html">irlba::ScaledMatrix</a>&lt;</div>
-<div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span>                EigenVector_,</div>
-<div class="line"><a id="l00946" name="l00946"></a><span class="lineno">  946</span>                EigenMatrix_,</div>
-<div class="line"><a id="l00947" name="l00947"></a><span class="lineno">  947</span>                I&lt;<span class="keyword">decltype</span>(ptr)&gt;,</div>
-<div class="line"><a id="l00948" name="l00948"></a><span class="lineno">  948</span>                I&lt;<span class="keyword">decltype</span>(&amp;(block_details-&gt;expanded_weights))&gt;</div>
-<div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span>            &gt;(</div>
-<div class="line"><a id="l00950" name="l00950"></a><span class="lineno">  950</span>                std::move(ptr),</div>
-<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span>                &amp;(block_details-&gt;expanded_weights),</div>
-<div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span>                <span class="comment">/* column = */</span> <span class="keyword">false</span>,</div>
-<div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span>                <span class="comment">/* divide = */</span> <span class="keyword">false</span></div>
-<div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span>            )</div>
-<div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span>        );</div>
-<div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span>        ptr.swap(alt);</div>
-<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span> </div>
-<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span>        output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a4350c3ad11efb406ff5e2d2ac0c9b041">metrics</a> = <a class="code hl_functionRef" href="https://ltla.github.io/CppIrlba/namespaceirlba.html#a3ef50b4731ec01ea6a1a035e4863390b">irlba::compute</a>(*ptr, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a05081d55f605a9140315cb29a6c787e2">number</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">rotation</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#ae83cf282975daa64bf304945b6fa71fd">variance_explained</a>, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a47b4fbf7461a5160001b5f681b87d9f6">irlba_options</a>);</div>
-<div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span>        subset_fun(num_blocks, block_sizes, block_details, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#ae83cf282975daa64bf304945b6fa71fd">variance_explained</a>);</div>
-<div class="line"><a id="l00960" name="l00960"></a><span class="lineno">  960</span> </div>
-<div class="line"><a id="l00961" name="l00961"></a><span class="lineno">  961</span>        EigenMatrix_ tmp;</div>
-<div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span>        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; scaled_rotation = scale_rotation_matrix(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">rotation</a>, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a9a6ae44f80e309c57d337e9f0885a647">scale</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scale</a>, tmp);</div>
-<div class="line"><a id="l00963" name="l00963"></a><span class="lineno">  963</span>        projector(scaled_rotation);</div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span> </div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Block_, <span class="keyword">typename</span> EigenMatrix_, <span class="keyword">class</span> EigenVector_, <span class="keyword">class</span> SubsetFunction_&gt;</div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span><span class="keywordtype">void</span> blocked_pca_internal(</div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Value_, Index_&gt;</a>&amp; mat,</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>    <span class="keyword">const</span> Block_* block,</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>    <span class="keyword">const</span> std::size_t num_blocks,</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions&lt;EigenVector_&gt;</a>&amp; options,</div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>    <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults&lt;EigenMatrix_, EigenVector_&gt;</a>&amp; output,</div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>    SubsetFunction_ subset_fun</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>) {</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>    <a class="code hl_classRef" href="https://ltla.github.io/CppIrlba/classirlba_1_1EigenThreadScope.html">irlba::EigenThreadScope</a> t(options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a>);</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>    std::unique_ptr&lt;irlba::Matrix&lt;EigenVector_, EigenMatrix_&gt; &gt; ptr;</div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>    std::function&lt;void(<span class="keyword">const</span> EigenMatrix_&amp;)&gt; projector;</div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span> </div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>    <span class="keyword">const</span> Index_ ngenes = mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>(), ncells = mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>(); </div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>    output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>.resize(</div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>        sanisizer::cast&lt;I&lt;<span class="keyword">decltype</span>(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>.rows())&gt; &gt;(num_blocks),</div>
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>        sanisizer::cast&lt;I&lt;<span class="keyword">decltype</span>(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>.cols())&gt; &gt;(ngenes)</div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>    );</div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>    <span class="keyword">auto</span> scale = <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#ada885a7e7ae9dcafcaf98cde30622afc">tatami::create_container_of_Index_size&lt;EigenVector_&gt;</a>(ngenes);</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span> </div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>    <span class="keyword">auto</span> block_sizes = sanisizer::create&lt;std::vector&lt;Index_&gt; &gt;(num_blocks);</div>
+<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>    <span class="keywordflow">for</span> (Index_ c = 0; c &lt; ncells; ++c) {</div>
+<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>        block_sizes[block[c]] += 1;</div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>    }</div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>    <span class="keyword">auto</span> block_details = compute_blocking_details&lt;EigenVector_&gt;(  </div>
+<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>        mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>(),</div>
+<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>        block,</div>
+<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>        num_blocks,</div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>        block_sizes,</div>
+<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>        options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a90ea56570afdc1ac9b6d62e26bbab18f">block_weight_policy</a>,</div>
+<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>        options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a6ee1dfa151e497faf4c2c436883c5579">variable_block_weight_parameters</a></div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>    );</div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span> </div>
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>    <span class="keywordflow">if</span> (!options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#ac1ef520bbfe708b6bb8ddf0cab8cccfe">realize_matrix</a>) {</div>
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>        compute_blockwise_mean_and_variance_tatami(</div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>            mat,</div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>            block,</div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>            num_blocks,</div>
+<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>            block_sizes,</div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>            block_details,</div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>            output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>,</div>
+<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>            scale,</div>
+<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>            options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a></div>
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>        );</div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>        ptr.reset(<span class="keyword">new</span> irlba_tatami::Transposed&lt;EigenVector_, EigenMatrix_, Value_, Index_, <span class="keyword">decltype</span>(&amp;mat)&gt;(&amp;mat, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a>));</div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>        projector = [&amp;](<span class="keyword">const</span> EigenMatrix_&amp; scaled_rotation) -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>            project_matrix_transposed_tatami(mat, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, scaled_rotation, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a>);</div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>        };</div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span> </div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#af84772cc4e911a87948d45a1edcabbd0">sparse</a>()) {</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>        <span class="comment">// &#39;extracted&#39; contains row-major contents... but we implicitly transpose it to CSC with genes in columns.</span></div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>        <span class="keyword">auto</span> extracted = <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a7e0ab534fd3195a57abcb47272d41ded">tatami::retrieve_compressed_sparse_contents&lt;Value_, Index_&gt;</a>(</div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>            mat,</div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>            <span class="comment">/* row = */</span> <span class="keyword">true</span>,</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>            [&amp;]{</div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>                <a class="code hl_structRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1RetrieveCompressedSparseContentsOptions.html">tatami::RetrieveCompressedSparseContentsOptions</a> opt;</div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>                opt.<a class="code hl_variableRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1RetrieveCompressedSparseContentsOptions.html#a6e8d3d669e760e0b640f085b519a49f3">two_pass</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>                opt.<a class="code hl_variableRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1RetrieveCompressedSparseContentsOptions.html#a63e19a4a990891427f82f3a433fa2044">num_threads</a> = options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a>;</div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>                <span class="keywordflow">return</span> opt;</div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>            }()</div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>        );</div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span> </div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>        <span class="comment">// Storing sparse_ptr in the unique pointer should not invalidate the former,</span></div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>        <span class="comment">// based on a reading of the C++ specification w.r.t. reset();</span></div>
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>        <span class="comment">// so we can continue to use it for projection.</span></div>
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>        <span class="keyword">const</span> <span class="keyword">auto</span> sparse_ptr = <span class="keyword">new</span> <a class="code hl_classRef" href="https://ltla.github.io/CppIrlba/classirlba_1_1ParallelSparseMatrix.html">irlba::ParallelSparseMatrix</a>&lt;</div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>            EigenVector_,</div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>            EigenMatrix_,</div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>            I&lt;<span class="keyword">decltype</span>(extracted.value)&gt;,</div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>            I&lt;<span class="keyword">decltype</span>(extracted.index)&gt;,</div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>            I&lt;<span class="keyword">decltype</span>(extracted.pointers)&gt;</div>
+<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>        &gt;(</div>
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>            ncells,</div>
+<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>            ngenes,</div>
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>            std::move(extracted.value),</div>
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>            std::move(extracted.index),</div>
+<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>            std::move(extracted.pointers),</div>
+<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>            <span class="keyword">true</span>,</div>
+<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>            options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a></div>
+<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>        );</div>
+<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>        ptr.reset(sparse_ptr);</div>
+<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span> </div>
+<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>        compute_blockwise_mean_and_variance_realized_sparse(</div>
+<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>            *sparse_ptr,</div>
+<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>            block,</div>
+<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>            num_blocks,</div>
+<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>            block_sizes,</div>
+<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>            block_details,</div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>            output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>,</div>
+<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>            scale,</div>
+<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>            options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a></div>
+<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>        );</div>
+<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span> </div>
+<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>        <span class="comment">// Make sure to copy sparse_ptr because it doesn&#39;t exist outside of this scope.</span></div>
+<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>        projector = [&amp;,sparse_ptr](<span class="keyword">const</span> EigenMatrix_&amp; scaled_rotation) -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>            project_matrix_realized_sparse&lt;EigenVector_&gt;(*sparse_ptr, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, scaled_rotation, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a>);</div>
+<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>        };</div>
+<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span> </div>
+<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span>        <span class="comment">// Perform an implicit transposition by performing a row-major extraction into a column-major transposed matrix.</span></div>
+<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>        <span class="keyword">auto</span> tmp_ptr = std::make_unique&lt;EigenMatrix_&gt;(</div>
+<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span>            sanisizer::cast&lt;I&lt;<span class="keyword">decltype</span>(std::declval&lt;EigenMatrix_&gt;().rows())&gt; &gt;(ncells),</div>
+<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span>            sanisizer::cast&lt;I&lt;<span class="keyword">decltype</span>(std::declval&lt;EigenMatrix_&gt;().cols())&gt; &gt;(ngenes)</div>
+<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>        ); </div>
+<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>        <span class="keyword">static_assert</span>(!EigenMatrix_::IsRowMajor);</div>
+<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span> </div>
+<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>        <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">tatami::convert_to_dense</a>(</div>
+<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>            mat,</div>
+<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>            <span class="comment">/* row_major = */</span> <span class="keyword">true</span>,</div>
+<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span>            tmp_ptr-&gt;data(),</div>
+<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>            [&amp;]{</div>
+<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span>                tatami::ConvertToDenseOptions opt;</div>
+<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span>                opt.num_threads = options.num_threads;</div>
+<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>                return opt;</div>
+<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span>            }()</div>
+<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span>        );</div>
+<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span> </div>
+<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>        compute_blockwise_mean_and_variance_realized_dense(</div>
+<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>            *tmp_ptr,</div>
+<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span>            block,</div>
+<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>            num_blocks,</div>
+<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span>            block_sizes,</div>
+<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span>            block_details,</div>
+<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span>            output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>,</div>
+<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span>            scale,</div>
+<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span>            options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#af84d32f6a888a991a2dc7fba3139edce">num_threads</a></div>
+<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span>        );</div>
+<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span> </div>
+<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>        <span class="keyword">const</span> <span class="keyword">auto</span> dense_ptr = tmp_ptr.get(); <span class="comment">// do this before the move.</span></div>
+<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span>        ptr.reset(<span class="keyword">new</span> <a class="code hl_classRef" href="https://ltla.github.io/CppIrlba/classirlba_1_1SimpleMatrix.html">irlba::SimpleMatrix</a>&lt;EigenVector_, EigenMatrix_, <span class="keyword">decltype</span>(tmp_ptr)&gt;(std::move(tmp_ptr)));</div>
+<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span> </div>
+<div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span>        <span class="comment">// Make sure to copy dense_ptr because it doesn&#39;t exist outside of this scope.</span></div>
+<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>        projector = [&amp;,dense_ptr](<span class="keyword">const</span> EigenMatrix_&amp; scaled_rotation) -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span>            output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>.noalias() = (*dense_ptr * scaled_rotation).adjoint();</div>
+<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>        };</div>
+<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>    }</div>
+<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span> </div>
+<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>    output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a00ac5c254aa7ae41c0a92ada12739a1b">total_variance</a> = process_scale_vector(options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a9a6ae44f80e309c57d337e9f0885a647">scale</a>, scale);</div>
+<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span> </div>
+<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>    std::unique_ptr&lt;irlba::Matrix&lt;EigenVector_, EigenMatrix_&gt; &gt; alt;</div>
+<div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>    alt.reset(</div>
+<div class="line"><a id="l00915" name="l00915"></a><span class="lineno">  915</span>        <span class="keyword">new</span> ResidualMatrix&lt;</div>
+<div class="line"><a id="l00916" name="l00916"></a><span class="lineno">  916</span>            EigenVector_,</div>
+<div class="line"><a id="l00917" name="l00917"></a><span class="lineno">  917</span>            EigenMatrix_,</div>
+<div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span>            I&lt;<span class="keyword">decltype</span>(ptr)&gt;,</div>
+<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span>            Block_,</div>
+<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span>            I&lt;<span class="keyword">decltype</span>(&amp;(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>))&gt;</div>
+<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span>        &gt;(</div>
+<div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span>            std::move(ptr),</div>
+<div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span>            block,</div>
+<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span>            &amp;(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a>)</div>
+<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span>        )</div>
+<div class="line"><a id="l00926" name="l00926"></a><span class="lineno">  926</span>    );</div>
+<div class="line"><a id="l00927" name="l00927"></a><span class="lineno">  927</span>    ptr.swap(alt);</div>
+<div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span> </div>
+<div class="line"><a id="l00929" name="l00929"></a><span class="lineno">  929</span>    <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a9a6ae44f80e309c57d337e9f0885a647">scale</a>) {</div>
+<div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span>        alt.reset(</div>
+<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>            <span class="keyword">new</span> <a class="code hl_classRef" href="https://ltla.github.io/CppIrlba/classirlba_1_1ScaledMatrix.html">irlba::ScaledMatrix</a>&lt;</div>
+<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>                EigenVector_,</div>
+<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span>                EigenMatrix_,</div>
+<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span>                I&lt;<span class="keyword">decltype</span>(ptr)&gt;,</div>
+<div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span>                I&lt;<span class="keyword">decltype</span>(&amp;(scale))&gt;</div>
+<div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span>            &gt;(</div>
+<div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span>                std::move(ptr),</div>
+<div class="line"><a id="l00938" name="l00938"></a><span class="lineno">  938</span>                &amp;(scale),</div>
+<div class="line"><a id="l00939" name="l00939"></a><span class="lineno">  939</span>                <span class="comment">/* column = */</span> <span class="keyword">true</span>,</div>
+<div class="line"><a id="l00940" name="l00940"></a><span class="lineno">  940</span>                <span class="comment">/* divide = */</span> <span class="keyword">true</span></div>
+<div class="line"><a id="l00941" name="l00941"></a><span class="lineno">  941</span>            )</div>
+<div class="line"><a id="l00942" name="l00942"></a><span class="lineno">  942</span>        );</div>
+<div class="line"><a id="l00943" name="l00943"></a><span class="lineno">  943</span>        ptr.swap(alt);</div>
+<div class="line"><a id="l00944" name="l00944"></a><span class="lineno">  944</span>    }</div>
+<div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span> </div>
+<div class="line"><a id="l00946" name="l00946"></a><span class="lineno">  946</span>    <span class="keywordflow">if</span> (block_details.has_value()) {</div>
+<div class="line"><a id="l00947" name="l00947"></a><span class="lineno">  947</span>        alt.reset(</div>
+<div class="line"><a id="l00948" name="l00948"></a><span class="lineno">  948</span>            <span class="keyword">new</span> <a class="code hl_classRef" href="https://ltla.github.io/CppIrlba/classirlba_1_1ScaledMatrix.html">irlba::ScaledMatrix</a>&lt;</div>
+<div class="line"><a id="l00949" name="l00949"></a><span class="lineno">  949</span>                EigenVector_,</div>
+<div class="line"><a id="l00950" name="l00950"></a><span class="lineno">  950</span>                EigenMatrix_,</div>
+<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span>                I&lt;<span class="keyword">decltype</span>(ptr)&gt;,</div>
+<div class="line"><a id="l00952" name="l00952"></a><span class="lineno">  952</span>                I&lt;<span class="keyword">decltype</span>(&amp;(block_details-&gt;expanded_weights))&gt;</div>
+<div class="line"><a id="l00953" name="l00953"></a><span class="lineno">  953</span>            &gt;(</div>
+<div class="line"><a id="l00954" name="l00954"></a><span class="lineno">  954</span>                std::move(ptr),</div>
+<div class="line"><a id="l00955" name="l00955"></a><span class="lineno">  955</span>                &amp;(block_details-&gt;expanded_weights),</div>
+<div class="line"><a id="l00956" name="l00956"></a><span class="lineno">  956</span>                <span class="comment">/* column = */</span> <span class="keyword">false</span>,</div>
+<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span>                <span class="comment">/* divide = */</span> <span class="keyword">false</span></div>
+<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span>            )</div>
+<div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span>        );</div>
+<div class="line"><a id="l00960" name="l00960"></a><span class="lineno">  960</span>        ptr.swap(alt);</div>
+<div class="line"><a id="l00961" name="l00961"></a><span class="lineno">  961</span> </div>
+<div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span>        output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a4350c3ad11efb406ff5e2d2ac0c9b041">metrics</a> = <a class="code hl_functionRef" href="https://ltla.github.io/CppIrlba/namespaceirlba.html#a3ef50b4731ec01ea6a1a035e4863390b">irlba::compute</a>(*ptr, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a05081d55f605a9140315cb29a6c787e2">number</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">rotation</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#ae83cf282975daa64bf304945b6fa71fd">variance_explained</a>, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a47b4fbf7461a5160001b5f681b87d9f6">irlba_options</a>);</div>
+<div class="line"><a id="l00963" name="l00963"></a><span class="lineno">  963</span>        subset_fun(num_blocks, block_sizes, block_details, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#ae83cf282975daa64bf304945b6fa71fd">variance_explained</a>);</div>
 <div class="line"><a id="l00964" name="l00964"></a><span class="lineno">  964</span> </div>
-<div class="line"><a id="l00965" name="l00965"></a><span class="lineno">  965</span>        <span class="comment">// Subtracting each block&#39;s mean from the PCs.</span></div>
-<div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span>        <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#aa672fa933bfc6d0bd3f1bf4b91d13386">center_scores_by_block</a>) {</div>
-<div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span>            EigenMatrix_ centering = (output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a> * scaled_rotation).adjoint();</div>
-<div class="line"><a id="l00968" name="l00968"></a><span class="lineno">  968</span>            <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(ncells)&gt; c =0 ; c &lt; ncells; ++c) {</div>
-<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span>                output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>.col(c) -= centering.col(block[c]);</div>
-<div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span>            }</div>
-<div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span>        }</div>
-<div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span> </div>
-<div class="line"><a id="l00973" name="l00973"></a><span class="lineno">  973</span>        clean_up_projected(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#ae83cf282975daa64bf304945b6fa71fd">variance_explained</a>);</div>
-<div class="line"><a id="l00974" name="l00974"></a><span class="lineno">  974</span>        <span class="keywordflow">if</span> (!options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a641144c07ab833ef1129919d736cbbe5">transpose</a>) {</div>
-<div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span>            output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>.adjointInPlace();</div>
-<div class="line"><a id="l00976" name="l00976"></a><span class="lineno">  976</span>        }</div>
-<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span> </div>
-<div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span>        output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a4350c3ad11efb406ff5e2d2ac0c9b041">metrics</a> = <a class="code hl_functionRef" href="https://ltla.github.io/CppIrlba/namespaceirlba.html#a3ef50b4731ec01ea6a1a035e4863390b">irlba::compute</a>(*ptr, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a05081d55f605a9140315cb29a6c787e2">number</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">rotation</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#ae83cf282975daa64bf304945b6fa71fd">variance_explained</a>, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a47b4fbf7461a5160001b5f681b87d9f6">irlba_options</a>);</div>
-<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span>        subset_fun(num_blocks, block_sizes, block_details, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#ae83cf282975daa64bf304945b6fa71fd">variance_explained</a>);</div>
+<div class="line"><a id="l00965" name="l00965"></a><span class="lineno">  965</span>        EigenMatrix_ tmp;</div>
+<div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span>        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; scaled_rotation = scale_rotation_matrix(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">rotation</a>, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a9a6ae44f80e309c57d337e9f0885a647">scale</a>, scale, tmp);</div>
+<div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span>        projector(scaled_rotation);</div>
+<div class="line"><a id="l00968" name="l00968"></a><span class="lineno">  968</span> </div>
+<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span>        <span class="comment">// Subtracting each block&#39;s mean from the PCs.</span></div>
+<div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span>        <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#aa672fa933bfc6d0bd3f1bf4b91d13386">center_scores_by_block</a>) {</div>
+<div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span>            EigenMatrix_ centering = (output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">center</a> * scaled_rotation).adjoint();</div>
+<div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span>            <span class="keywordflow">for</span> (I&lt;<span class="keyword">decltype</span>(ncells)&gt; c =0 ; c &lt; ncells; ++c) {</div>
+<div class="line"><a id="l00973" name="l00973"></a><span class="lineno">  973</span>                output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>.col(c) -= centering.col(block[c]);</div>
+<div class="line"><a id="l00974" name="l00974"></a><span class="lineno">  974</span>            }</div>
+<div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span>        }</div>
+<div class="line"><a id="l00976" name="l00976"></a><span class="lineno">  976</span> </div>
+<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span>        clean_up_projected(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#ae83cf282975daa64bf304945b6fa71fd">variance_explained</a>);</div>
+<div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span>        <span class="keywordflow">if</span> (!options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a641144c07ab833ef1129919d736cbbe5">transpose</a>) {</div>
+<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span>            output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>.adjointInPlace();</div>
+<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span>        }</div>
 <div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span> </div>
-<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span>        <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#aa672fa933bfc6d0bd3f1bf4b91d13386">center_scores_by_block</a>) {</div>
-<div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span>            clean_up(mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>(), output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#ae83cf282975daa64bf304945b6fa71fd">variance_explained</a>);</div>
-<div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span>            <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a641144c07ab833ef1129919d736cbbe5">transpose</a>) {</div>
-<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span>                output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>.adjointInPlace();</div>
-<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span>            }</div>
-<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span> </div>
-<div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span>            EigenMatrix_ tmp;</div>
-<div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span>            <span class="keyword">const</span> <span class="keyword">auto</span>&amp; scaled_rotation = scale_rotation_matrix(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">rotation</a>, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a9a6ae44f80e309c57d337e9f0885a647">scale</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scale</a>, tmp);</div>
-<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span>            projector(scaled_rotation);</div>
-<div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span> </div>
-<div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span>            clean_up_projected(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#ae83cf282975daa64bf304945b6fa71fd">variance_explained</a>);</div>
-<div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span>            <span class="keywordflow">if</span> (!options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a641144c07ab833ef1129919d736cbbe5">transpose</a>) {</div>
-<div class="line"><a id="l00995" name="l00995"></a><span class="lineno">  995</span>                output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>.adjointInPlace();</div>
-<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span>            }</div>
-<div class="line"><a id="l00997" name="l00997"></a><span class="lineno">  997</span>        }</div>
-<div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span>    }</div>
-<div class="line"><a id="l00999" name="l00999"></a><span class="lineno">  999</span> </div>
-<div class="line"><a id="l01000" name="l01000"></a><span class="lineno"> 1000</span>    <span class="keywordflow">if</span> (!options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a9a6ae44f80e309c57d337e9f0885a647">scale</a>) {</div>
-<div class="line"><a id="l01001" name="l01001"></a><span class="lineno"> 1001</span>        output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scale</a> = EigenVector_();</div>
+<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span>        output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a4350c3ad11efb406ff5e2d2ac0c9b041">metrics</a> = <a class="code hl_functionRef" href="https://ltla.github.io/CppIrlba/namespaceirlba.html#a3ef50b4731ec01ea6a1a035e4863390b">irlba::compute</a>(*ptr, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a05081d55f605a9140315cb29a6c787e2">number</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">rotation</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#ae83cf282975daa64bf304945b6fa71fd">variance_explained</a>, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a47b4fbf7461a5160001b5f681b87d9f6">irlba_options</a>);</div>
+<div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span>        subset_fun(num_blocks, block_sizes, block_details, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#ae83cf282975daa64bf304945b6fa71fd">variance_explained</a>);</div>
+<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span> </div>
+<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span>        <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#aa672fa933bfc6d0bd3f1bf4b91d13386">center_scores_by_block</a>) {</div>
+<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span>            clean_up(mat.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>(), output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#ae83cf282975daa64bf304945b6fa71fd">variance_explained</a>);</div>
+<div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span>            <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a641144c07ab833ef1129919d736cbbe5">transpose</a>) {</div>
+<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span>                output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>.adjointInPlace();</div>
+<div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span>            }</div>
+<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span> </div>
+<div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span>            EigenMatrix_ tmp;</div>
+<div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span>            <span class="keyword">const</span> <span class="keyword">auto</span>&amp; scaled_rotation = scale_rotation_matrix(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">rotation</a>, options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a9a6ae44f80e309c57d337e9f0885a647">scale</a>, scale, tmp);</div>
+<div class="line"><a id="l00995" name="l00995"></a><span class="lineno">  995</span>            projector(scaled_rotation);</div>
+<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span> </div>
+<div class="line"><a id="l00997" name="l00997"></a><span class="lineno">  997</span>            clean_up_projected(output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>, output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#ae83cf282975daa64bf304945b6fa71fd">variance_explained</a>);</div>
+<div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span>            <span class="keywordflow">if</span> (!options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a641144c07ab833ef1129919d736cbbe5">transpose</a>) {</div>
+<div class="line"><a id="l00999" name="l00999"></a><span class="lineno">  999</span>                output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">components</a>.adjointInPlace();</div>
+<div class="line"><a id="l01000" name="l01000"></a><span class="lineno"> 1000</span>            }</div>
+<div class="line"><a id="l01001" name="l01001"></a><span class="lineno"> 1001</span>        }</div>
 <div class="line"><a id="l01002" name="l01002"></a><span class="lineno"> 1002</span>    }</div>
-<div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span>}</div>
-<div class="line"><a id="l01059" name="l01059"></a><span class="lineno"> 1059</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Block_, <span class="keyword">typename</span> EigenMatrix_, <span class="keyword">class</span> EigenVector_&gt;</div>
-<div class="foldopen" id="foldopen01060" data-start="{" data-end="}">
-<div class="line"><a id="l01060" name="l01060"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#a7742b16678e40263e63873a1153aa4eb"> 1060</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacescran__pca.html#a7742b16678e40263e63873a1153aa4eb">blocked_pca</a>(</div>
-<div class="line"><a id="l01061" name="l01061"></a><span class="lineno"> 1061</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Value_, Index_&gt;</a>&amp; mat,</div>
-<div class="line"><a id="l01062" name="l01062"></a><span class="lineno"> 1062</span>    <span class="keyword">const</span> Block_* block,</div>
-<div class="line"><a id="l01063" name="l01063"></a><span class="lineno"> 1063</span>    <span class="keyword">const</span> std::size_t num_blocks,</div>
-<div class="line"><a id="l01064" name="l01064"></a><span class="lineno"> 1064</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions&lt;EigenVector_&gt;</a>&amp; options,</div>
-<div class="line"><a id="l01065" name="l01065"></a><span class="lineno"> 1065</span>    <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults&lt;EigenMatrix_, EigenVector_&gt;</a>&amp; output</div>
-<div class="line"><a id="l01066" name="l01066"></a><span class="lineno"> 1066</span>) {</div>
-<div class="line"><a id="l01067" name="l01067"></a><span class="lineno"> 1067</span>    blocked_pca_internal&lt;Value_, Index_, Block_, EigenMatrix_, EigenVector_&gt;(</div>
-<div class="line"><a id="l01068" name="l01068"></a><span class="lineno"> 1068</span>        mat,</div>
-<div class="line"><a id="l01069" name="l01069"></a><span class="lineno"> 1069</span>        block,</div>
-<div class="line"><a id="l01070" name="l01070"></a><span class="lineno"> 1070</span>        num_blocks,</div>
-<div class="line"><a id="l01071" name="l01071"></a><span class="lineno"> 1071</span>        options,</div>
-<div class="line"><a id="l01072" name="l01072"></a><span class="lineno"> 1072</span>        output,</div>
-<div class="line"><a id="l01073" name="l01073"></a><span class="lineno"> 1073</span>        [&amp;](</div>
-<div class="line"><a id="l01074" name="l01074"></a><span class="lineno"> 1074</span>            <span class="keyword">const</span> std::size_t, </div>
-<div class="line"><a id="l01075" name="l01075"></a><span class="lineno"> 1075</span>            <span class="keyword">const</span> std::vector&lt;Index_&gt;&amp;,</div>
-<div class="line"><a id="l01076" name="l01076"></a><span class="lineno"> 1076</span>            <span class="keyword">const</span> std::optional&lt;BlockingDetails&lt;EigenVector_&gt; &gt;&amp;,</div>
-<div class="line"><a id="l01077" name="l01077"></a><span class="lineno"> 1077</span>            <span class="keyword">const</span> EigenMatrix_&amp;,</div>
-<div class="line"><a id="l01078" name="l01078"></a><span class="lineno"> 1078</span>            <span class="keyword">const</span> EigenVector_&amp;</div>
-<div class="line"><a id="l01079" name="l01079"></a><span class="lineno"> 1079</span>        ) -&gt; <span class="keywordtype">void</span> {}</div>
-<div class="line"><a id="l01080" name="l01080"></a><span class="lineno"> 1080</span>    );</div>
-<div class="line"><a id="l01081" name="l01081"></a><span class="lineno"> 1081</span>}</div>
+<div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span> </div>
+<div class="line"><a id="l01004" name="l01004"></a><span class="lineno"> 1004</span>    <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaOptions.html#a9a6ae44f80e309c57d337e9f0885a647">scale</a>) {</div>
+<div class="line"><a id="l01005" name="l01005"></a><span class="lineno"> 1005</span>        output.<a class="code hl_variable" href="structscran__pca_1_1BlockedPcaResults.html#a421e893adb69b9ab917a27448a35e605">scale</a> = std::move(scale);</div>
+<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span>    }</div>
+<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span>}</div>
+<div class="line"><a id="l01063" name="l01063"></a><span class="lineno"> 1063</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Block_, <span class="keyword">typename</span> EigenMatrix_, <span class="keyword">class</span> EigenVector_&gt;</div>
+<div class="foldopen" id="foldopen01064" data-start="{" data-end="}">
+<div class="line"><a id="l01064" name="l01064"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#a7742b16678e40263e63873a1153aa4eb"> 1064</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacescran__pca.html#a7742b16678e40263e63873a1153aa4eb">blocked_pca</a>(</div>
+<div class="line"><a id="l01065" name="l01065"></a><span class="lineno"> 1065</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Value_, Index_&gt;</a>&amp; mat,</div>
+<div class="line"><a id="l01066" name="l01066"></a><span class="lineno"> 1066</span>    <span class="keyword">const</span> Block_* block,</div>
+<div class="line"><a id="l01067" name="l01067"></a><span class="lineno"> 1067</span>    <span class="keyword">const</span> std::size_t num_blocks,</div>
+<div class="line"><a id="l01068" name="l01068"></a><span class="lineno"> 1068</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions&lt;EigenVector_&gt;</a>&amp; options,</div>
+<div class="line"><a id="l01069" name="l01069"></a><span class="lineno"> 1069</span>    <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults&lt;EigenMatrix_, EigenVector_&gt;</a>&amp; output</div>
+<div class="line"><a id="l01070" name="l01070"></a><span class="lineno"> 1070</span>) {</div>
+<div class="line"><a id="l01071" name="l01071"></a><span class="lineno"> 1071</span>    blocked_pca_internal&lt;Value_, Index_, Block_, EigenMatrix_, EigenVector_&gt;(</div>
+<div class="line"><a id="l01072" name="l01072"></a><span class="lineno"> 1072</span>        mat,</div>
+<div class="line"><a id="l01073" name="l01073"></a><span class="lineno"> 1073</span>        block,</div>
+<div class="line"><a id="l01074" name="l01074"></a><span class="lineno"> 1074</span>        num_blocks,</div>
+<div class="line"><a id="l01075" name="l01075"></a><span class="lineno"> 1075</span>        options,</div>
+<div class="line"><a id="l01076" name="l01076"></a><span class="lineno"> 1076</span>        output,</div>
+<div class="line"><a id="l01077" name="l01077"></a><span class="lineno"> 1077</span>        [&amp;](</div>
+<div class="line"><a id="l01078" name="l01078"></a><span class="lineno"> 1078</span>            <span class="keyword">const</span> std::size_t, </div>
+<div class="line"><a id="l01079" name="l01079"></a><span class="lineno"> 1079</span>            <span class="keyword">const</span> std::vector&lt;Index_&gt;&amp;,</div>
+<div class="line"><a id="l01080" name="l01080"></a><span class="lineno"> 1080</span>            <span class="keyword">const</span> std::optional&lt;BlockingDetails&lt;EigenVector_&gt; &gt;&amp;,</div>
+<div class="line"><a id="l01081" name="l01081"></a><span class="lineno"> 1081</span>            <span class="keyword">const</span> EigenMatrix_&amp;,</div>
+<div class="line"><a id="l01082" name="l01082"></a><span class="lineno"> 1082</span>            <span class="keyword">const</span> EigenVector_&amp;</div>
+<div class="line"><a id="l01083" name="l01083"></a><span class="lineno"> 1083</span>        ) -&gt; <span class="keywordtype">void</span> {}</div>
+<div class="line"><a id="l01084" name="l01084"></a><span class="lineno"> 1084</span>    );</div>
+<div class="line"><a id="l01085" name="l01085"></a><span class="lineno"> 1085</span>}</div>
 </div>
-<div class="line"><a id="l01082" name="l01082"></a><span class="lineno"> 1082</span> </div>
-<div class="line"><a id="l01102" name="l01102"></a><span class="lineno"> 1102</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> EigenMatrix_ = Eigen::MatrixXd, <span class="keyword">class</span> EigenVector_ = Eigen::VectorXd, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Block_&gt;</div>
-<div class="foldopen" id="foldopen01103" data-start="{" data-end="}">
-<div class="line"><a id="l01103" name="l01103"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#a1fd84e4763415fa1b89aafcac3f73e48"> 1103</a></span><a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults&lt;EigenMatrix_, EigenVector_&gt;</a> <a class="code hl_function" href="namespacescran__pca.html#a7742b16678e40263e63873a1153aa4eb">blocked_pca</a>(</div>
-<div class="line"><a id="l01104" name="l01104"></a><span class="lineno"> 1104</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Value_, Index_&gt;</a>&amp; mat,</div>
-<div class="line"><a id="l01105" name="l01105"></a><span class="lineno"> 1105</span>    <span class="keyword">const</span> Block_* block,</div>
-<div class="line"><a id="l01106" name="l01106"></a><span class="lineno"> 1106</span>    <span class="keyword">const</span> std::size_t num_blocks,</div>
-<div class="line"><a id="l01107" name="l01107"></a><span class="lineno"> 1107</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions&lt;EigenVector_&gt;</a>&amp; options</div>
-<div class="line"><a id="l01108" name="l01108"></a><span class="lineno"> 1108</span>) {</div>
-<div class="line"><a id="l01109" name="l01109"></a><span class="lineno"> 1109</span>    <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults&lt;EigenMatrix_, EigenVector_&gt;</a> output;</div>
-<div class="line"><a id="l01110" name="l01110"></a><span class="lineno"> 1110</span>    <a class="code hl_function" href="namespacescran__pca.html#a7742b16678e40263e63873a1153aa4eb">blocked_pca</a>(mat, block, num_blocks, options, output);</div>
-<div class="line"><a id="l01111" name="l01111"></a><span class="lineno"> 1111</span>    <span class="keywordflow">return</span> output;</div>
-<div class="line"><a id="l01112" name="l01112"></a><span class="lineno"> 1112</span>}</div>
+<div class="line"><a id="l01086" name="l01086"></a><span class="lineno"> 1086</span> </div>
+<div class="line"><a id="l01106" name="l01106"></a><span class="lineno"> 1106</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> EigenMatrix_ = Eigen::MatrixXd, <span class="keyword">class</span> EigenVector_ = Eigen::VectorXd, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Block_&gt;</div>
+<div class="foldopen" id="foldopen01107" data-start="{" data-end="}">
+<div class="line"><a id="l01107" name="l01107"></a><span class="lineno"><a class="line" href="namespacescran__pca.html#a1fd84e4763415fa1b89aafcac3f73e48"> 1107</a></span><a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults&lt;EigenMatrix_, EigenVector_&gt;</a> <a class="code hl_function" href="namespacescran__pca.html#a7742b16678e40263e63873a1153aa4eb">blocked_pca</a>(</div>
+<div class="line"><a id="l01108" name="l01108"></a><span class="lineno"> 1108</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Value_, Index_&gt;</a>&amp; mat,</div>
+<div class="line"><a id="l01109" name="l01109"></a><span class="lineno"> 1109</span>    <span class="keyword">const</span> Block_* block,</div>
+<div class="line"><a id="l01110" name="l01110"></a><span class="lineno"> 1110</span>    <span class="keyword">const</span> std::size_t num_blocks,</div>
+<div class="line"><a id="l01111" name="l01111"></a><span class="lineno"> 1111</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaOptions.html">BlockedPcaOptions&lt;EigenVector_&gt;</a>&amp; options</div>
+<div class="line"><a id="l01112" name="l01112"></a><span class="lineno"> 1112</span>) {</div>
+<div class="line"><a id="l01113" name="l01113"></a><span class="lineno"> 1113</span>    <a class="code hl_struct" href="structscran__pca_1_1BlockedPcaResults.html">BlockedPcaResults&lt;EigenMatrix_, EigenVector_&gt;</a> output;</div>
+<div class="line"><a id="l01114" name="l01114"></a><span class="lineno"> 1114</span>    <a class="code hl_function" href="namespacescran__pca.html#a7742b16678e40263e63873a1153aa4eb">blocked_pca</a>(mat, block, num_blocks, options, output);</div>
+<div class="line"><a id="l01115" name="l01115"></a><span class="lineno"> 1115</span>    <span class="keywordflow">return</span> output;</div>
+<div class="line"><a id="l01116" name="l01116"></a><span class="lineno"> 1116</span>}</div>
 </div>
-<div class="line"><a id="l01113" name="l01113"></a><span class="lineno"> 1113</span> </div>
-<div class="line"><a id="l01114" name="l01114"></a><span class="lineno"> 1114</span>}</div>
-<div class="line"><a id="l01115" name="l01115"></a><span class="lineno"> 1115</span> </div>
-<div class="line"><a id="l01116" name="l01116"></a><span class="lineno"> 1116</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l01117" name="l01117"></a><span class="lineno"> 1117</span> </div>
+<div class="line"><a id="l01118" name="l01118"></a><span class="lineno"> 1118</span>}</div>
+<div class="line"><a id="l01119" name="l01119"></a><span class="lineno"> 1119</span> </div>
+<div class="line"><a id="l01120" name="l01120"></a><span class="lineno"> 1120</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassirlba_1_1AdjointWorkspace_html"><div class="ttname"><a href="https://ltla.github.io/CppIrlba/classirlba_1_1AdjointWorkspace.html">irlba::AdjointWorkspace</a></div></div>
 <div class="ttc" id="aclassirlba_1_1EigenThreadScope_html"><div class="ttname"><a href="https://ltla.github.io/CppIrlba/classirlba_1_1EigenThreadScope.html">irlba::EigenThreadScope</a></div></div>
 <div class="ttc" id="aclassirlba_1_1Matrix_html"><div class="ttname"><a href="https://ltla.github.io/CppIrlba/classirlba_1_1Matrix.html">irlba::Matrix</a></div></div>
@@ -1055,13 +1055,14 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="anamespacescran__blocks_html_a33ebed1decbfe3627ce4ddf0b99df825"><div class="ttname"><a href="https://libscran.github.io/scran_blocks/namespacescran__blocks.html#a33ebed1decbfe3627ce4ddf0b99df825">scran_blocks::compute_variable_weight</a></div><div class="ttdeci">double compute_variable_weight(const double s, const VariableWeightParameters &amp;params)</div></div>
 <div class="ttc" id="anamespacescran__blocks_html_ac2412948da94055ff438267ba089ba97"><div class="ttname"><a href="https://libscran.github.io/scran_blocks/namespacescran__blocks.html#ac2412948da94055ff438267ba089ba97">scran_blocks::WeightPolicy</a></div><div class="ttdeci">WeightPolicy</div></div>
 <div class="ttc" id="anamespacescran__pca_html"><div class="ttname"><a href="namespacescran__pca.html">scran_pca</a></div><div class="ttdoc">Principal component analysis on single-cell data.</div></div>
-<div class="ttc" id="anamespacescran__pca_html_a7742b16678e40263e63873a1153aa4eb"><div class="ttname"><a href="namespacescran__pca.html#a7742b16678e40263e63873a1153aa4eb">scran_pca::blocked_pca</a></div><div class="ttdeci">void blocked_pca(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const std::size_t num_blocks, const BlockedPcaOptions&lt; EigenVector_ &gt; &amp;options, BlockedPcaResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:1060</div></div>
+<div class="ttc" id="anamespacescran__pca_html_a7742b16678e40263e63873a1153aa4eb"><div class="ttname"><a href="namespacescran__pca.html#a7742b16678e40263e63873a1153aa4eb">scran_pca::blocked_pca</a></div><div class="ttdeci">void blocked_pca(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;mat, const Block_ *block, const std::size_t num_blocks, const BlockedPcaOptions&lt; EigenVector_ &gt; &amp;options, BlockedPcaResults&lt; EigenMatrix_, EigenVector_ &gt; &amp;output)</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:1064</div></div>
 <div class="ttc" id="anamespacetatami_html_a5a07f7937bfdbbe8e355cba20d7c0c3a"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/namespacetatami.html#a5a07f7937bfdbbe8e355cba20d7c0c3a">tatami::wrap_shared_ptr</a></div><div class="ttdeci">std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; wrap_shared_ptr(const Matrix&lt; Value_, Index_ &gt; *const ptr)</div></div>
 <div class="ttc" id="anamespacetatami_html_a61b43d2b751c7fcca6815f3be929d4d3"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/namespacetatami.html#a61b43d2b751c7fcca6815f3be929d4d3">tatami::resize_container_to_Index_size</a></div><div class="ttdeci">void resize_container_to_Index_size(Container_ &amp;container, const Index_ x, Args_ &amp;&amp;... args)</div></div>
 <div class="ttc" id="anamespacetatami_html_a7e0ab534fd3195a57abcb47272d41ded"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/namespacetatami.html#a7e0ab534fd3195a57abcb47272d41ded">tatami::retrieve_compressed_sparse_contents</a></div><div class="ttdeci">CompressedSparseContents&lt; StoredValue_, StoredIndex_, StoredPointer_ &gt; retrieve_compressed_sparse_contents(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, const bool row, const RetrieveCompressedSparseContentsOptions &amp;options)</div></div>
 <div class="ttc" id="anamespacetatami_html_a9c3979c60e3d7e066be533f7ee3a2f97"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/namespacetatami.html#a9c3979c60e3d7e066be533f7ee3a2f97">tatami::parallelize</a></div><div class="ttdeci">int parallelize(Function_ fun, const Index_ tasks, const int workers)</div></div>
 <div class="ttc" id="anamespacetatami_html_ac5f5ff476ecb172e59c3535cedb966cd"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">tatami::convert_to_dense</a></div><div class="ttdeci">void convert_to_dense(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, const bool row_major, StoredValue_ *const store, const ConvertToDenseOptions &amp;options)</div></div>
 <div class="ttc" id="anamespacetatami_html_ac6d0f6694ab914f57229b925641779d4"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/namespacetatami.html#ac6d0f6694ab914f57229b925641779d4">tatami::cast_Index_to_container_size</a></div><div class="ttdeci">I&lt; decltype(std::declval&lt; Container_ &gt;().size())&gt; cast_Index_to_container_size(const Index_ x)</div></div>
+<div class="ttc" id="anamespacetatami_html_ada885a7e7ae9dcafcaf98cde30622afc"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/namespacetatami.html#ada885a7e7ae9dcafcaf98cde30622afc">tatami::create_container_of_Index_size</a></div><div class="ttdeci">Container_ create_container_of_Index_size(const Index_ x, Args_ &amp;&amp;... args)</div></div>
 <div class="ttc" id="aparallel_8hpp_html"><div class="ttname"><a href="https://ltla.github.io/CppIrlba/parallel_8hpp.html">parallel.hpp</a></div></div>
 <div class="ttc" id="ascran__blocks_8hpp_html"><div class="ttname"><a href="https://libscran.github.io/scran_blocks/scran__blocks_8hpp.html">scran_blocks.hpp</a></div></div>
 <div class="ttc" id="astructirlba_1_1Metrics_html"><div class="ttname"><a href="https://ltla.github.io/CppIrlba/structirlba_1_1Metrics.html">irlba::Metrics</a></div></div>
@@ -1080,10 +1081,10 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html">scran_pca::BlockedPcaResults</a></div><div class="ttdoc">Results of blocked_pca().</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:717</div></div>
 <div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a00ac5c254aa7ae41c0a92ada12739a1b"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a00ac5c254aa7ae41c0a92ada12739a1b">scran_pca::BlockedPcaResults::total_variance</a></div><div class="ttdeci">EigenVector_::Scalar total_variance</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:739</div></div>
 <div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a339a8c10e11d719fdde0b935e56a8bc8"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a339a8c10e11d719fdde0b935e56a8bc8">scran_pca::BlockedPcaResults::components</a></div><div class="ttdeci">EigenMatrix_ components</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:726</div></div>
-<div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a4350c3ad11efb406ff5e2d2ac0c9b041"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a4350c3ad11efb406ff5e2d2ac0c9b041">scran_pca::BlockedPcaResults::metrics</a></div><div class="ttdeci">irlba::Metrics metrics</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:764</div></div>
+<div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a421e893adb69b9ab917a27448a35e605"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a421e893adb69b9ab917a27448a35e605">scran_pca::BlockedPcaResults::scale</a></div><div class="ttdeci">std::optional&lt; EigenVector_ &gt; scale</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:763</div></div>
+<div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a4350c3ad11efb406ff5e2d2ac0c9b041"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a4350c3ad11efb406ff5e2d2ac0c9b041">scran_pca::BlockedPcaResults::metrics</a></div><div class="ttdeci">irlba::Metrics metrics</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:768</div></div>
 <div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a442055b2a3841303ec4019394496c057"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a442055b2a3841303ec4019394496c057">scran_pca::BlockedPcaResults::rotation</a></div><div class="ttdeci">EigenMatrix_ rotation</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:746</div></div>
-<div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a910c7e46f4cc53f12b9b15eea7170659"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a910c7e46f4cc53f12b9b15eea7170659">scran_pca::BlockedPcaResults::scale</a></div><div class="ttdeci">EigenVector_ scale</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:759</div></div>
-<div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a97057089c28f6338d93081dabfad2785"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">scran_pca::BlockedPcaResults::center</a></div><div class="ttdeci">EigenMatrix_ center</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:753</div></div>
+<div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_a97057089c28f6338d93081dabfad2785"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#a97057089c28f6338d93081dabfad2785">scran_pca::BlockedPcaResults::center</a></div><div class="ttdeci">EigenMatrix_ center</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:754</div></div>
 <div class="ttc" id="astructscran__pca_1_1BlockedPcaResults_html_ae83cf282975daa64bf304945b6fa71fd"><div class="ttname"><a href="structscran__pca_1_1BlockedPcaResults.html#ae83cf282975daa64bf304945b6fa71fd">scran_pca::BlockedPcaResults::variance_explained</a></div><div class="ttdeci">EigenVector_ variance_explained</div><div class="ttdef"><b>Definition</b> blocked_pca.hpp:733</div></div>
 <div class="ttc" id="astructtatami_1_1RetrieveCompressedSparseContentsOptions_html"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/structtatami_1_1RetrieveCompressedSparseContentsOptions.html">tatami::RetrieveCompressedSparseContentsOptions</a></div></div>
 <div class="ttc" id="astructtatami_1_1RetrieveCompressedSparseContentsOptions_html_a63e19a4a990891427f82f3a433fa2044"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/structtatami_1_1RetrieveCompressedSparseContentsOptions.html#a63e19a4a990891427f82f3a433fa2044">tatami::RetrieveCompressedSparseContentsOptions::num_threads</a></div><div class="ttdeci">int num_threads</div></div>

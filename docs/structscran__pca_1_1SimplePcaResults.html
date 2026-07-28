@@ -121,8 +121,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a3cc8c8bf58ca8fc62eb2bd141f4d6b73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace27de1e888eaf093e0544ccee7bacd0" id="r_ace27de1e888eaf093e0544ccee7bacd0"><td class="memItemLeft" align="right" valign="top">EigenVector_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ace27de1e888eaf093e0544ccee7bacd0">center</a></td></tr>
 <tr class="separator:ace27de1e888eaf093e0544ccee7bacd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9f61059704fb822342fbb776cb66617" id="r_ad9f61059704fb822342fbb776cb66617"><td class="memItemLeft" align="right" valign="top">EigenVector_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad9f61059704fb822342fbb776cb66617">scale</a></td></tr>
-<tr class="separator:ad9f61059704fb822342fbb776cb66617"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b655bf274cb89d18f0a7e24322d3fe7" id="r_a3b655bf274cb89d18f0a7e24322d3fe7"><td class="memItemLeft" align="right" valign="top">std::optional&lt; EigenVector_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3b655bf274cb89d18f0a7e24322d3fe7">scale</a></td></tr>
+<tr class="separator:a3b655bf274cb89d18f0a7e24322d3fe7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afdc06d82cd7b5b015043fab279159d22" id="r_afdc06d82cd7b5b015043fab279159d22"><td class="memItemLeft" align="right" valign="top"><a class="elRef" href="https://ltla.github.io/CppIrlba/structirlba_1_1Metrics.html">irlba::Metrics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afdc06d82cd7b5b015043fab279159d22">metrics</a></td></tr>
 <tr class="separator:afdc06d82cd7b5b015043fab279159d22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -150,7 +150,7 @@ template&lt;typename EigenMatrix_ , typename EigenVector_ &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Centering vector. Each entry corresponds to a row in the matrix and contains the mean value for that feature. </p>
+<p>Centering vector. Each entry corresponds to a gene (i.e., row of the input matrix) and contains the mean value of that gene. If the input matrix has no cells, the mean is set to zero for all genes. </p>
 
 </div>
 </div>
@@ -206,8 +206,8 @@ template&lt;typename EigenMatrix_ , typename EigenVector_ &gt; </div>
 
 </div>
 </div>
-<a id="ad9f61059704fb822342fbb776cb66617" name="ad9f61059704fb822342fbb776cb66617"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad9f61059704fb822342fbb776cb66617">&#9670;&#160;</a></span>scale</h2>
+<a id="a3b655bf274cb89d18f0a7e24322d3fe7" name="a3b655bf274cb89d18f0a7e24322d3fe7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b655bf274cb89d18f0a7e24322d3fe7">&#9670;&#160;</a></span>scale</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -215,11 +215,11 @@ template&lt;typename EigenMatrix_ , typename EigenVector_ &gt; </div>
 template&lt;typename EigenMatrix_ , typename EigenVector_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">EigenVector_ <a class="el" href="structscran__pca_1_1SimplePcaResults.html">scran_pca::SimplePcaResults</a>&lt; EigenMatrix_, EigenVector_ &gt;::scale</td>
+          <td class="memname">std::optional&lt;EigenVector_&gt; <a class="el" href="structscran__pca_1_1SimplePcaResults.html">scran_pca::SimplePcaResults</a>&lt; EigenMatrix_, EigenVector_ &gt;::scale</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Scaling vector, only returned if <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#a0dce270d9989cc7fb4c7e1d34c7612bf">SimplePcaOptions::scale</a> = true</code>. Each entry corresponds to a row in the matrix and contains the scaling factor used to divide the feature values if <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#a0dce270d9989cc7fb4c7e1d34c7612bf">SimplePcaOptions::scale</a> = true</code>. </p>
+<p>Scaling vector, only returned if <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#a0dce270d9989cc7fb4c7e1d34c7612bf">SimplePcaOptions::scale</a> = true</code>. Each entry corresponds to a gene (i.e., row of the input matrix) and contains the scaling factor used to divide the feature values if <code><a class="el" href="structscran__pca_1_1SimplePcaOptions.html#a0dce270d9989cc7fb4c7e1d34c7612bf">SimplePcaOptions::scale</a> = true</code>. This is usually the sample standard deviation of that gene. For genes with zero variance, the scaling factor is set to 1 to avoid non-finite values upon scaling. For input matrices with fewer than 2 cells, the scaling factor is set to 1 for all genes. </p>
 
 </div>
 </div>
