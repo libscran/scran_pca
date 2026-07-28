@@ -310,13 +310,17 @@ struct SimplePcaResults {
 
     /**
      * Centering vector.
-     * Each entry corresponds to a row in the matrix and contains the mean value for that feature.
+     * Each entry corresponds to a gene (i.e., row of the input matrix) and contains the mean value of that gene.
+     * If the input matrix has no cells, the mean is set to zero for all genes.
      */
     EigenVector_ center;
 
     /**
      * Scaling vector, only returned if `SimplePcaOptions::scale = true`.
-     * Each entry corresponds to a row in the matrix and contains the scaling factor used to divide the feature values if `SimplePcaOptions::scale = true`.
+     * Each entry corresponds to a gene (i.e., row of the input matrix) and contains the scaling factor used to divide the feature values if `SimplePcaOptions::scale = true`.
+     * This is usually the sample standard deviation of that gene.
+     * For genes with zero variance, the scaling factor is set to 1 to avoid non-finite values upon scaling.
+     * For input matrices with fewer than 2 cells, the scaling factor is set to 1 for all genes. 
      */
     EigenVector_ scale;
 

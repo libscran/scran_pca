@@ -740,21 +740,25 @@ struct BlockedPcaResults {
 
     /**
      * Rotation matrix.
-     * Each row corresponds to a gene while each column corresponds to a PC.
+     * Each row corresponds to a gene (i.e., row of the input matrix) while each column corresponds to a PC.
      * The number of PCs is as described for `BlockedPcaResults::components`.
      */
     EigenMatrix_ rotation;
 
     /**
      * Centering matrix.
-     * Each row corresponds to a block and each column corresponds to a gene.
-     * Each entry contains the mean for a particular gene in the corresponding block.
+     * Each row corresponds to a block and each column corresponds to a gene (i.e., row of the input matrix).
+     * Each entry contains the mean of a particular gene in the corresponding block.
+     * For empty blocks, the mean for all genes is set to zero.
      */
     EigenMatrix_ center;
 
     /**
      * Scaling vector, only returned if `BlockedPcaOptions::scale = true`.
-     * Each entry corresponds to a row in the input matrix and contains the scaling factor used to divide that gene's values if `BlockedPcaOptions::scale = true`.
+     * Each entry corresponds to a gene (i.e., row of the input matrix) and contains the scaling factor used to divide that gene's values if `BlockedPcaOptions::scale = true`.
+     * This is usually the weighted sum of the per-block sample standard deviation of that gene.
+     * For genes with zero variance in all blocks, the scaling factor is set to 1 to avoid non-finite values upon scaling.
+     * For input matrices with fewer than 2 cells, the scaling factor is set to 1 for all genes. 
      */
     EigenVector_ scale;
 
