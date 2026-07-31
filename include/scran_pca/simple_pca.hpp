@@ -88,20 +88,18 @@ struct SimplePcaOptions {
  */
 template<typename Value_, typename Index_, class EigenVector_>
 void compute_row_means_and_variances(const tatami::Matrix<Value_, Index_>& mat, const int num_threads, EigenVector_& center_v, EigenVector_& scale_v) {
-    tatami_stats::RssOptions vopt;
-    vopt.num_threads = num_threads;
+    tatami_stats::RssOptions<typename EigenVector_::Scalar> opts;
+    opts.num_threads = num_threads;
+    opts.mean_placeholder = 0; // rss() emits NaNs if there are no cells, we replace them with zeros to avoid downstream problems with propagation.
 
     tatami_stats::RssBuffers<typename EigenVector_::Scalar> buffers;
     buffers.mean = center_v.data();
     buffers.rss = scale_v.data();
-    tatami_stats::rss(true, mat, buffers, vopt);
+    tatami_stats::rss(true, mat, buffers, opts);
 
     const auto ncells = mat.ncol();
     if (ncells > 1) {
         scale_v /= ncells - 1;
-    } else if (!ncells) {
-        // rss() emits NaNs if there are no cells, we replace them with zeros to avoid downstream problems.
-        std::fill(center_v.begin(), center_v.end(), 0);
     }
 }
 

@@ -234,8 +234,6 @@ void compute_blockwise_mean_and_variance_realized_sparse(
                 if (bsize) {
                     block_centers[b] /= bsize;
                 }
-                // We'll set the means to NaN at the end of the function.
-                // We don't do it here as NaNs would propagate in ResidualMatrix's multiply.
             }
 
             // Computing the RSS instead of the sample variance.
@@ -273,7 +271,7 @@ void compute_blockwise_mean_and_variance_realized_sparse(
             // Magnitude doesn't matter when scaling for process_scale_vector anyway.
             //
             // If there are not enough cells, we set the variance to zero so that no scaling is done in process_scale_vector().
-            // We'll set this to NaN at the end of the function.
+            // We don't set this to NaN to avoid problems with propagation.
             if (ncells > 1) {
                 variances[g] = rss / (ncells - 1);
             } else {
@@ -384,8 +382,9 @@ void compute_blockwise_mean_and_variance_tatami(
         buffers.rss.push_back(tmp_rss[b].data());
     }
 
-    tatami_stats::GroupRssOptions opt;
+    tatami_stats::GroupRssOptions<Float> opt;
     opt.num_threads = nthreads;
+    opt.mean_placeholder = 0; // avoid NaN propagation in ResidualMatrix.
     tatami_stats::group_rss(true, mat, block, num_blocks, block_sizes.data(), buffers, opt);
 
     assert(sanisizer::is_equal(variances.size(), ngenes));
@@ -402,9 +401,6 @@ void compute_blockwise_mean_and_variance_tatami(
                     variances.coeffRef(g) += currss[g];
                 }
             }
-        } else {
-            // Replace NaNs with zeros so ResidualMatrix's multiplications don't propagate NaNs.
-            std::fill_n(buffers.mean[b], ngenes, 0);
         }
     }
 
