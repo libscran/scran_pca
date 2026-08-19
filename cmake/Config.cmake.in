@@ -8,6 +8,6 @@ find_dependency(libscran_scran_blocks 0.1.0 CONFIG)
 find_dependency(ltla_irlba 3.1.0 CONFIG)
 find_dependency(libscran_irlba_tatami 0.1.0 CONFIG)
 find_dependency(ltla_sanisizer 0.2.0 CONFIG)
-find_dependency(Eigen3 5.0.0 CONFIG)
+find_dependency(Eigen3 5 CONFIG)
 
 include("${CMAKE_CURRENT_LIST_DIR}/libscran_scran_pcaTargets.cmake")
